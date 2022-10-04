@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "eslint.probe": ["javascript", "javascriptreact", "html", "markdown"],
+  "eslint.validate": ["javascript", "javascriptreact"],
+  "svg.preview.background": "transparent"
+}

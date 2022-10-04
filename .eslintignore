@@ -1,0 +1,16 @@
+node_modules
+dist
+coverage
+
+jsconfig.json
+jest.config.js
+jest.config.e2e.js
+.eslintrc.js
+
+yarn.lock
+
+knexfile.js
+lambda.js
+
+db/*
+static
