@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "repository": "git@github.com:iritep/be_elitegame.git",
   "author": "iritep <rpat.upwork@gmail.com>",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "scripts": {
     "prepare": "husky install",
     "clean": "rimraf ./dist",
@@ -64,7 +64,6 @@
     "eslint": "^7.32.0 || ^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "jest": "^29.1.2",
