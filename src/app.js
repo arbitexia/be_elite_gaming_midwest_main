@@ -5,12 +5,12 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
-// import database from '@/database';
+import database from './database';
 import routes from './routes';
 import config from './config';
 
 // Configure the utils before loading.
-// database.enableTracing();
+database.enableTracing();
 
 // Setup the app.
 const app = express();

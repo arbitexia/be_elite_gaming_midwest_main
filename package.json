@@ -9,7 +9,7 @@
   "scripts": {
     "prepare": "husky install",
     "clean": "rimraf ./dist",
-    "transpile": "babel ./src --out-dir ./dist",
+    "build": "babel ./src --out-dir ./dist",
     "dev": "nodemon --exec babel-node src/index.js",
     "dist:start": "node ./dist",
     "start": "npm-run-all build dist:start",
