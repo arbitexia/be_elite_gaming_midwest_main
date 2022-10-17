@@ -1,0 +1,73 @@
+service: elitegame
+variablesResolutionMode: 20210326
+configValidationMode: error
+frameworkVersion: '2'
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  lambdaHashingVersion: 20201221
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+  role: ${ssm:/elitegame/AWS_PROVIDER_ROLE}
+  environment:
+    NODE_ENV: ${ssm:/elitegame/NODE_ENV}
+    LOG_LEVEL: ${ssm:/elitegame/LOG_LEVEL}
+    DB_HOST: ${ssm:/elitegame/DB_HOST}
+    DB_PORT: ${ssm:/elitegame/DB_PORT}
+    DB_NAME: ${ssm:/elitegame/DB_NAME}
+    DB_PASSWORD: ${ssm:/elitegame/DB_PASSWORD}
+    DB_USER: ${ssm:/elitegame/DB_USER}
+    DB_MIN_POOL: ${ssm:/elitegame/DB_MIN_POOL}
+    DB_MAX_POOL: ${ssm:/elitegame/DB_MAX_POOL}
+
+functions:
+  api:
+    handler: lambda.handler
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+    package:
+      include:
+        - dist/**
+        - package.json
+        - lambda.js
+        - public/**
+      exclude:
+        - '*'
+        - node_modules/**
+        - .github/**
+        - __test__/**
+        - docs/**
+        - db/**
+
+  # TODO
+  # 1. confirm all app's cases
+  # 2. split the main parts for gathering the status of aspects
+  # 3. ....
+
+  # app-worker:
+  #   handler: dist/workers/app-worker.handler
+  #   timeout: 600
+  #   events:
+  #     - schedule: rate(12 hours)
+  #   package:
+  #     include:
+  #       - dist/**
+  #       - package.json
+  #     exclude:
+  #       - '*'
+  #       - node_modules/**
+  #       - .github/**
+  #       - __test__/**
+  #       - docs/**
+  #       - db/**
+  #       - public/**
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-offline
