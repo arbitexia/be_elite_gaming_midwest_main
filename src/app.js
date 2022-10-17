@@ -6,8 +6,8 @@ import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 // import database from '@/database';
-// import routes from '@/routes';
-import config from '@/config';
+import routes from './routes';
+import config from './config';
 
 // Configure the utils before loading.
 // database.enableTracing();
@@ -37,7 +37,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// app.use('/', routes);
+app.use('/', routes);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
