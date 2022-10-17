@@ -1,7 +1,7 @@
 service: elitegame
 variablesResolutionMode: 20210326
 configValidationMode: error
-frameworkVersion: '2'
+frameworkVersion: '3'
 
 custom:
   stage: ${opt:stage, 'dev'}
