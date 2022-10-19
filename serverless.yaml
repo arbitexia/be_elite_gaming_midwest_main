@@ -1,4 +1,4 @@
-service: api_elitegaming
+service: api-elitegaming
 variablesResolutionMode: 20210326
 configValidationMode: error
 frameworkVersion: '3'
