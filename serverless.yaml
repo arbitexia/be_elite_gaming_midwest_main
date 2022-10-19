@@ -13,10 +13,11 @@ provider:
   lambdaHashingVersion: 20201221
   stage: ${self:custom.stage}
   region: ${self:custom.region}
-  role: ${ssm:/elitegame/AWS_PROVIDER_ROLE}
+  # role: ${ssm:/elitegame/AWS_PROVIDER_ROLE}
   environment:
     NODE_ENV: ${ssm:/elitegame/NODE_ENV}
     LOG_LEVEL: ${ssm:/elitegame/LOG_LEVEL}
+    APP_SECRET: ${ssm:/elitegame/APP_SECRET}
     DB_HOST: ${ssm:/elitegame/DB_HOST}
     DB_PORT: ${ssm:/elitegame/DB_PORT}
     DB_NAME: ${ssm:/elitegame/DB_NAME}
