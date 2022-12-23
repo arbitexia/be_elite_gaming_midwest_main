@@ -4,7 +4,7 @@ import { knex, Table, transaction } from './common';
 let tracingEnabled = false;
 function enableTracing() {
   if (!tracingEnabled) {
-    knex.on('query', ({ sql, bindings }) => logHelper.trace(sql, bindings));
+    knex.on('query', ({ sql, bindings }) => console.log(sql)); //logHelper.trace(sql, bindings));
   }
   tracingEnabled = true;
 }

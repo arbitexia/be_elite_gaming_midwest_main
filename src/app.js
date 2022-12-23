@@ -1,6 +1,7 @@
 import path from 'path';
 import cors from 'cors';
 import express from 'express';
+import logger from 'morgan';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
@@ -33,6 +34,7 @@ if (!config.DEBUG) {
 // eslint-disable-next-line global-require
 if (config.DEBUG) app.use(require('morgan')('dev'));
 
+app.use(logger('dev'));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -47,6 +49,7 @@ app.use((req, res, next) => {
 // Error handler
 app.use((err, req, res) => {
   // set locals, only providing error in development
+  console.log(err);
   res.locals.messge = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 

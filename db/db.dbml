@@ -17,13 +17,14 @@ Table users [note: 'user table'] {
   first_name varchar [note: 'first name']
   last_name varchar [note: 'last name']
   user_name varchar [unique, note: 'userid']
-  email varchar
+  email varchar [not null]
   phone varchar
-  password varchar
+  password varchar [not null, note: 'password']
   location "jsonb" [note: 'country, city, state, zipcode, address1, address2']
   birthday date
   asset_id int
   status user_status
+  provider user_provider
   role_id int [not null, note: 'role id']
   created_at timestamp [default: `now()`]
   updated_at timestamp 
@@ -34,13 +35,14 @@ Enum role_short_code {
   USER
   TABLET
   ADMIN
-  SUPER
+  SUPER_ADMIN
 }
 
 Table roles [note: 'user role table'] {
   id int [pk, increment]
   name varchar
   short_code role_short_code
+  permissions varchar [note: 'list of permissions for actions by role: ex) canUpdate, canDelete ']
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }
@@ -64,26 +66,3 @@ Table assets [note: 'Application assets'] {
 }
 
 Ref: assets.id < users.asset_id
-
-Enum verification_type {
-  VERIFY_PHONE
-  INVITATION
-  FORGOT_PASSWORD
-}
-
-Enum verification_status {
-  ACTIVATED
-  EXPIRED
-  VERIFIED
-  COMPLETED
-}
-
-Table verifications [note: 'User verification'] {
-  id int [pk, increment]
-  victim_id int [note: 'action model id => user, invitation']
-  type verification_type
-  token varchar
-  status verification_status
-  created_at timestamp [default: `now()`]
-  updated_at timestamp 
-}

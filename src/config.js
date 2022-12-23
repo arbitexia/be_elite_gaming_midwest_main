@@ -1,6 +1,9 @@
+require('dotenv').config();
+
 export default {
   DEBUG: process.env.NODE_ENV !== 'production',
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
+  APP_SECRET: process.env.APP_SECRET,
   PORT: process.env.POORT,
   DB_HOST: process.env.DB_HOST,
   DB_PORT: process.env.DB_PORT,

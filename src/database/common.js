@@ -5,13 +5,6 @@ export function transaction(fn) {
   return _knex.transaction(fn);
 }
 
-/**
- * Run a block of code, creating a new transaction if one isn't passed
- *
- * @param opts with nullable knex transaction object
- * @param fn async function that takes a modified opts object as its only argument
- * @return {Promise<*>}
- */
 export function withTransaction(opts, fn) {
   if (opts && opts.transaction) {
     return fn(opts);
@@ -29,7 +22,10 @@ export function queryBuilder(tableName, opts) {
 }
 
 export const Table = {
-  USER: camelCaseString('users')
+  ASSET: camelCaseString('assets'),
+  USER: camelCaseString('users'),
+  ROLE: camelCaseString('roles'),
+  VERIFICATION: camelCaseString('verifications')
 };
 
 export const knex = _knex;
