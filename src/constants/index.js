@@ -7,6 +7,8 @@ export {
   ROLE_SHORT_CODES
 } from './user';
 
+export { EMAIL_TEMPLATE_MAPPER } from './email';
+
 export {
   VERIFICATION_STATUS_MAPPER,
   VERIFICATION_TYPE_MAPPER,

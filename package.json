@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.19.0",
+    "aws-sdk": "^2.1282.0",
     "aws-serverless-express": "^3.4.0",
     "bcrypt": "^5.1.0",
     "bluebird": "^3.7.2",
@@ -35,19 +36,22 @@
     "coroutine": "^0.3.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "csv-parse": "^5.3.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^2.3.0",
     "lodash": "^4.17.21",
+    "mime": "^3.0.0",
     "morgan": "^1.10.0",
     "objection": "^3.0.1",
     "pg": "^8.8.0",
     "pino": "^8.6.1",
     "pino-pretty": "^9.1.0",
     "regenerator-runtime": "^0.13.9",
-    "twilio": "^3.84.0"
+    "twilio": "^3.84.0",
+    "uniqid": "^5.4.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",

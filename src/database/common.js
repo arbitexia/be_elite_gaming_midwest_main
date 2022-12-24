@@ -25,6 +25,7 @@ export const Table = {
   ASSET: camelCaseString('assets'),
   USER: camelCaseString('users'),
   ROLE: camelCaseString('roles'),
+  EMAIL_TEMPLATE: camelCaseString('email_templates'),
   VERIFICATION: camelCaseString('verifications')
 };
 

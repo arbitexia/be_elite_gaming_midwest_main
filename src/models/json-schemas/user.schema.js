@@ -24,7 +24,7 @@ export default {
     assetId: { type: 'integer' },
     status: {
       type: 'string',
-      enum: ['ACTIVATED', 'DISABLED', 'ARCHIVED', 'VERIFY_PHONE']
+      enum: ['ACTIVATED', 'DISABLED', 'ARCHIVED', 'VERIFY_PHONE', 'VERIFY_EMAIL']
     },
     roleId: { type: 'integer' }
   }

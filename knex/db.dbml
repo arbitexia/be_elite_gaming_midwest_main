@@ -10,6 +10,7 @@ Enum user_status {
   DISABLED
   ARCHIVED
   VERIFY_PHONE
+  VERIFY_EMAIL
 }
 
 Table users [note: 'user table'] {
@@ -66,6 +67,7 @@ Table assets [note: 'Application assets'] {
 Ref: assets.id < users.asset_id
 
 Enum verification_type {
+  VERIFY_EMAIL
   VERIFY_PHONE
   INVITATION
   FORGOT_PASSWORD
@@ -84,6 +86,16 @@ Table verifications [note: 'User verification'] {
   type verification_type
   token varchar
   status verification_status
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+}
+
+Table email_templates [note: 'email tempalte list'] {
+  id int [pk, increment]
+  name varchar
+  subject varchar
+  body varchar
+  use_for varchar
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }

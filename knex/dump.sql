@@ -37,9 +37,9 @@ CREATE TABLE "users" (
   "first_name" varchar,
   "last_name" varchar,
   "user_name" varchar UNIQUE,
-  "email" varchar NOT NULL,
+  "email" varchar,
   "phone" varchar,
-  "password" varchar NOT NULL,
+  "password" varchar,
   "location" jsonb,
   "birthday" date,
   "asset_id" int,
@@ -77,6 +77,16 @@ CREATE TABLE "verifications" (
   "updated_at" timestamp
 );
 
+CREATE TABLE "email_templates" (
+  "id" SERIAL PRIMARY KEY,
+  "name" varchar,
+  "subject" varchar,
+  "body" varchar,
+  "use_for" varchar,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp
+);
+
 COMMENT ON TABLE "users" IS 'user table';
 
 COMMENT ON COLUMN "users"."first_name" IS 'first name';
@@ -84,8 +94,6 @@ COMMENT ON COLUMN "users"."first_name" IS 'first name';
 COMMENT ON COLUMN "users"."last_name" IS 'last name';
 
 COMMENT ON COLUMN "users"."user_name" IS 'userid';
-
-COMMENT ON COLUMN "users"."password" IS 'password';
 
 COMMENT ON COLUMN "users"."location" IS 'country, city, state, zipcode, address1, address2';
 
@@ -98,6 +106,8 @@ COMMENT ON TABLE "assets" IS 'Application assets';
 COMMENT ON TABLE "verifications" IS 'User verification';
 
 COMMENT ON COLUMN "verifications"."victim_id" IS 'action model id => user, invitation';
+
+COMMENT ON TABLE "email_templates" IS 'email tempalte list';
 
 ALTER TABLE "users" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("id");
 
