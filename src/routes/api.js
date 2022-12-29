@@ -3,6 +3,7 @@ import { authController } from '@/controller';
 
 const router = Router();
 router.post('/authorize', authController.authorize);
+router.post('/authorizeTablet', authController.authorizeTablet);
 router.post('/authorizeCustomer', authController.authorizeCustomer);
 router.post('/verifyPhone', authController.verifyPhone);
 router.post('/register', authController.register);

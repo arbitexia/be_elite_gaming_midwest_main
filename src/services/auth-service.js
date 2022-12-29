@@ -38,11 +38,12 @@ export const register = async (phone, email, birthday, res) => {
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
   const token = securityHelper.genPhoneVerifyToken().toString();
+  console.log(token);
 
   client.messages
     .create({
       body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      to: user.phone,
+      to: newUser.phone,
       from: '+12345678901' // From a valid Twilio number
     })
     .then((message) => console.log(message.sid));
@@ -55,21 +56,16 @@ export const register = async (phone, email, birthday, res) => {
   });
 
   return {
-    message: APP_MESSAGE.AUTH.SEND_VERIFY
+    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY
   };
 };
 
-export const authorize = async (identifier, password, res) => {
+export const authorizeTablet = async (identifier, password, res) => {
   const user = await User.query()
     .findOne({
       userName: identifier,
-      status: USER_STATUS_MAPPER.ACTIVATED
-    })
-    .where((builder) => {
-      builder
-        .where('roleId', USER_ROLE_MAPPER.ADMIN)
-        .orWhere('roleId', USER_ROLE_MAPPER.SUPER)
-        .orWhere('roleId', USER_ROLE_MAPPER.TABLET);
+      status: USER_STATUS_MAPPER.ACTIVATED,
+      roleId: USER_ROLE_MAPPER.TABLET
     })
     .withGraphFetched('[role, avatar]')
     .throwIfNotFound({
@@ -96,8 +92,44 @@ export const authorize = async (identifier, password, res) => {
   };
 };
 
+export const authorize = async (identifier, password, res) => {
+  const user = await User.query()
+    .findOne({
+      userName: identifier,
+      status: USER_STATUS_MAPPER.ACTIVATED
+    })
+    .where((builder) => {
+      builder
+        .where('roleId', USER_ROLE_MAPPER.ADMIN)
+        .orWhere('roleId', USER_ROLE_MAPPER.SUPER)
+        .orWhere('roleId', USER_ROLE_MAPPER.TABLET);
+    })
+    .withGraphFetched('[role, avatar]')
+    .throwIfNotFound({
+      message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
+      type: 'NOT_FOUND'
+    });
+
+  const isValidated = await securityHelper.validatePassword(password, user.password);
+  if (!isValidated) {
+    throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
+  }
+
+  const accessToken = await securityHelper.genJwtToken(user.id, '10h');
+  const refreshToken = await securityHelper.genRefreshToken();
+
+  if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
+  const { role, ...rest } = user;
+
+  return {
+    user: rest,
+    role,
+    accessToken,
+    refreshToken
+  };
+};
+
 export const verifyPhone = async (token, res) => {
-  console.log(token);
   const verification = await Verification.query()
     .findOne({
       token,
@@ -107,7 +139,7 @@ export const verifyPhone = async (token, res) => {
     .throwIfNotFound({
       message: APP_MESSAGE.VERIFICATION.NOT_FOUND
     });
-  console.log(verification);
+
   const user = await User.query()
     .updateAndFetchById(verification.victimId, {
       status: USER_STATUS_MAPPER.ACTIVATED
@@ -152,6 +184,7 @@ export const authorizeCustomer = async (identifier, res) => {
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
   const token = securityHelper.genPhoneVerifyToken().toString();
+  console.log(token);
 
   client.messages
     .create({
@@ -169,7 +202,7 @@ export const authorizeCustomer = async (identifier, res) => {
   });
 
   return {
-    message: APP_MESSAGE.AUTH.SEND_VERIFY
+    message: APP_MESSAGE.AUTH.SEND_AUTH_VERIFY
   };
 };
 

@@ -6,7 +6,8 @@ const APP_MESSAGE = {
     INVALID_SCHEMA: 'Invalid schema name, needs to register the schema'
   },
   AUTH: {
-    SEND_VERIFY: 'Send SMS Verification code',
+    SEND_AUTH_VERIFY: 'Send SMS Verification code for authorization',
+    SEND_REGISTER_VERIFY: 'Send SMS Verification code for register',
     DUPLICATED_EMAIL: 'Current email address already exists!',
     DUPLICATED_PHONE: 'Current phonenumber already exists!',
     SUCCESS_REGISTER: 'Successfully, the profile has been created!',
