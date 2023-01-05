@@ -13,10 +13,7 @@ import { BadRequest } from '@/provider/error';
 import config from '@/config';
 import twilio from 'twilio';
 
-const accountSid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // Your Account SID from www.twilio.com/console
-const authToken = 'your_auth_token'; // Your Auth Token from www.twilio.com/console
-
-const client = new twilio(accountSid, authToken);
+const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.auth);
 
 export const register = async (phone, email, birthday, res) => {
   const user = await User.query().findOne({
@@ -43,10 +40,12 @@ export const register = async (phone, email, birthday, res) => {
   client.messages
     .create({
       body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      to: newUser.phone,
-      from: '+12345678901' // From a valid Twilio number
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: newUser.phone
     })
-    .then((message) => console.log(message.sid));
+    .then((message) => console.log(message.sid))
+    .catch((e) => console.log(e))
+    .done();
 
   await Verification.query().insert({
     victimId: updatedUser.id,
@@ -186,10 +185,12 @@ export const authorizeCustomer = async (identifier, res) => {
   client.messages
     .create({
       body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      to: user.phone,
-      from: '+12345678901' // From a valid Twilio number
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: user.phone
     })
-    .then((message) => console.log(message.sid));
+    .then((message) => console.log(message.sid))
+    .catch((e) => console.log(e))
+    .done();
 
   await Verification.query().insert({
     victimId: updatedUser.id,

@@ -19,5 +19,10 @@ export default {
       SUPPORT_EMAIL: process.env.SUPPORT_EMAIL
     },
     S3_ASSET_BUCKET: process.env.S3_ASSET_BUCKET
+  },
+  TWILLIO: {
+    ACCOUNT_SID: process.env.TWILLIO_ACCOUNT_SID,
+    AUTH_TOKEN: process.env.TWILLIO_AUTH_TOKEN,
+    MESSAGE_SID: process.env.TWILLIO_MESSAGE_SID
   }
 };
