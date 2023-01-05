@@ -99,10 +99,7 @@ export const authorize = async (identifier, password, res) => {
       status: USER_STATUS_MAPPER.ACTIVATED
     })
     .where((builder) => {
-      builder
-        .where('roleId', USER_ROLE_MAPPER.ADMIN)
-        .orWhere('roleId', USER_ROLE_MAPPER.SUPER)
-        .orWhere('roleId', USER_ROLE_MAPPER.TABLET);
+      builder.where('roleId', USER_ROLE_MAPPER.ADMIN).orWhere('roleId', USER_ROLE_MAPPER.SUPER);
     })
     .withGraphFetched('[role, avatar]')
     .throwIfNotFound({

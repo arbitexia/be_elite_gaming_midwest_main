@@ -37,7 +37,8 @@ const placeholderHelper = async ({ template, userInfo, adminInfo, ...rest }) => 
     token = securityHelper.genRandomTokenString(40);
     const expression = /~VERIFY_LINK!/g;
     const partialLink = getPartialLink(template.useFor);
-    const value = `${config.FRONTEND_URL}/${partialLink}/${token}`;
+    const value = `${config.FRONTEND_URL}/${partialLink}?token=${token}`;
+    console.log(value);
     htmlBody = htmlBody.replace(expression, value);
   }
 
