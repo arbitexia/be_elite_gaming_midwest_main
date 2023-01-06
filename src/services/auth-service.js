@@ -13,7 +13,7 @@ import { BadRequest } from '@/provider/error';
 import config from '@/config';
 import twilio from 'twilio';
 
-const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.auth);
+const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN);
 
 export const register = async (phone, email, birthday, res) => {
   const user = await User.query().findOne({
@@ -111,7 +111,7 @@ export const authorize = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = await securityHelper.genJwtToken(user.id, '10h');
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
   const refreshToken = await securityHelper.genRefreshToken();
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
@@ -148,7 +148,7 @@ export const verifyPhone = async (token, res) => {
     })
     .where({ id: verification.id });
 
-  const accessToken = await securityHelper.genJwtToken(user.id, '1h');
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
   const refreshToken = await securityHelper.genRefreshToken();
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);

@@ -10,9 +10,15 @@ jobs:
     name: Staging Deploy
     runs-on: ubuntu-latest
     env:
+      APP_SECRET: ${{ secrets.APP_SECRET }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      AWS_SUPPORT_EMAIL: ${{ secrets.AWS_SUPPORT_EMAIL }}
+      AWS_S3_ASSET_BUCKET: ${{ secrets.AWS_S3_ASSET_BUCKET }}
+      TWILLIO_ACCOUNT_SID: ${{ secrets.TWILLIO_ACCOUNT_SID }}
+      TWILLIO_AUTH_TOKEN: ${{ secrets.TWILLIO_AUTH_TOKEN }}
+      TWILLIO_MESSAGE_SID: ${{ secrets.TWILLIO_MESSAGE_SID }}
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_NAME: ${{ secrets.DB_NAME }}
       DB_USER: ${{ secrets.DB_USER }}
@@ -33,10 +39,10 @@ jobs:
         run: npm install -g foreman
       - name: Install Dependencies
         run: yarn install --no-lockfile
-      # - name: Migrate DB
-      #   run: yarn knex:migrate
-      # - name: Seed DB
-      #   run: yarn knex:seed
+      - name: Migrate DB
+        run: yarn knex:migrate
+      - name: Seed DB
+        run: yarn knex:seed
       - name: Build
         run: yarn build
       - name: Deploy
