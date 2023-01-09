@@ -29,11 +29,11 @@ provider:
     TWILLIO_ACCOUNT_SID: ${ssm:/elitegame/TWILLIO_ACCOUNT_SID}
     TWILLIO_AUTH_TOKEN: ${ssm:/elitegame/TWILLIO_AUTH_TOKEN}
     TWILLIO_MESSAGE_SID: ${ssm:/elitegame/TWILLIO_MESSAGE_SID}
-    AWS_ACCESS_KEY_ID: ${ssm:/elitegame/AWS_ACCESS_KEY_ID}
-    AWS_SECRET_ACCESS_KEY: ${ssm:/elitegame/AWS_SECRET_ACCESS_KEY}
-    AWS_DEFAULT_REGION: ${ssm:/elitegame/AWS_DEFAULT_REGION}
-    AWS_SUPPORT_EMAIL: ${ssm:/elitegame/AWS_SUPPORT_EMAIL}
-    AWS_S3_ASSET_BUCKET: ${ssm:/elitegame/AWS_S3_ASSET_BUCKET}
+    AWS_ACCESS_KEY_ID: ${ssm:/elitegame/ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${ssm:/elitegame/SECRET_ACCESS_KEY}
+    AWS_DEFAULT_REGION: ${ssm:/elitegame/DEFAULT_REGION}
+    AWS_SUPPORT_EMAIL: ${ssm:/elitegame/SUPPORT_EMAIL}
+    AWS_S3_ASSET_BUCKET: ${ssm:/elitegame/S3_ASSET_BUCKET}
 
 functions:
   api:
