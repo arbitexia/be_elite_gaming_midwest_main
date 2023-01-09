@@ -18,10 +18,13 @@ const app = express();
 
 app.use(
   cors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    origin: [
+      'http://localhost:3000',
+      'https://admin.elitegaming.rpatdev.com/',
+      'https://customer.elitegaming.rpatdev.com/',
+      'https://tablet.elitegaming.rpatdev.com/',
+      'https://staging-elitegame.calj4kdsekpa.us-east-1.rds.amazonaws.com'
+    ]
   })
 );
 app.use('/public', express.static(path.join(__dirname, '../public')));
