@@ -20,9 +20,9 @@ app.use(
   cors({
     origin: [
       'http://localhost:3000',
-      'https://admin.elitegaming.rpatdev.com/',
-      'https://customer.elitegaming.rpatdev.com/',
-      'https://tablet.elitegaming.rpatdev.com/',
+      'https://admin.elitegaming.rpatdev.com',
+      'https://customer.elitegaming.rpatdev.com',
+      'https://tablet.elitegaming.rpatdev.com',
       'https://staging-elitegame.calj4kdsekpa.us-east-1.rds.amazonaws.com'
     ]
   })
