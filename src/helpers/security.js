@@ -26,10 +26,8 @@ passport.use(
 );
 
 export const sign = (userId, expiresIn) => {
-  new Promise((resolve, reject) => {
-    const token = jwt.sign({ userId }, config.APP_SECRET, { expiresIn });
-    resolve(token);
-  });
+  const token = jwt.sign({ userId }, config.APP_SECRET, { expiresIn });
+  return token;
 };
 
 export const genRandomTokenString = (length) => crypto.randomBytes(length).toString('hex');

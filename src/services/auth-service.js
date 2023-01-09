@@ -77,7 +77,7 @@ export const authorizeTablet = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = await securityHelper.sign(user.id, '24h');
+  const accessToken = securityHelper.sign(user.id, '24h');
   const refreshToken = await securityHelper.genRefreshToken();
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
@@ -111,7 +111,7 @@ export const authorize = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = await securityHelper.sign(user.id, '8h');
+  const accessToken = securityHelper.sign(user.id, '8h');
   const refreshToken = await securityHelper.genRefreshToken();
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
