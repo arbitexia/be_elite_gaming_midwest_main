@@ -21,6 +21,20 @@ export const register = async (phone, email, birthday, res) => {
     roleId: USER_ROLE_MAPPER.USER
   });
   if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
+
+  const token = securityHelper.genPhoneVerifyToken().toString();
+  console.log(token);
+
+  await client.messages
+    .create({
+      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: phone
+    })
+    .catch((e) => {
+      throw new BadRequest(e.message);
+    });
+
   const newUser = await User.query()
     .insertAndFetch({
       phone,
@@ -34,18 +48,6 @@ export const register = async (phone, email, birthday, res) => {
   const updatedUser = await newUser
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
-  const token = securityHelper.genPhoneVerifyToken().toString();
-  console.log(token);
-
-  client.messages
-    .create({
-      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: newUser.phone
-    })
-    .then((message) => console.log(message.sid))
-    .catch((e) => console.log(e))
-    .done();
 
   await Verification.query().insert({
     victimId: updatedUser.id,
@@ -176,21 +178,22 @@ export const authorizeCustomer = async (identifier, res) => {
       type: 'NOT_FOUND'
     });
 
-  const updatedUser = await user
-    .$query()
-    .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
   const token = securityHelper.genPhoneVerifyToken().toString();
   console.log(token);
 
-  client.messages
+  await client.messages
     .create({
       body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
       messagingServiceSid: config.TWILLIO.MESSAGE_SID,
       to: user.phone
     })
-    .then((message) => console.log(message.sid))
-    .catch((e) => console.log(e))
-    .done();
+    .catch((e) => {
+      throw new BadRequest(e.message);
+    });
+
+  const updatedUser = await user
+    .$query()
+    .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
 
   await Verification.query().insert({
     victimId: updatedUser.id,
