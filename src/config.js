@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log('print current process envs', process.env);
 
 export default {
   DEBUG: process.env.NODE_ENV !== 'production',
