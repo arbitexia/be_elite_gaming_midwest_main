@@ -1,11 +1,34 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import passport from 'passport';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { userService } from '@/services';
 import config from '@/config';
 
 const DEBUG = config.NODE_ENV === 'development';
 const saltRounds = 10;
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.APP_SECRET
+};
+
+passport.use(
+  new JwtStrategy(opts, async (payload, done) => {
+    try {
+      const user = await User.query().findById(payload.id);
+      return done(null, user);
+    } catch (e) {
+      return done(e, false);
+    }
+  })
+);
+
+export const sign = (userId, expiresIn) => {
+  const token = jwt.sign({ userId }, config.APP_SECRET, { expiresIn });
+  return token;
+};
 
 export const genRandomTokenString = (length) => crypto.randomBytes(length).toString('hex');
 export const genPhoneVerifyToken = () => crypto.randomInt(1000, 9999);
@@ -92,3 +115,5 @@ export const hasUserIdOnRequest = async (req) => {
   const user = await userService.getOne(userId);
   return user;
 };
+
+export { passport as JwtAuth };

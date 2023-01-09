@@ -46,6 +46,8 @@
     "mime": "^3.0.0",
     "morgan": "^1.10.0",
     "objection": "^3.0.1",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
     "pg": "^8.8.0",
     "pino": "^8.6.1",
     "pino-pretty": "^9.1.0",
