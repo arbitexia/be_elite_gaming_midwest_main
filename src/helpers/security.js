@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { userService } from '@/services';
+import { User } from '@/models';
 import config from '@/config';
 
 const DEBUG = config.NODE_ENV === 'development';
