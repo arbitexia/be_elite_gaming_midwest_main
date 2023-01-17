@@ -16,9 +16,11 @@ import twilio from 'twilio';
 
 const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN);
 
-export const refreshToken = async (user, accessToken, refreshToken, res) => {
+export const refreshToken = async (refreshToken, res) => {
+  const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
+  const accessToken = refreshDecoded.accessToken;
   const decoded = await securityHelper.decodeJwtToken(accessToken);
-  const userId = decoded.id;
+  const userId = decoded.userId;
   const newToken = securityHelper.genJwtToken({ userId }, '8h');
   return { accessToken: newToken };
 };
@@ -31,7 +33,6 @@ export const register = async (phone, email, birthday, res) => {
   if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
 
   const token = securityHelper.genPhoneVerifyToken().toString();
-  console.log(token);
 
   await client.messages
     .create({

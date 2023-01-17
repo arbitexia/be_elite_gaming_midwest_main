@@ -12,6 +12,18 @@ export const authorize = async (req, res) => {
   }
 };
 
+export const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    const result = await authService.refreshToken(refreshToken, password, res);
+    //TODO add auth Activity
+    res.status(200).json(result);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e.message);
+  }
+};
+
 export const authorizeTablet = async (req, res) => {
   try {
     const { identifier, password } = req.body;
@@ -61,7 +73,6 @@ export const verifyPhone = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    console.log(req.body);
     const { phone, email, birthday } = req.body;
     const result = await authService.register(phone, email, birthday, res);
     //TODO add register Activity

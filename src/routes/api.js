@@ -4,6 +4,7 @@ import { securityHelper } from '@/helpers';
 
 const router = Router();
 router.post('/authorize', authController.authorize);
+router.post('/refreshToken', authController.refreshToken);
 router.post('/authorizeTablet', authController.authorizeTablet);
 router.post('/authorizeCustomer', authController.authorizeCustomer);
 router.post('/verifyPhone', authController.verifyPhone);

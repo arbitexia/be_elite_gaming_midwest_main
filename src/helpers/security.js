@@ -18,7 +18,6 @@ const opts = {
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
     try {
-      console.log(payload);
       const user = await userService.getOne(payload.userId);
       return done(null, user);
     } catch (e) {
@@ -56,9 +55,9 @@ export const genJwtToken = (userId, expiresIn) =>
     resolve(token);
   });
 
-export const genRefreshToken = (token, expiresIn) =>
+export const genRefreshToken = (accessToken, expiresIn) =>
   new Promise((resolve) => {
-    const token = jwt.sign({ token }, config.APP_SECRET, { expiresIn });
+    const token = jwt.sign({ accessToken }, config.APP_SECRET, { expiresIn });
     resolve(token);
   });
 
