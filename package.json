@@ -1,0 +1,109 @@
+{
+  "name": "be_elitegame",
+  "version": "1.0.0",
+  "description": "Elite Gaming Backend Service",
+  "main": "src/index.js",
+  "repository": "git@github.com:iritep/be_elitegame.git",
+  "author": "iritep <rpat.upwork@gmail.com>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "prepare": "husky install",
+    "clean": "rimraf ./dist",
+    "build": "babel ./src --out-dir ./dist",
+    "dev": "nodemon --exec babel-node src/index.js",
+    "dist:start": "node ./dist",
+    "start": "npm-run-all build dist:start",
+    "dump2sql": "cd knex && dbml2sql ./db.dbml --postgres > dump.sql",
+    "build4dbml": "cd knex && dbdocs build ./db.dbml --password Welcome2021!",
+    "knex:make-migrate": "nf run knex migrate:make",
+    "knex:make-seed": "nf run knex seed:make",
+    "knex:migrate": "nf run knex migrate:latest",
+    "knex:seed": "nf run knex seed:run",
+    "test": "export NODE_ENV=test && jest --runInBand",
+    "test:e2e": "jest --runInBand --config jest.config.e2e.js",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.19.0",
+    "aws-sdk": "^2.1282.0",
+    "aws-serverless-express": "^3.4.0",
+    "bcrypt": "^5.1.0",
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "core-js": "^3.25.3",
+    "coroutine": "^0.3.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "csv-parse": "^5.3.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^2.3.0",
+    "lodash": "^4.17.21",
+    "mime": "^3.0.0",
+    "morgan": "^1.10.0",
+    "objection": "^3.0.1",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.8.0",
+    "pino": "^8.6.1",
+    "pino-pretty": "^9.1.0",
+    "regenerator-runtime": "^0.13.9",
+    "twilio": "^3.84.0",
+    "uniqid": "^5.4.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.19.3",
+    "@babel/node": "^7.19.1",
+    "@babel/plugin-transform-async-to-generator": "^7.18.6",
+    "@babel/plugin-transform-runtime": "^7.19.1",
+    "@babel/preset-env": "^7.19.3",
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "@types/core-js": "^2.5.5",
+    "@types/regenerator-runtime": "^0.13.1",
+    "babel-jest": "^29.1.2",
+    "babel-plugin-dynamic-import-node": "^2.3.3",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-plugin-transform-imports": "^2.0.0",
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "jest": "^29.1.2",
+    "lint-staged": "^13.0.3",
+    "nodemon": "^2.0.20",
+    "npm-run-all": "^4.1.5",
+    "prettier": "2.7.1",
+    "rimraf": "^3.0.2",
+    "serverless-offline": "^11.1.3",
+    "serverless-prune-plugin": "^2.0.1",
+    "supertest": "^6.2.4"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "nodemonConfig": {
+    "exec": "npm start",
+    "watch": [
+      "src/*"
+    ],
+    "ignore": [
+      "**/__tests__/**",
+      "*.test.js",
+      "*.spec.js"
+    ]
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "engines": {
+    "node": ">= 14.0.0",
+    "npm": ">= 7.0.0"
+  }
+}

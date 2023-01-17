@@ -1,0 +1,60 @@
+import { userService } from '@/services';
+
+export const getUsers = async (req, res) => {
+  try {
+    const { filterBy, cursor } = req.body;
+    const result = await userService.loadUsers(filterBy, cursor);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const result = await userService.getOne(userId);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const getRoles = async (req, res) => {
+  try {
+    const result = await userService.loadRoles();
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { userId, input } = req.body;
+    const result = await userService.updateUser(userId, input);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const result = await userService.deleteUser(userId);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const updatePassword = async (req, res) => {
+  try {
+    const { userId, oldPassword, password } = req.body;
+    const result = await userService.updatePassword(userId, oldPassword, password);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};

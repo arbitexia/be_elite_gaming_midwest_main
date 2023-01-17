@@ -1,0 +1,10 @@
+no,name,subject,body,use_for
+1,Forgot Password,Verify your email address,"Hi ~USER_FULL_NAME!. 
+Recently, we have got the forgot password on your profile.
+The request has been approved, now you can reset your password with the below link.
+~VERIFY_LINK!
+Thanks",VERIFY_EMAIL_FORGOT_PASSWORD
+2,Reset Password,Updated your password,"Hi ~USER_FULL_NAME!. 
+Your new password has been set to your profile, now you can goto the login and try to access the service.
+Please feel free to contact us if your credentials are not working. 
+Thanks",CONFIRM_EMAIL_RESET_PASSWORD

@@ -1,0 +1,27 @@
+2023-01-13T02:56:52.539Z
+SyntaxError: You have a syntax error at "db.dbml" line 116 column 24. Expected ",", "]", comment, or whitespace but "1" found.
+    at C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\utils.js:55:13
+    at Array.forEach (<anonymous>)
+    at generate (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\utils.js:48:14)
+    at exportHandler (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\export.js:38:27)
+    at Object.dbml2sql (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\index.js:27:23)
+    at Object.<anonymous> (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\bin\dbml2sql.js:4:19)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Module.load (internal/modules/cjs/loader.js:950:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:790:12)
+
+ROOT_ERROR:
+SyntaxError: Expected ",", "]", comment, or whitespace but "1" found.
+    at peg$buildStructuredError (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\node_modules\@dbml\core\lib\parse\dbmlParser.js:1163:12)
+    at Object.peg$parse [as parse] (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\node_modules\@dbml\core\lib\parse\dbmlParser.js:8164:11)
+    at Function.parseDBMLToJSON (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\node_modules\@dbml\core\lib\parse\Parser.js:54:37)
+    at Function.parse (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\node_modules\@dbml\core\lib\parse\Parser.js:81:32)
+    at Object._export [as export] (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\node_modules\@dbml\core\lib\export\index.js:15:37)
+    at C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\export.js:38:69
+    at C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\utils.js:52:23
+    at Array.forEach (<anonymous>)
+    at generate (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\utils.js:48:14)
+    at exportHandler (C:\Users\Terry\AppData\Roaming\npm\node_modules\@dbml\cli\lib\cli\export.js:38:27)
+{"start":{"offset":2166,"line":116,"column":24},"end":{"offset":2167,"line":116,"column":25}}
+
