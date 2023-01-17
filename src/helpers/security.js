@@ -56,10 +56,9 @@ export const genJwtToken = (userId, expiresIn) =>
     resolve(token);
   });
 
-export const genRefreshToken = () =>
+export const genRefreshToken = (token, expiresIn) =>
   new Promise((resolve) => {
-    const token = genRandomTokenString(40);
-
+    const token = jwt.sign({ token }, config.APP_SECRET, { expiresIn });
     resolve(token);
   });
 

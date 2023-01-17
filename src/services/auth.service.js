@@ -16,6 +16,13 @@ import twilio from 'twilio';
 
 const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN);
 
+export const refreshToken = async (user, accessToken, refreshToken, res) => {
+  const decoded = await securityHelper.decodeJwtToken(accessToken);
+  const userId = decoded.id;
+  const newToken = securityHelper.genJwtToken({ userId }, '8h');
+  return { accessToken: newToken };
+};
+
 export const register = async (phone, email, birthday, res) => {
   const user = await User.query().findOne({
     phone,
@@ -81,7 +88,7 @@ export const authorizeTablet = async (identifier, password, res) => {
   }
 
   const accessToken = await securityHelper.genJwtToken(user.id, '24h');
-  const refreshToken = await securityHelper.genRefreshToken();
+  const refreshToken = await securityHelper.genRefreshToken(accessToken, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
   const { role, ...rest } = user;
@@ -115,7 +122,7 @@ export const authorize = async (identifier, password, res) => {
   }
 
   const accessToken = await securityHelper.genJwtToken(user.id, '10s');
-  const refreshToken = await securityHelper.genRefreshToken();
+  const refreshToken = await securityHelper.genRefreshToken(accessToken, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
   const { role, ...rest } = user;
@@ -152,7 +159,7 @@ export const verifyPhone = async (token, res) => {
     .where({ id: verification.id });
 
   const accessToken = await securityHelper.genJwtToken(user.id, '8h');
-  const refreshToken = await securityHelper.genRefreshToken();
+  const refreshToken = await securityHelper.genRefreshToken(accessToken, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
 
