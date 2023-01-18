@@ -24,6 +24,49 @@ export const refreshToken = async (refreshToken, res) => {
   return { accessToken: newToken };
 };
 
+export const register = async (phone, email, birthday, res) => {
+  const user = await User.query().findOne({
+    phone,
+    roleId: USER_ROLE_MAPPER.USER
+  });
+  if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
+  const token = securityHelper.genPhoneVerifyToken().toString();
+  console.log(token);
+
+  // await client.messages
+  //   .create({
+  //     body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+  //     messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+  //     to: phone
+  //   })
+  //   .catch((e) => {
+  //     throw new BadRequest(e.message);
+  //   });
+
+  const newUser = await User.query()
+    .insertAndFetch({
+      phone,
+      email,
+      birthday,
+      roleId: USER_ROLE_MAPPER.USER,
+      status: USER_STATUS_MAPPER.VERIFY_PHONE
+    })
+    .withGraphFetched('[role, avatar]');
+  const updatedUser = await newUser
+    .$query()
+    .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
+  await Verification.query().insert({
+    victimId: updatedUser.id,
+    type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE,
+    token,
+    status: VERIFICATION_STATUS_MAPPER.ACTIVATED
+  });
+  return {
+    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY,
+    token
+  };
+};
+
 export const authorizeTablet = async (identifier, password, res) => {
   const user = await User.query()
     .findOne({
