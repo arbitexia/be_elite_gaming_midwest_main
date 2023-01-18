@@ -9,7 +9,7 @@ services:
     restart: always
     environment:
       POSTGRES_DB: elitegame
-      POSTGRES_USER: dbuser
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Password2022!
     volumes:
       - postgres:/var/lib/postgresql/data
