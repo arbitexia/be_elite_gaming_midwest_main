@@ -27,7 +27,6 @@ CREATE TYPE "verification_type" AS ENUM (
   'FORGOT_PASSWORD'
 );
 
-
 CREATE TYPE "verification_status" AS ENUM (
   'ACTIVATED',
   'EXPIRED',
