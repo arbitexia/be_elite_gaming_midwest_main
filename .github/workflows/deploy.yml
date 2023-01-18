@@ -37,8 +37,8 @@ jobs:
         run: yarn install --no-lockfile
       - name: Migrate DB
         run: yarn knex:migrate
-      # - name: Seed DB
-      #   run: yarn knex:seed
+      - name: Seed DB
+        run: yarn knex:seed
       - name: Build
         run: yarn build
       - name: Deploy
