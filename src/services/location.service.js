@@ -4,7 +4,6 @@ import { APP_MESSAGE } from '@/constants';
 
 export const loadLocations = async (filterBy, cursor) => {
   let queryBuilder;
-
   const pageCursor = cursorHelper('location', cursor);
   const { filter } = await fractionateHelper('location');
   queryBuilder = filter(filterBy);

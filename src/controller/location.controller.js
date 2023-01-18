@@ -2,7 +2,7 @@ import { locationService } from '@/services';
 
 export const getLocations = async (req, res) => {
   try {
-    const { filterBy, cursor } = req.body;
+    const { filterBy, cursor } = req.query;
     const result = await locationService.loadLocations(filterBy, cursor);
     res.status(200).json(result);
   } catch (e) {
@@ -12,7 +12,7 @@ export const getLocations = async (req, res) => {
 
 export const getLocation = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const result = await locationService.getOne(id);
     res.status(200).json(result);
   } catch (e) {
@@ -42,7 +42,7 @@ export const updateLocation = async (req, res) => {
 
 export const deleteLocation = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const result = await locationService.deleteLocation(id);
     res.status(200).json(result);
   } catch (e) {

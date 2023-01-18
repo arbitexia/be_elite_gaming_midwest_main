@@ -4,21 +4,21 @@ import { securityHelper } from '@/helpers';
 
 const router = Router();
 router.post('/authorize', authController.authorize);
-router.post('/refreshToken', authController.refreshToken);
-router.post('/authorizeTablet', authController.authorizeTablet);
-router.post('/authorizeCustomer', authController.authorizeCustomer);
-router.post('/verifyPhone', authController.verifyPhone);
+router.post('/refresh', authController.refreshToken);
+router.post('/authorize_tablet', authController.authorizeTablet);
+router.post('/authorize_customer', authController.authorizeCustomer);
+router.post('/verify_phone', authController.verifyPhone);
 router.post('/register', authController.register);
-router.post('/forgotPassword', authController.forgotPassword);
-router.post('/resetPassword', authController.resetPassword);
-router.post('/verifyEmail', authController.verifyEmail);
+router.post('/forgot_password', authController.forgotPassword);
+router.post('/reset_password', authController.resetPassword);
+router.post('/verify_email', authController.verifyEmail);
 router.post(
-  '/tablet/authorizeCustomer',
+  '/tablet/authorize',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   authController.authorizeCustomer
 );
 router.post(
-  '/tablet/verifyPhone',
+  '/tablet/verify_phone',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   authController.verifyPhone
 );
@@ -27,18 +27,18 @@ router.post(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   authController.register
 );
-router.post(
+router.get(
   '/roles',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.getRoles
 );
-router.post(
+router.get(
   '/users',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.getUsers
 );
-router.post(
-  '/user',
+router.get(
+  '/user/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.getUser
 );
@@ -47,54 +47,54 @@ router.post(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.updatePassword
 );
-router.post(
-  '/updateUser',
+router.put(
+  '/user',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.updateUser
 );
-router.post(
-  '/deleteUser',
+router.delete(
+  '/user/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.deleteUser
 );
 
-router.post(
+router.get(
   '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.getLocations
 );
-router.post(
-  '/location',
+router.get(
+  '/location/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.getLocation
 );
 router.post(
-  '/createLocation',
+  '/location',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.createLocation
 );
-router.post(
-  '/updateLocation',
+router.put(
+  '/location',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.updateLocation
 );
-router.post(
-  '/deleteLocation',
+router.delete(
+  '/location/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.deleteLocation
 );
 router.post(
-  '/createUploadForm',
+  '/new_upload_form',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.createUploadForm
 );
 router.post(
-  '/createAsset',
+  '/asset',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.createAsset
 );
 router.post(
-  '/createGallery',
+  '/gallery',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.createGallery
 );

@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { userService } from '@/services';
-import { User } from '@/models';
+import { AuthenticationError } from '@/provider/error';
 import config from '@/config';
 
 const DEBUG = config.NODE_ENV === 'development';
@@ -51,19 +51,18 @@ export const validatePassword = (password, hashedPassword) =>
 export const genJwtToken = (userId, expiresIn) =>
   new Promise((resolve) => {
     const token = jwt.sign({ userId }, config.APP_SECRET, { expiresIn });
-
     resolve(token);
   });
 
-export const genRefreshToken = (accessToken, expiresIn) =>
+export const genRefreshToken = (userId, expiresIn) =>
   new Promise((resolve) => {
-    const token = jwt.sign({ accessToken }, config.APP_SECRET, { expiresIn });
+    const token = jwt.sign({ userId }, config.APP_REFRESH_SECRET, { expiresIn });
     resolve(token);
   });
 
 export const decodeJwtToken = (token) =>
   new Promise((resolve, reject) => {
-    const key = config.APP_SECRET;
+    const key = config.APP_REFRESH_SECRET;
     jwt.verify(token, key, (error, decoded) => {
       if (error) reject(new AuthenticationError(error.message));
       resolve(decoded);

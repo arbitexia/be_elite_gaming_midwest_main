@@ -18,56 +18,10 @@ const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN)
 
 export const refreshToken = async (refreshToken, res) => {
   const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
-  const accessToken = refreshDecoded.accessToken;
-  const decoded = await securityHelper.decodeJwtToken(accessToken);
-  const userId = decoded.userId;
-  const newToken = securityHelper.genJwtToken({ userId }, '8h');
+  console.log(refreshDecoded);
+  const userId = refreshDecoded.userId;
+  const newToken = await securityHelper.genJwtToken(userId, '8h');
   return { accessToken: newToken };
-};
-
-export const register = async (phone, email, birthday, res) => {
-  const user = await User.query().findOne({
-    phone,
-    roleId: USER_ROLE_MAPPER.USER
-  });
-  if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
-
-  const token = securityHelper.genPhoneVerifyToken().toString();
-
-  await client.messages
-    .create({
-      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: phone
-    })
-    .catch((e) => {
-      throw new BadRequest(e.message);
-    });
-
-  const newUser = await User.query()
-    .insertAndFetch({
-      phone,
-      email,
-      birthday,
-      roleId: USER_ROLE_MAPPER.USER,
-      status: USER_STATUS_MAPPER.VERIFY_PHONE
-    })
-    .withGraphFetched('[role, avatar]');
-
-  const updatedUser = await newUser
-    .$query()
-    .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
-
-  await Verification.query().insert({
-    victimId: updatedUser.id,
-    type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE,
-    token,
-    status: VERIFICATION_STATUS_MAPPER.ACTIVATED
-  });
-
-  return {
-    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY
-  };
 };
 
 export const authorizeTablet = async (identifier, password, res) => {
@@ -89,7 +43,7 @@ export const authorizeTablet = async (identifier, password, res) => {
   }
 
   const accessToken = await securityHelper.genJwtToken(user.id, '24h');
-  const refreshToken = await securityHelper.genRefreshToken(accessToken, '24h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
   const { role, ...rest } = user;
@@ -122,8 +76,8 @@ export const authorize = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = await securityHelper.genJwtToken(user.id, '10s');
-  const refreshToken = await securityHelper.genRefreshToken(accessToken, '24h');
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
   const { role, ...rest } = user;
@@ -160,7 +114,7 @@ export const verifyPhone = async (token, res) => {
     .where({ id: verification.id });
 
   const accessToken = await securityHelper.genJwtToken(user.id, '8h');
-  const refreshToken = await securityHelper.genRefreshToken(accessToken, '24h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
 

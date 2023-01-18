@@ -15,7 +15,7 @@ export const authorize = async (req, res) => {
 export const refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    const result = await authService.refreshToken(refreshToken, password, res);
+    const result = await authService.refreshToken(refreshToken, res);
     //TODO add auth Activity
     res.status(200).json(result);
   } catch (e) {

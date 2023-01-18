@@ -2,7 +2,8 @@ import { userService } from '@/services';
 
 export const getUsers = async (req, res) => {
   try {
-    const { filterBy, cursor } = req.body;
+    console.log(req);
+    const { filterBy, cursor } = req.query;
     const result = await userService.loadUsers(filterBy, cursor);
     res.status(200).json(result);
   } catch (e) {
@@ -12,7 +13,7 @@ export const getUsers = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params;
     const result = await userService.getOne(userId);
     res.status(200).json(result);
   } catch (e) {
@@ -41,7 +42,7 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params;
     const result = await userService.deleteUser(userId);
     res.status(200).json(result);
   } catch (e) {
