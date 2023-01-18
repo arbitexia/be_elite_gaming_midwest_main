@@ -105,15 +105,16 @@ export const authorizeCustomer = async (identifier, res) => {
   const token = securityHelper.genPhoneVerifyToken().toString();
   console.log(token);
 
-  await client.messages
-    .create({
-      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: user.phone
-    })
-    .catch((e) => {
-      throw new BadRequest(e.message);
-    });
+  // await client.messages
+  //   .create({
+  //     body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+  //     messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+  //     to: user.phone
+  //   })
+  //   .catch((e) => {
+  //     throw new BadRequest(e.message);
+  //   });
+
   const updatedUser = await user
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
