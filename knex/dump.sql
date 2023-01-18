@@ -8,7 +8,7 @@ CREATE TYPE "user_status" AS ENUM (
 
 CREATE TYPE "role_short_code" AS ENUM (
   'GUEST',
-  'USER',
+  'CUSTOMER',
   'TABLET',
   'ADMIN',
   'SUPER'
@@ -35,7 +35,7 @@ CREATE TYPE "verification_status" AS ENUM (
 );
 
 CREATE TYPE "location_status" AS ENUM (
-  'OPENED',
+  'OPEN',
   'CLOSED'
 );
 
