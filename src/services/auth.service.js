@@ -90,6 +90,45 @@ export const authorize = async (identifier, password, res) => {
   };
 };
 
+export const authorizeCustomer = async (identifier, res) => {
+  const user = await User.query()
+    .findOne({
+      phone: identifier,
+      roleId: USER_ROLE_MAPPER.USER,
+      status: USER_STATUS_MAPPER.ACTIVATED
+    })
+    .withGraphFetched('[role, avatar]')
+    .throwIfNotFound({
+      message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
+      type: 'NOT_FOUND'
+    });
+  const token = securityHelper.genPhoneVerifyToken().toString();
+  console.log(token);
+
+  await client.messages
+    .create({
+      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: user.phone
+    })
+    .catch((e) => {
+      throw new BadRequest(e.message);
+    });
+  const updatedUser = await user
+    .$query()
+    .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
+  await Verification.query().insert({
+    victimId: updatedUser.id,
+    type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE,
+    token,
+    status: VERIFICATION_STATUS_MAPPER.ACTIVATED
+  });
+  return {
+    message: APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
+    token
+  };
+};
+
 export const verifyPhone = async (token, res) => {
   const verification = await Verification.query()
     .findOne({
