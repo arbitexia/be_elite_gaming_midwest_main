@@ -30,11 +30,11 @@ jobs:
         with:
           node-version: "16"
       - name: Install Serverless Services
-        run: npm install -g serverless@latest
+        run: npm install -g serverless@latest yarn
       - name: Install Node Foreman Service
         run: npm install -g foreman
       - name: Install Dependencies
-        run: yarn install --no-lockfile && yarn cache clean
+        run: yarn install --no-lockfile
       - name: Migrate DB
         run: yarn knex:migrate
       # - name: Seed DB
