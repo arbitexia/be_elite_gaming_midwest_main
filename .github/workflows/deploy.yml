@@ -35,10 +35,10 @@ jobs:
         run: npm install -g foreman
       - name: Install Dependencies
         run: yarn install --no-lockfile
-      - name: Migrate DB
-        run: yarn knex:migrate
-      - name: Seed DB
-        run: yarn knex:seed
+      # - name: Migrate DB
+      #   run: yarn knex:migrate
+      # - name: Seed DB
+      #   run: yarn knex:seed
       - name: Build
         run: yarn build
       - name: Deploy
