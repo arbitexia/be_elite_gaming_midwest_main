@@ -1,4 +1,4 @@
-name: 'EliteGame Staging Deploy'
+name: "EliteGame Staging Deploy"
 
 on:
   push:
@@ -28,15 +28,15 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: '16'
+          node-version: "16"
       - name: Install Serverless Services
         run: npm install -g serverless@latest
       - name: Install Node Foreman Service
         run: npm install -g foreman
       - name: Install Dependencies
         run: yarn install --no-lockfile
-      # - name: Migrate DB
-      #   run: yarn knex:migrate
+      - name: Migrate DB
+        run: yarn knex:migrate
       # - name: Seed DB
       #   run: yarn knex:seed
       - name: Build
