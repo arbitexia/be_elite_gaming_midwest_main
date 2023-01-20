@@ -148,3 +148,9 @@ Table gallery [note: 'assets gallery table'] {
 }
 
 Ref: assets.id < gallery.asset_id
+
+Table point [note: 'point table'] {
+  id int [pk, increment]
+  user_location_id int
+  
+}

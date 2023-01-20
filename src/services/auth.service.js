@@ -1,4 +1,4 @@
-import { User, Verification, EmailTemplate, UserLocation } from '@/models';
+import { User, Verification, EmailTemplate } from '@/models';
 import { securityHelper, placeholderHelper } from '@/helpers';
 import {
   APP_MESSAGE,
@@ -6,8 +6,7 @@ import {
   USER_ROLE_MAPPER,
   VERIFICATION_TYPE_MAPPER,
   VERIFICATION_STATUS_MAPPER,
-  EMAIL_TEMPLATE_MAPPER,
-  DEAULT_INC_POINT
+  EMAIL_TEMPLATE_MAPPER
 } from '@/constants';
 import { AWSProvider } from '@/provider';
 import { BadRequest } from '@/provider/error';
@@ -137,7 +136,7 @@ export const authorizeCustomer = async (identifier, res) => {
   const user = await User.query()
     .findOne({
       phone: identifier,
-      roleId: USER_ROLE_MAPPER.USER,
+      roleId: USER_ROLE_MAPPER.USER
       // status: USER_STATUS_MAPPER.ACTIVATED
     })
     .withGraphFetched('[role, avatar]')
@@ -168,7 +167,7 @@ export const authorizeCustomer = async (identifier, res) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
   return {
-    message: token,
+    message: token, //APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
     token
   };
 };
