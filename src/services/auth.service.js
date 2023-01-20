@@ -138,7 +138,7 @@ export const authorizeCustomer = async (identifier, res) => {
     .findOne({
       phone: identifier,
       roleId: USER_ROLE_MAPPER.USER,
-      status: USER_STATUS_MAPPER.ACTIVATED
+      // status: USER_STATUS_MAPPER.ACTIVATED
     })
     .withGraphFetched('[role, avatar]')
     .throwIfNotFound({

@@ -37,8 +37,8 @@ jobs:
         run: npm install --no-lockfile
       - name: Migrate DB
         run: npm run knex:migrate
-      - name: Seed DB
-        run: npm run knex:seed
+      # - name: Seed DB
+      #   run: npm run knex:seed
       - name: Build
         run: npm run build
       - name: Deploy
