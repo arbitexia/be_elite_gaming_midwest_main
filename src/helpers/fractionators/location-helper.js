@@ -4,7 +4,7 @@ import { Location } from '@/models';
 export const filter = (params) => {
   let queryBuilder;
   queryBuilder = Location.query();
-  if (params.search) {
+  if (params?.search) {
     queryBuilder
       .where((builder) => {
         builder

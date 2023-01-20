@@ -1,22 +1,13 @@
 import { Location } from '@/models';
-import { fractionateHelper, cursorHelper } from '@/helpers';
+import { fractionateHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 
-export const loadLocations = async (filterBy, cursor) => {
+export const loadLocations = async (filterBy) => {
   let queryBuilder;
-  const pageCursor = cursorHelper('location', cursor);
   const { filter } = await fractionateHelper('location');
   queryBuilder = filter(filterBy);
-  console.log(pageCursor);
-  const { results, total } = await queryBuilder.page(pageCursor.page, pageCursor.size);
-  console.log('locations');
-  return {
-    data: results,
-    pageInfo: {
-      ...pageCursor,
-      total
-    }
-  };
+  const locations = await queryBuilder.select('*');
+  return locations;
 };
 
 export const getOne = async (id) => {

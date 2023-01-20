@@ -195,7 +195,7 @@ export const verifyPhone = async (token, res) => {
     })
     .where({ id: verification.id });
 
-  const accessToken = await securityHelper.genJwtToken(user.id, '10s');
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
   const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);

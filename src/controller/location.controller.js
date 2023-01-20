@@ -2,8 +2,8 @@ import { locationService } from '@/services';
 
 export const getLocations = async (req, res) => {
   try {
-    const { filterBy, cursor } = req.query;
-    const result = await locationService.loadLocations(filterBy, cursor);
+    const { filterBy } = req.query;
+    const result = await locationService.loadLocations(filterBy);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);
