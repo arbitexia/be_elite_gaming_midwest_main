@@ -168,7 +168,7 @@ export const authorizeCustomer = async (identifier, res) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
   return {
-    message: APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
+    message: token,
     token
   };
 };
