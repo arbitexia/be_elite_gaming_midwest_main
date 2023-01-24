@@ -24,7 +24,7 @@ class AWSProvider {
     });
 
     this.lambdaClient = new AWS.Lambda({
-      region: config.REGION
+      region: config.AWS.REGION
     });
   }
 

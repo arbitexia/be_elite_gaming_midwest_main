@@ -118,7 +118,7 @@ export const authorize = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
+  const accessToken = await securityHelper.genJwtToken(user.id, '8s');
   const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);

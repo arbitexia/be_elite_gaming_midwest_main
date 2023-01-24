@@ -24,7 +24,7 @@ class Location extends BaseModel {
         }
       },
       gallery: {
-        relation: Model.BelongsToOneRelation,
+        relation: Model.HasManyRelation,
         modelClass: path.join(__dirname, 'gallery'),
         join: {
           to: `${Table.GALLERY}.victimId`,
