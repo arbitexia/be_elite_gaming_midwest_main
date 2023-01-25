@@ -119,6 +119,7 @@ Table locations [note: 'location table'] {
   status location_status
   address "jsonb" [note: 'country, city, state, zipcode, address1, address2']
   type location_type
+  description varchar
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }

@@ -29,6 +29,9 @@ export default {
     type: {
       type: 'string',
       enum: ['PALM', 'ROULETTE']
+    },
+    description: {
+      type: 'string'
     }
   }
 };
