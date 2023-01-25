@@ -74,7 +74,7 @@ router.post(
   locationController.createLocation
 );
 router.put(
-  '/location',
+  '/location/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.updateLocation
 );
