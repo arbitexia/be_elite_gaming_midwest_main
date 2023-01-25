@@ -6,7 +6,7 @@ export const loadLocations = async (filterBy) => {
   let queryBuilder;
   const { filter } = await fractionateHelper('location');
   queryBuilder = filter(filterBy);
-  const locations = await queryBuilder.select('*');
+  const locations = await queryBuilder.select('*').withGraphFetched('[gallery]');
   return locations;
 };
 

@@ -27,8 +27,8 @@ class Location extends BaseModel {
         relation: Model.HasManyRelation,
         modelClass: path.join(__dirname, 'gallery'),
         join: {
-          to: `${Table.GALLERY}.victimId`,
-          from: `${Table.LOCATION}.id`
+          from: `${Table.LOCATION}.id`,
+          to: `${Table.GALLERY}.victimId`
         }
       }
     };
