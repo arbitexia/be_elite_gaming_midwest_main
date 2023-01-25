@@ -17,7 +17,12 @@ export const getOne = async (id) => {
 
 export const createLocation = async (input) => {
   const newLocation = await Location.query().insertAndFetch({
-    ...input
+    name: input.name,
+    coords: input.coords,
+    address: input.address,
+    status: input.status,
+    type: input.type,
+    description: input.description
   });
   return newLocation;
 };
@@ -31,7 +36,12 @@ export const updateLocation = async (id, input) => {
   const updatedUser = await location
     .$query()
     .updateAndFetch({
-      ...input
+      name: input.name,
+      coords: input.coords,
+      address: input.address,
+      status: input.status,
+      type: input.type,
+      description: input.description
     })
     .withGraphFetched('[gallery]');
 
