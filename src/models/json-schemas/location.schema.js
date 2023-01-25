@@ -7,8 +7,8 @@ export default {
     coords: {
       type: 'object',
       properties: {
-        lng: { type: 'float' },
-        lat: { type: 'float' }
+        lng: { type: 'number' },
+        lat: { type: 'number' }
       }
     },
     address: {
