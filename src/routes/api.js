@@ -98,5 +98,14 @@ router.post(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.createGallery
 );
-
+router.put(
+  '/gallery',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  assetController.updateGallery
+);
+router.delete(
+  '/gallery',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  assetController.deleteGallery
+);
 export default router;

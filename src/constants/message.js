@@ -36,6 +36,10 @@ const APP_MESSAGE = {
   LOCATION: {
     NOT_FOUND: 'Location does not exist!',
     SUCESS_DELETE: 'Location has been deleted'
+  },
+  ASSET: {
+    NOT_FOUND: 'Image does not exist!',
+    SUCESS_DELETE: 'Image has been deleted'
   }
 };
 

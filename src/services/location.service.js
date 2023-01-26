@@ -35,7 +35,7 @@ export const updateLocation = async (id, input) => {
     type: 'NOT_FOUND'
   });
 
-  const updatedUser = await location
+  const updatedLocation = await location
     .$query()
     .updateAndFetch({
       name: input.name,
@@ -47,7 +47,7 @@ export const updateLocation = async (id, input) => {
     })
     .withGraphFetched('[gallery, gallery.asset]');
 
-  return updatedUser;
+  return updatedLocation;
 };
 
 export const deleteLocation = async (id) => {
