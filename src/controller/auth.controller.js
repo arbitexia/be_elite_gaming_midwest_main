@@ -1,4 +1,4 @@
-import { authService, userLocationService } from '@/services';
+import { authService, userLocationService, pointService } from '@/services';
 
 export const authorize = async (req, res) => {
   try {
@@ -55,14 +55,8 @@ export const verifyPhone = async (req, res) => {
     const result = await authService.verifyPhone(token, res);
     if (tablet) {
       const userLocation = await userLocationService.checkIn(tablet.id, result.user.id);
-      // await pointService.checkIn(userLocation.id);
-      // await Point.query()
-      //   .increment('point', DEAULT_INC_POINT)
-      //   .where({ userLocationId: location.id });
-      // await Point.query().insert({
-      //   userLocationId: newLocation.id,
-      //   point: DEAULT_INC_POINT
-      // });
+      await pointService.checkIn(userLocation.id);
+      //TODO Check user can get the coupons
     }
     res.status(200).json(result);
   } catch (e) {

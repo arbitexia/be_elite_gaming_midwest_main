@@ -29,7 +29,8 @@ export const Table = {
   EMAIL_TEMPLATE: camelCaseString('email_templates'),
   VERIFICATION: camelCaseString('verifications'),
   LOCATION: camelCaseString('locations'),
-  USER_LOCATION: camelCaseString('user_locations')
+  USER_LOCATION: camelCaseString('user_locations'),
+  POINT: camelCaseString('points')
 };
 
 export const knex = _knex;

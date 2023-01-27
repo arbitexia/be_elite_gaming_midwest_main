@@ -150,8 +150,12 @@ Table gallery [note: 'assets gallery table'] {
 
 Ref: assets.id < gallery.asset_id
 
-Table point [note: 'point table'] {
+Table points [note: 'points table'] {
   id int [pk, increment]
   user_location_id int
-  
+  point int
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
 }
+
+Ref: user_locations.id < points.user_location_id

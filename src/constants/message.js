@@ -20,6 +20,7 @@ const APP_MESSAGE = {
   USER: {
     DISABLED: 'Current user has been archieved, required additional action to recover the profile.',
     NOT_FOUND: 'Current user does not exist!',
+    TABLET_NOT_FOUND: 'Location does not exist',
     ALREADY_DEFINED: 'Current parameter already set on the user.',
     INVALID_USER: 'Unable to process the not matched user!',
     INVALID_PASSWORD: 'Unable to process the update password!',

@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { authController, userController, locationController, assetController } from '@/controller';
+import {
+  authController,
+  userController,
+  locationController,
+  assetController,
+  pointController
+} from '@/controller';
 import { securityHelper } from '@/helpers';
 
 const router = Router();
@@ -107,5 +113,11 @@ router.delete(
   '/gallery',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.deleteGallery
+);
+
+router.get(
+  '/points/:userId/:locationId',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  pointController.getPoint
 );
 export default router;
