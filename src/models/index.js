@@ -6,3 +6,4 @@ export { default as Verification } from './verification';
 export { default as EmailTemplate } from './email-template';
 export { default as Location } from './location';
 export { default as UserLocation } from './user-locations';
+export { default as Point } from './point';

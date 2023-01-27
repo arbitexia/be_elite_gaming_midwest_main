@@ -1,13 +1,15 @@
 import { Point, UserLocation } from '@/models';
-import { securityHelper, fractionateHelper, placeholderHelper, cursorHelper } from '@/helpers';
-import { AWSProvider } from '@/provider';
-import { APP_MESSAGE, EMAIL_TEMPLATE_MAPPER } from '@/constants';
+import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
 
 const TEST = config.NODE_ENV === 'test';
 
 export const getPoints = async (userId) => {
-  return 'GetPoints';
+  const points = await Point.query()
+    .joinRelated('userLocation')
+    .where('userLocation.userId', userId)
+    .withGraphFetched('[userLocation, userLocation.user, userLocation.location]');
+  return points;
 };
 
 export const getPoint = async (userId, locationId) => {

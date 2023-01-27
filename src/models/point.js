@@ -19,7 +19,7 @@ class Point extends BaseModel {
         relation: Model.BelongsToOneRelation,
         modelClass: path.join(__dirname, 'user-locations'),
         join: {
-          from: `${Table.POINT}.assetId`,
+          from: `${Table.POINT}.userLocationId`,
           to: `${Table.USER_LOCATION}.id`
         }
       }

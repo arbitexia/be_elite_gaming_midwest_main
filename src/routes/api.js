@@ -116,6 +116,11 @@ router.delete(
 );
 
 router.get(
+  '/points/:userId/',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  pointController.getPoints
+);
+router.get(
   '/points/:userId/:locationId',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   pointController.getPoint
