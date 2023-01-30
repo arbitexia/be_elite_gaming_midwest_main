@@ -1,5 +1,5 @@
 import { Point, UserLocation } from '@/models';
-import { APP_MESSAGE } from '@/constants';
+import { APP_MESSAGE, DEAULT_INC_POINT } from '@/constants';
 import config from '@/config';
 
 const TEST = config.NODE_ENV === 'test';
@@ -8,7 +8,7 @@ export const getPoints = async (userId) => {
   const points = await Point.query()
     .joinRelated('userLocation')
     .where('userLocation.userId', userId)
-    .withGraphFetched('[userLocation, userLocation.user, userLocation.location]');
+    .withGraphFetched('[userLocation.[user, location]]');
   return points;
 };
 
@@ -20,10 +20,16 @@ export const getPoint = async (userId, locationId) => {
 
   const point = await Point.query()
     .findOne({ userLocationId: location.id })
-    .withGraphFetched('[userLocation, userLocation.user, userLocation.location]');
+    .withGraphFetched('[userLocation.[user, location]]');
   return point;
 };
 
 export const checkIn = async (userLocationId) => {
-  await Point.query().increment('point', DEAULT_INC_POINT).where({ userLocationId });
+  const point = await Point.query().findOne({ userLocationId });
+  if (!point)
+    await Point.query().insert({
+      userLocationId,
+      point: DEAULT_INC_POINT
+    });
+  else await Point.query().increment('point', DEAULT_INC_POINT).where({ userLocationId });
 };
