@@ -159,3 +159,22 @@ Table points [note: 'points table'] {
 }
 
 Ref: user_locations.id < points.user_location_id
+
+Enum product_status {
+  AVAILABLE
+  DISABLED
+  OUTOFSTOCK
+}
+
+Table products [note: 'products table'] {
+  id int [pk, increment]
+  name varchar
+  location_id int
+  amount int
+  point int
+  status product_status
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: location.id < products.location_id
