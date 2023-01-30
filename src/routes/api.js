@@ -4,7 +4,8 @@ import {
   userController,
   locationController,
   assetController,
-  pointController
+  pointController,
+  productController
 } from '@/controller';
 import { securityHelper } from '@/helpers';
 
@@ -125,4 +126,31 @@ router.get(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   pointController.getPoint
 );
+
+router.get(
+  '/products',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.getProducts
+);
+router.get(
+  '/product/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.getProduct
+);
+router.post(
+  '/product',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.createProduct
+);
+router.put(
+  '/product/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.updateProduct
+);
+router.delete(
+  '/product/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.deleteProduct
+);
+
 export default router;

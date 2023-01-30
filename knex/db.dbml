@@ -173,8 +173,9 @@ Table products [note: 'products table'] {
   amount int
   point int
   status product_status
+  description varchar
   created_at timestamp [default: `now()`]
   updated_at timestamp
 }
 
-Ref: location.id < products.location_id
+Ref: locations.id < products.location_id

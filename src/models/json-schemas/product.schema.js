@@ -10,6 +10,9 @@ export default {
     status: {
       type: 'string',
       enum: ['AVAILABLE', 'DISABLED', 'OUTOFSTOCK']
+    },
+    description: {
+      type: 'string'
     }
   }
 };

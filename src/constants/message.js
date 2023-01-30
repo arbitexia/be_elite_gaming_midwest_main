@@ -38,6 +38,10 @@ const APP_MESSAGE = {
     NOT_FOUND: 'Location does not exist!',
     SUCESS_DELETE: 'Location has been deleted'
   },
+  PRODUCT: {
+    NOT_FOUND: 'Reward does not exist!',
+    SUCESS_DELETE: 'Reward has been deleted'
+  },
   ASSET: {
     NOT_FOUND: 'Image does not exist!',
     SUCESS_DELETE: 'Image has been deleted'
