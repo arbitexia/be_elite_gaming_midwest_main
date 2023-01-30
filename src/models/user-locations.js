@@ -15,6 +15,14 @@ class UserLocation extends BaseModel {
 
   static get relationMappings() {
     return {
+      point: {
+        relation: Model.HasManyRelation,
+        modelClass: path.join(__dirname, 'point'),
+        join: {
+          from: `${Table.USER_LOCATION}.id`,
+          to: `${Table.POINT}.userLocationId`
+        }
+      },
       location: {
         relation: Model.BelongsToOneRelation,
         modelClass: path.join(__dirname, 'location'),
