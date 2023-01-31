@@ -28,7 +28,7 @@ export const authorizeTablet = async (req, res) => {
   try {
     const { identifier, password } = req.body;
     const result = await authService.authorizeTablet(identifier, password, res);
-    const userLocation = await userLocationService.getOneByTablet(result.id);
+    const userLocation = await userLocationService.getOneByTablet(result.user.id);
     const location = await locationService.getOne(userLocation.locationId);
     //TODO add auth Activity
     res.status(200).json({ ...result, location });
