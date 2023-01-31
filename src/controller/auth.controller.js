@@ -1,4 +1,4 @@
-import { authService, userLocationService, pointService } from '@/services';
+import { authService, userLocationService, pointService, locationService } from '@/services';
 
 export const authorize = async (req, res) => {
   try {
@@ -28,8 +28,10 @@ export const authorizeTablet = async (req, res) => {
   try {
     const { identifier, password } = req.body;
     const result = await authService.authorizeTablet(identifier, password, res);
+    const userLocation = await userLocationService.getOneByTablet(result.id);
+    const location = await locationService.getOne(userLocation.locationId);
     //TODO add auth Activity
-    res.status(200).json(result);
+    res.status(200).json({ ...result, location });
   } catch (e) {
     console.log(e);
     res.status(500).json(e.message);

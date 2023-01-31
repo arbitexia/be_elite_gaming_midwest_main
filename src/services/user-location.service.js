@@ -22,3 +22,15 @@ export const checkIn = async (tabletId, userId) => {
   }
   return location;
 };
+
+export const getOneByTablet = async (tabletId) => {
+  const userLocation = await UserLocation.query()
+    .findOne({
+      userId: tabletId
+    })
+    .throwIfNotFound({
+      message: APP_MESSAGE.USER.NOT_FOUND
+    });
+
+  return userLocation;
+};
