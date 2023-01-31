@@ -45,7 +45,7 @@ router.get(
   userController.getUsers
 );
 router.get(
-  '/user/:id',
+  '/users/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.getUser
 );
@@ -55,12 +55,12 @@ router.post(
   userController.updatePassword
 );
 router.put(
-  '/user',
+  '/users',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.updateUser
 );
 router.delete(
-  '/user/:id',
+  '/users/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.deleteUser
 );
@@ -71,22 +71,22 @@ router.get(
   locationController.getLocations
 );
 router.get(
-  '/location/:id',
+  '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.getLocation
 );
 router.post(
-  '/location',
+  '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.createLocation
 );
 router.put(
-  '/location/:id',
+  '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.updateLocation
 );
 router.delete(
-  '/location/:id',
+  '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.deleteLocation
 );
@@ -117,7 +117,7 @@ router.delete(
 );
 
 router.get(
-  '/points/:userId/',
+  '/points',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   pointController.getPoints
 );
@@ -133,22 +133,22 @@ router.get(
   productController.getProducts
 );
 router.get(
-  '/product/:id',
+  '/products/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   productController.getProduct
 );
 router.post(
-  '/product',
+  '/products',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   productController.createProduct
 );
 router.put(
-  '/product/:id',
+  '/products/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   productController.updateProduct
 );
 router.delete(
-  '/product/:id',
+  '/products/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   productController.deleteProduct
 );
