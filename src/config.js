@@ -1,11 +1,12 @@
 require('dotenv').config();
-console.log('print current process envs', process.env);
+// console.log('print current process envs', process.env);
 
 export default {
   DEBUG: process.env.NODE_ENV !== 'production',
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
   FRONTEND_URL: process.env.FRONTEND_URL || 'https://admin.elitegaming.rpatdev.com',
   APP_SECRET: process.env.APP_SECRET,
+  APP_REFRESH_SECRET: process.env.APP_REFRESH_SECRET,
   PORT: process.env.POORT || '8080',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: process.env.DB_PORT || '5432',

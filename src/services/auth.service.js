@@ -15,25 +15,32 @@ import twilio from 'twilio';
 
 const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN);
 
+export const refreshToken = async (refreshToken, res) => {
+  const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
+  console.log(refreshDecoded);
+  const userId = refreshDecoded.userId;
+  const newToken = await securityHelper.genJwtToken(userId, '8h');
+  return { accessToken: newToken };
+};
+
 export const register = async (phone, email, birthday, res) => {
   const user = await User.query().findOne({
     phone,
     roleId: USER_ROLE_MAPPER.USER
   });
   if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
-
   const token = securityHelper.genPhoneVerifyToken().toString();
   console.log(token);
 
-  await client.messages
-    .create({
-      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: phone
-    })
-    .catch((e) => {
-      throw new BadRequest(e.message);
-    });
+  // await client.messages
+  //   .create({
+  //     body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+  //     messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+  //     to: phone
+  //   })
+  //   .catch((e) => {
+  //     throw new BadRequest(e.message);
+  //   });
 
   const newUser = await User.query()
     .insertAndFetch({
@@ -44,20 +51,18 @@ export const register = async (phone, email, birthday, res) => {
       status: USER_STATUS_MAPPER.VERIFY_PHONE
     })
     .withGraphFetched('[role, avatar]');
-
   const updatedUser = await newUser
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
-
   await Verification.query().insert({
     victimId: updatedUser.id,
     type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE,
     token,
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
-
   return {
-    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY
+    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY,
+    token
   };
 };
 
@@ -79,8 +84,8 @@ export const authorizeTablet = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = securityHelper.sign(user.id, '24h');
-  const refreshToken = await securityHelper.genRefreshToken();
+  const accessToken = await securityHelper.genJwtToken(user.id, '24h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
   const { role, ...rest } = user;
@@ -113,8 +118,8 @@ export const authorize = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = securityHelper.sign(user.id, '8h');
-  const refreshToken = await securityHelper.genRefreshToken();
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
   const { role, ...rest } = user;
@@ -124,6 +129,46 @@ export const authorize = async (identifier, password, res) => {
     role,
     accessToken,
     refreshToken
+  };
+};
+
+export const authorizeCustomer = async (identifier, res) => {
+  const user = await User.query()
+    .findOne({
+      phone: identifier,
+      roleId: USER_ROLE_MAPPER.USER
+      // status: USER_STATUS_MAPPER.ACTIVATED
+    })
+    .withGraphFetched('[role, avatar]')
+    .throwIfNotFound({
+      message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
+      type: 'NOT_FOUND'
+    });
+  const token = securityHelper.genPhoneVerifyToken().toString();
+  console.log(token);
+
+  // await client.messages
+  //   .create({
+  //     body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+  //     messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+  //     to: user.phone
+  //   })
+  //   .catch((e) => {
+  //     throw new BadRequest(e.message);
+  //   });
+
+  const updatedUser = await user
+    .$query()
+    .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
+  await Verification.query().insert({
+    victimId: updatedUser.id,
+    type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE,
+    token,
+    status: VERIFICATION_STATUS_MAPPER.ACTIVATED
+  });
+  return {
+    message: token, //APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
+    token
   };
 };
 
@@ -150,8 +195,8 @@ export const verifyPhone = async (token, res) => {
     })
     .where({ id: verification.id });
 
-  const accessToken = securityHelper.sign(user.id, '8h');
-  const refreshToken = await securityHelper.genRefreshToken();
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
 
@@ -162,48 +207,6 @@ export const verifyPhone = async (token, res) => {
     role,
     accessToken,
     refreshToken
-  };
-};
-
-export const authorizeCustomer = async (identifier, res) => {
-  const user = await User.query()
-    .findOne({
-      phone: identifier,
-      roleId: USER_ROLE_MAPPER.USER,
-      status: USER_STATUS_MAPPER.ACTIVATED
-    })
-    .withGraphFetched('[role, avatar]')
-    .throwIfNotFound({
-      message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
-      type: 'NOT_FOUND'
-    });
-
-  const token = securityHelper.genPhoneVerifyToken().toString();
-  console.log(token);
-
-  await client.messages
-    .create({
-      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: user.phone
-    })
-    .catch((e) => {
-      throw new BadRequest(e.message);
-    });
-
-  const updatedUser = await user
-    .$query()
-    .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
-
-  await Verification.query().insert({
-    victimId: updatedUser.id,
-    type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE,
-    token,
-    status: VERIFICATION_STATUS_MAPPER.ACTIVATED
-  });
-
-  return {
-    message: APP_MESSAGE.AUTH.SEND_AUTH_VERIFY
   };
 };
 

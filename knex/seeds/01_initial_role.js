@@ -12,7 +12,7 @@ exports.seed = async (knex) => {
         },
         {
           name: 'Customer',
-          short_code: 'USER',
+          short_code: 'CUSTOMER',
           created_at: new Date()
         },
         {

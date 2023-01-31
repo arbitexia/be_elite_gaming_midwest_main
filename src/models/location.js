@@ -2,11 +2,11 @@ import path from 'path';
 import { Model } from 'objection';
 import { Table } from '@/database/common';
 import BaseModel from './__base';
-import jsonSchema from './json-schemas/asset.schema';
+import jsonSchema from './json-schemas/location.schema';
 
-class Asset extends BaseModel {
+class Location extends BaseModel {
   static get tableName() {
-    return Table.ASSET;
+    return Table.LOCATION;
   }
 
   static get jsonSchema() {
@@ -15,24 +15,24 @@ class Asset extends BaseModel {
 
   static get relationMappings() {
     return {
-      avatars: {
+      userLocation: {
         relation: Model.HasManyRelation,
-        modelClass: path.join(__dirname, 'user'),
+        modelClass: path.join(__dirname, 'user-locations'),
         join: {
-          from: `${Table.ASSET}.id`,
-          to: `${Table.USER}.assetId`
+          from: `${Table.LOCATION}.id`,
+          to: `${Table.USER_LOCATION}.locationId`
         }
       },
       gallery: {
         relation: Model.HasManyRelation,
         modelClass: path.join(__dirname, 'gallery'),
         join: {
-          from: `${Table.ASSET}.id`,
-          to: `${Table.GALLERY}.assetId`
+          from: `${Table.LOCATION}.id`,
+          to: `${Table.GALLERY}.victimId`
         }
       }
     };
   }
 }
 
-export default Asset;
+export default Location;

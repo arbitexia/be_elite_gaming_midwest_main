@@ -30,9 +30,11 @@ Table users [note: 'user table'] {
   updated_at timestamp 
 }
 
+Ref: users.id < user_locations.user_id
+
 Enum role_short_code {
   GUEST
-  USER
+  CUSTOMER
   TABLET
   ADMIN
   SUPER
@@ -99,3 +101,81 @@ Table email_templates [note: 'email tempalte list'] {
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }
+
+Enum location_status {
+  OPEN
+  CLOSED
+}
+
+Enum location_type {
+  PALM
+  ROULETTE
+}
+
+Table locations [note: 'location table'] {
+  id int [pk, increment]
+  name varchar
+  coords jsonb [note: 'lng, lat']
+  status location_status
+  address "jsonb" [note: 'country, city, state, zipcode, address1, address2']
+  type location_type
+  description varchar
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+}
+
+Ref: locations.id < user_locations.location_id
+
+Table user_locations [note: 'user and location table'] {
+  id int [pk, increment]
+  user_id int
+  location_id int
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+}
+
+Enum gallery_model {
+  PRODUCT
+  LOCATION
+}
+
+Table gallery [note: 'assets gallery table'] {
+  id int [pk, increment]
+  asset_id int
+  victim_id int
+  model gallery_model
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+}
+
+Ref: assets.id < gallery.asset_id
+
+Table points [note: 'points table'] {
+  id int [pk, increment]
+  user_location_id int
+  point int
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: user_locations.id < points.user_location_id
+
+Enum product_status {
+  AVAILABLE
+  DISABLED
+  OUTOFSTOCK
+}
+
+Table products [note: 'products table'] {
+  id int [pk, increment]
+  name varchar
+  location_id int
+  amount int
+  point int
+  status product_status
+  description varchar
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: locations.id < products.location_id

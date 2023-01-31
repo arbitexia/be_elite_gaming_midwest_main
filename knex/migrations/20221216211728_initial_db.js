@@ -1,3 +1,4 @@
+const knex = require('knex');
 const fs = require('fs');
 const path = require('path');
 
@@ -7,6 +8,7 @@ exports.up = async (knex) => {
   await knex.raw(initialSchema);
 };
 
-exports.down = function (knex) {
-  console.log('Down migrations not supported');
+exports.down = async (knex) => {
+  await knex.schema.dropSchema('public', true);
+  await knex.schema.createSchema('public');
 };

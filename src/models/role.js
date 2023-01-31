@@ -14,16 +14,7 @@ class Role extends BaseModel {
   }
 
   static get relationMappings() {
-    return {
-      users: {
-        relation: Model.HasManyRelation,
-        modelClass: path.join(__dirname, 'user'),
-        join: {
-          from: `${Table.ROLE}.id`,
-          to: `${Table.USER}.roleId`
-        }
-      }
-    };
+    return {};
   }
 }
 

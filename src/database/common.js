@@ -1,3 +1,4 @@
+import camelCase from 'lodash/camelCase';
 import camelCaseString from 'lodash/camelCase';
 import _knex from './knex';
 
@@ -23,10 +24,15 @@ export function queryBuilder(tableName, opts) {
 
 export const Table = {
   ASSET: camelCaseString('assets'),
+  GALLERY: camelCaseString('gallery'),
   USER: camelCaseString('users'),
   ROLE: camelCaseString('roles'),
   EMAIL_TEMPLATE: camelCaseString('email_templates'),
-  VERIFICATION: camelCaseString('verifications')
+  VERIFICATION: camelCaseString('verifications'),
+  LOCATION: camelCaseString('locations'),
+  USER_LOCATION: camelCaseString('user_locations'),
+  POINT: camelCaseString('points'),
+  PRODUCT: camelCaseString('products')
 };
 
 export const knex = _knex;

@@ -18,6 +18,7 @@ provider:
     NODE_ENV: ${ssm:/elitegame/NODE_ENV}
     LOG_LEVEL: ${ssm:/elitegame/LOG_LEVEL}
     APP_SECRET: ${ssm:/elitegame/APP_SECRET}
+    APP_REFRESH_SECRET: ${ssm:/elitegame/APP_REFRESH_SECRET}
     FRONTEND_URL: ${ssm:/elitegame/FRONTEND_URL}
     DB_HOST: ${ssm:/elitegame/DB_HOST}
     DB_PORT: ${ssm:/elitegame/DB_PORT}

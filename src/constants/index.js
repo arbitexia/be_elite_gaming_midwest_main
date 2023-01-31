@@ -1,3 +1,5 @@
+export { DEAULT_INC_POINT } from './common';
+
 export { default as APP_MESSAGE } from './message';
 export {
   AUTH_ACTION_TYPE_MAPPER,

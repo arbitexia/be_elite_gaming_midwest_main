@@ -1,5 +1,10 @@
 export { default as User } from './user';
 export { default as Asset } from './asset';
+export { default as Gallery } from './gallery';
 export { default as Role } from './role';
 export { default as Verification } from './verification';
 export { default as EmailTemplate } from './email-template';
+export { default as Location } from './location';
+export { default as UserLocation } from './user-locations';
+export { default as Product } from './product';
+export { default as Point } from './point';

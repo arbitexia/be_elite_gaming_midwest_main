@@ -38,6 +38,14 @@ class User extends BaseModel {
           from: `${Table.USER}.roleId`,
           to: `${Table.ROLE}.id`
         }
+      },
+      userLocations: {
+        relation: Model.HasManyRelation,
+        modelClass: path.join(__dirname, 'user-locations'),
+        join: {
+          from: `${Table.USER}.id`,
+          to: `${Table.USER_LOCATION}.userId`
+        }
       }
     };
   }

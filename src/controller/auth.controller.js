@@ -1,9 +1,21 @@
-import { authService } from '@/services';
+import { authService, userLocationService, pointService } from '@/services';
 
 export const authorize = async (req, res) => {
   try {
     const { identifier, password } = req.body;
     const result = await authService.authorize(identifier, password, res);
+    //TODO add auth Activity
+    res.status(200).json(result);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e.message);
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    const result = await authService.refreshToken(refreshToken, res);
     //TODO add auth Activity
     res.status(200).json(result);
   } catch (e) {
@@ -38,8 +50,14 @@ export const authorizeCustomer = async (req, res) => {
 
 export const verifyPhone = async (req, res) => {
   try {
+    const tablet = req.user;
     const { token } = req.body;
     const result = await authService.verifyPhone(token, res);
+    if (tablet) {
+      const userLocation = await userLocationService.checkIn(tablet.id, result.user.id);
+      await pointService.checkIn(userLocation.id);
+      //TODO Check user can get the coupons
+    }
     res.status(200).json(result);
   } catch (e) {
     console.log(e);
@@ -49,7 +67,6 @@ export const verifyPhone = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    console.log(req.body);
     const { phone, email, birthday } = req.body;
     const result = await authService.register(phone, email, birthday, res);
     //TODO add register Activity

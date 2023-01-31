@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { userService } from '@/services';
-import { User } from '@/models';
+import { AuthenticationError } from '@/provider/error';
 import config from '@/config';
 
 const DEBUG = config.NODE_ENV === 'development';
@@ -18,19 +18,13 @@ const opts = {
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
     try {
-      console.log(payload);
-      const user = await User.query().findById(payload.userId);
+      const user = await userService.getOne(payload.userId);
       return done(null, user);
     } catch (e) {
       return done(e, false);
     }
   })
 );
-
-export const sign = (userId, expiresIn) => {
-  const token = jwt.sign({ userId }, config.APP_SECRET, { expiresIn });
-  return token;
-};
 
 export const genRandomTokenString = (length) => crypto.randomBytes(length).toString('hex');
 export const genPhoneVerifyToken = () => crypto.randomInt(1000, 9999);
@@ -57,20 +51,18 @@ export const validatePassword = (password, hashedPassword) =>
 export const genJwtToken = (userId, expiresIn) =>
   new Promise((resolve) => {
     const token = jwt.sign({ userId }, config.APP_SECRET, { expiresIn });
-
     resolve(token);
   });
 
-export const genRefreshToken = () =>
+export const genRefreshToken = (userId, expiresIn) =>
   new Promise((resolve) => {
-    const token = genRandomTokenString(40);
-
+    const token = jwt.sign({ userId }, config.APP_REFRESH_SECRET, { expiresIn });
     resolve(token);
   });
 
 export const decodeJwtToken = (token) =>
   new Promise((resolve, reject) => {
-    const key = config.APP_SECRET;
+    const key = config.APP_REFRESH_SECRET;
     jwt.verify(token, key, (error, decoded) => {
       if (error) reject(new AuthenticationError(error.message));
       resolve(decoded);
