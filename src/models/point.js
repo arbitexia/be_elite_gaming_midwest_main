@@ -17,7 +17,7 @@ class Point extends BaseModel {
     return {
       userLocation: {
         relation: Model.BelongsToOneRelation,
-        modelClass: path.join(__dirname, 'user-locations'),
+        modelClass: path.join(__dirname, 'user-location'),
         join: {
           from: `${Table.POINT}.userLocationId`,
           to: `${Table.USER_LOCATION}.id`

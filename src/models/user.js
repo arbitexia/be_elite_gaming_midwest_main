@@ -41,7 +41,7 @@ class User extends BaseModel {
       },
       userLocations: {
         relation: Model.HasManyRelation,
-        modelClass: path.join(__dirname, 'user-locations'),
+        modelClass: path.join(__dirname, 'user-location'),
         join: {
           from: `${Table.USER}.id`,
           to: `${Table.USER_LOCATION}.userId`

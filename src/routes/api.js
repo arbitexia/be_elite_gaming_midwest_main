@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   authController,
+  awardController,
   userController,
   locationController,
   assetController,
@@ -151,6 +152,32 @@ router.delete(
   '/products/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   productController.deleteProduct
+);
+
+router.get(
+  '/awards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.getAwards
+);
+router.get(
+  '/awards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.getAward
+);
+router.post(
+  '/awards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.createAward
+);
+router.put(
+  '/awards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.acceptAward
+);
+router.delete(
+  '/awards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.declineAward
 );
 
 export default router;

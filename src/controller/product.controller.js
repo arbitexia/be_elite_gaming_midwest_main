@@ -2,8 +2,8 @@ import { productService } from '@/services';
 
 export const getProducts = async (req, res) => {
   try {
-    const { filterBy } = req.query;
-    const result = await productService.loadProducts(filterBy);
+    const { filterBy, cursor } = req.query;
+    const result = await productService.loadProducts(filterBy, cursor);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);
