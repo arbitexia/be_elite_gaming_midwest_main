@@ -160,6 +160,7 @@ CREATE TABLE "products" (
   "amount" int,
   "point" int,
   "status" product_status,
+  "short" varchar,
   "description" varchar,
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp

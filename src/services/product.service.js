@@ -30,16 +30,24 @@ export const getOne = async (id) => {
   return user;
 };
 
-export const createProduct = async ({ name, locationId, amount, point, status, description }) => {
+export const createProduct = async ({
+  name,
+  locationId,
+  amount,
+  point,
+  status,
+  short,
+  description
+}) => {
   const product = await Product.query()
-    .insertAndFetch({ name, locationId, amount, point, status, description })
+    .insertAndFetch({ name, locationId, amount, point, status, short, description })
     .withGraphFetched('[gallery.asset, location]');
   return product;
 };
 
 export const updateProduct = async (
   id,
-  { name, locationId, amount, point, status, description }
+  { name, locationId, amount, point, status, short, description }
 ) => {
   const product = await Product.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.PRODUCT.NOT_FOUND,
@@ -54,6 +62,7 @@ export const updateProduct = async (
       amount,
       point,
       status,
+      short,
       description
     })
     .withGraphFetched('[gallery.asset, location]');

@@ -11,6 +11,9 @@ export default {
       type: 'string',
       enum: ['AVAILABLE', 'DISABLED', 'OUTOFSTOCK']
     },
+    short: {
+      type: 'string'
+    },
     description: {
       type: 'string'
     }
