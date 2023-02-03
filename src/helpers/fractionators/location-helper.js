@@ -10,27 +10,27 @@ export const filter = (params) => {
         builder
           .where(fn.lower(ref('name')), 'like', `%${params.search.toLowerCase()}%`)
           .orWhere(
-            fn.lower(ref('location:city').castText()),
+            fn.lower(ref('address:city').castText()),
             'like',
             `%${params.search.toLowerCase()}%`
           )
           .orWhere(
-            fn.lower(ref('location:zipcode').castText()),
+            fn.lower(ref('address:zipcode').castText()),
             'like',
             `%${params.search.toLowerCase()}%`
           )
           .orWhere(
-            fn.lower(ref('location:state').castText()),
+            fn.lower(ref('address:state').castText()),
             'like',
             `%${params.search.toLowerCase()}%`
           )
           .orWhere(
-            fn.lower(ref('location:address1').castText()),
+            fn.lower(ref('address:address1').castText()),
             'like',
             `%${params.search.toLowerCase()}%`
           )
           .orWhere(
-            fn.lower(ref('location:country').castText()),
+            fn.lower(ref('address:country').castText()),
             'like',
             `%${params.search.toLowerCase()}%`
           );
