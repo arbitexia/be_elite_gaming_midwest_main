@@ -31,7 +31,8 @@ export const getRoles = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { userId, input } = req.body;
+    const { userId } = req.params;
+    const { input } = req.body;
     const result = await userService.updateUser(userId, input);
     res.status(200).json(result);
   } catch (e) {

@@ -20,6 +20,13 @@ export const getAward = async (req, res) => {
   }
 };
 
+export const sendRequest = async (req, res) => {
+  try {
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
 export const createAward = async (req, res) => {
   try {
     const { input } = req.body;

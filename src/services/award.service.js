@@ -56,7 +56,7 @@ export const acceptAward = async (id, assigneeId) => {
   return updatedAward;
 };
 
-export const declineAward = async (id) => {
+export const declineAward = async (id, assigneeId) => {
   const award = await Award.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.PRODUCT.NOT_FOUND,
     type: 'NOT_FOUND'
