@@ -9,6 +9,18 @@ class Gallery extends BaseModel {
     return Table.GALLERY;
   }
 
+  static get modifiers() {
+    return {
+      location(builder) {
+        builder.where('model', 'LOCATION');
+      },
+
+      product(builder) {
+        builder.where('model', 'PRODUCT');
+      }
+    };
+  }
+
   static get jsonSchema() {
     return jsonSchema;
   }

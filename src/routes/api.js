@@ -107,12 +107,12 @@ router.post(
   assetController.createGallery
 );
 router.put(
-  '/gallery',
+  '/gallery/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.updateGallery
 );
 router.delete(
-  '/gallery',
+  '/gallery/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.deleteGallery
 );

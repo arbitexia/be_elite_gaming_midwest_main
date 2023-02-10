@@ -14,7 +14,7 @@ export const loadProducts = async (filterBy, cursor) => {
 
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
-    .withGraphFetched('[gallery.asset, location]');
+    .withGraphFetched('[gallery(product).asset, location]');
 
   return {
     data: results,
@@ -26,7 +26,9 @@ export const loadProducts = async (filterBy, cursor) => {
 };
 
 export const getOne = async (id) => {
-  const user = await Product.query().findOne({ id }).withGraphFetched('[gallery.asset, location]');
+  const user = await Product.query()
+    .findOne({ id })
+    .withGraphFetched('[gallery(product).asset, location]');
   return user;
 };
 
@@ -41,7 +43,7 @@ export const createProduct = async ({
 }) => {
   const product = await Product.query()
     .insertAndFetch({ name, locationId, amount, point, status, short, description })
-    .withGraphFetched('[gallery.asset, location]');
+    .withGraphFetched('[gallery(product).asset, location]');
   return product;
 };
 
@@ -65,7 +67,7 @@ export const updateProduct = async (
       short,
       description
     })
-    .withGraphFetched('[gallery.asset, location]');
+    .withGraphFetched('[gallery(product).asset, location]');
 
   return updatedProduct;
 };
