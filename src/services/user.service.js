@@ -37,20 +37,30 @@ export const loadRoles = async () => {
 };
 
 export const updateUser = async (id, input) => {
-  console.log(id, input);
-  const user = await User.query().findOne({ id }).throwIfNotFound({
-    message: APP_MESSAGE.USER.NOT_FOUND,
-    type: 'NOT_FOUND'
-  });
+  if (parseInt(id) == 0) {
+    if (input.password) input.password = await securityHelper.hashPassword(input.password);
+    console.log(input.password);
+    const newUser = await User.query()
+      .insertAndFetch({
+        ...input
+      })
+      .withGraphFetched('[role, avatar]');
+    return newUser;
+  } else {
+    console.log('update', id);
+    const user = await User.query().findOne({ id }).throwIfNotFound({
+      message: APP_MESSAGE.USER.NOT_FOUND,
+      type: 'NOT_FOUND'
+    });
+    const updatedUser = await user
+      .$query()
+      .updateAndFetch({
+        ...input
+      })
+      .withGraphFetched('[role, avatar]');
 
-  const updatedUser = await user
-    .$query()
-    .updateAndFetch({
-      ...input
-    })
-    .withGraphFetched('[role, avatar]');
-
-  return updatedUser;
+    return updatedUser;
+  }
 };
 
 export const deleteUser = async (id) => {
