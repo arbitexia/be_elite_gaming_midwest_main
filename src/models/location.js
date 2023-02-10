@@ -13,6 +13,16 @@ class Location extends BaseModel {
     return jsonSchema;
   }
 
+  static get virtualAttributes() {
+    return ['fullAddress'];
+  }
+
+  fullAddress() {
+    return `${this.address.address1 ?? ''} ${this.address.address2 ?? ''} ${
+      this.address.city ?? ''
+    } ${this.address.state ?? ''} ${this.address.zipcode ?? ''} ${this.address.country ?? ''}`;
+  }
+
   static get relationMappings() {
     return {
       userLocation: {

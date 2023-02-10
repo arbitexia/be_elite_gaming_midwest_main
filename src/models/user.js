@@ -14,11 +14,19 @@ class User extends BaseModel {
   }
 
   static get virtualAttributes() {
-    return ['fullName'];
+    return ['fullName', 'fullAddress'];
   }
 
   fullName() {
     return `${this.firstName} ${this.lastName}`;
+  }
+
+  fullAddress() {
+    return `${this.location?.address1 ?? ''} ${this.location?.address2 ?? ''} ${
+      this.location?.city ?? ''
+    } ${this.location?.state ?? ''} ${this.location?.zipcode ?? ''} ${
+      this.location?.country ?? ''
+    }`;
   }
 
   static get relationMappings() {
