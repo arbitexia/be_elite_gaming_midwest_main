@@ -37,6 +37,7 @@ export const loadRoles = async () => {
 };
 
 export const updateUser = async (id, input) => {
+  console.log(id, input);
   const user = await User.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'

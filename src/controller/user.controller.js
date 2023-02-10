@@ -31,9 +31,9 @@ export const getRoles = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id } = req.params;
     const { input } = req.body;
-    const result = await userService.updateUser(userId, input);
+    const result = await userService.updateUser(id, input);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);
@@ -42,8 +42,8 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const result = await userService.deleteUser(userId);
+    const { id } = req.params;
+    const result = await userService.deleteUser(id);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);
@@ -52,8 +52,8 @@ export const deleteUser = async (req, res) => {
 
 export const updatePassword = async (req, res) => {
   try {
-    const { userId, oldPassword, password } = req.body;
-    const result = await userService.updatePassword(userId, oldPassword, password);
+    const { id, oldPassword, password } = req.body;
+    const result = await userService.updatePassword(id, oldPassword, password);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);

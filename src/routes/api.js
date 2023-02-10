@@ -56,7 +56,7 @@ router.post(
   userController.updatePassword
 );
 router.put(
-  '/users',
+  '/users/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.updateUser
 );
