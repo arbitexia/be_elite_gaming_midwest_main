@@ -1,6 +1,11 @@
 import { ref, fn } from 'objection';
 import { User } from '@/models';
-import { USER_STATUS_MAPPER, USER_FILTER_TYPE_MAPPER, USER_ROLE_MAPPER } from '@/constants';
+import {
+  USER_STATUS_MAPPER,
+  USER_FILTER_TYPE_MAPPER,
+  USER_ROLE_MAPPER,
+  ROLE_SHORT_CODES
+} from '@/constants';
 
 export const filter = (params) => {
   let queryBuilder;
@@ -30,7 +35,19 @@ export const filter = (params) => {
   }
 
   if (params.type) {
-    queryBuilder.joinRelated('role').where('role.shortCode', params.type);
+    queryBuilder.joinRelated('role').where((builder) => {
+      if (params.type === USER_FILTER_TYPE_MAPPER.CUSTOMER_USER) {
+        return builder
+          .where('role.shortCode', ROLE_SHORT_CODES.CUSTOMER)
+          .orWhere('role.shortCode', ROLE_SHORT_CODES.TABLET);
+      }
+      if (params.type === USER_FILTER_TYPE_MAPPER.TABLET_USER) {
+        return builder.where('role.shortCode', ROLE_SHORT_CODES.TABLET);
+      }
+      if (params.type === USER_FILTER_TYPE_MAPPER.ADMIN_USER) {
+        return builder.where('role.shortCode', ROLE_SHORT_CODES.ADMIN);
+      }
+    });
   }
 
   if (params.search) {

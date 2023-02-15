@@ -2,6 +2,7 @@ import { User, Role, EmailTemplate } from '@/models';
 import { securityHelper, fractionateHelper, placeholderHelper, cursorHelper } from '@/helpers';
 import { AWSProvider } from '@/provider';
 import { APP_MESSAGE, EMAIL_TEMPLATE_MAPPER } from '@/constants';
+import { BadRequest } from '@/provider/error';
 import config from '@/config';
 
 const TEST = config.NODE_ENV === 'test';
@@ -79,10 +80,11 @@ export const updatePassword = async (id, oldPassword, password) => {
   const user = await User.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.USER.NOT_FOUND
   });
-
-  if (!securityHelper.validatePassword(oldPassword, user.password)) {
-    throw new UserInputError(APP_MESSAGE.USER.INVALID_PASSWORD);
+  const isValidate = await securityHelper.validatePassword(oldPassword, user.password);
+  if (!isValidate) {
+    throw new BadRequest(APP_MESSAGE.USER.INVALID_PASSWORD);
   }
+  console.log('no issue');
   await user.$query().updateAndFetch({
     password: hashedPassword
   });

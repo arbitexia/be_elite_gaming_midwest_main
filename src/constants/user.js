@@ -16,7 +16,7 @@ export const USER_STATUS_MAPPER = {
 
 export const ROLE_SHORT_CODES = {
   GUEST: 'GUEST',
-  USER: 'USER',
+  CUSTOMER: 'CUSTOMER',
   TABLET: 'TABLET',
   ADMIN: 'ADMIN',
   SUPER: 'SUPER'

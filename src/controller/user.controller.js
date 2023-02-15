@@ -52,8 +52,8 @@ export const deleteUser = async (req, res) => {
 
 export const updatePassword = async (req, res) => {
   try {
-    const { id, oldPassword, password } = req.body;
-    const result = await userService.updatePassword(id, oldPassword, password);
+    const { userId, oldPassword, password } = req.body;
+    const result = await userService.updatePassword(userId, oldPassword, password);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);
