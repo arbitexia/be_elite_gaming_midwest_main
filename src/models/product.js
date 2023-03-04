@@ -2,11 +2,11 @@ import path from 'path';
 import { Model } from 'objection';
 import { Table } from '@/database/common';
 import BaseModel from './__base';
-import jsonSchema from './json-schemas/location.schema';
+import jsonSchema from './json-schemas/product.schema';
 
-class Location extends BaseModel {
+class Product extends BaseModel {
   static get tableName() {
-    return Table.LOCATION;
+    return Table.PRODUCT;
   }
 
   static get jsonSchema() {
@@ -15,19 +15,19 @@ class Location extends BaseModel {
 
   static get relationMappings() {
     return {
-      userLocation: {
-        relation: Model.HasManyRelation,
-        modelClass: path.join(__dirname, 'user-location'),
+      location: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: path.join(__dirname, 'location'),
         join: {
-          from: `${Table.LOCATION}.id`,
-          to: `${Table.USER_LOCATION}.locationId`
+          from: `${Table.PRODUCT}.locationId`,
+          to: `${Table.LOCATION}.id`
         }
       },
       gallery: {
         relation: Model.HasManyRelation,
         modelClass: path.join(__dirname, 'gallery'),
         join: {
-          from: `${Table.LOCATION}.id`,
+          from: `${Table.PRODUCT}.id`,
           to: `${Table.GALLERY}.victimId`
         }
       }
@@ -35,4 +35,4 @@ class Location extends BaseModel {
   }
 }
 
-export default Location;
+export default Product;

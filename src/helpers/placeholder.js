@@ -38,7 +38,6 @@ const placeholderHelper = async ({ template, userInfo, adminInfo, ...rest }) => 
     const expression = /~VERIFY_LINK!/g;
     const partialLink = getPartialLink(template.useFor);
     const value = `${config.FRONTEND_URL}/${partialLink}?token=${token}`;
-    console.log(value);
     htmlBody = htmlBody.replace(expression, value);
   }
 

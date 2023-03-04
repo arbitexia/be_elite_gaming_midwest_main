@@ -6,26 +6,26 @@ export const loadLocations = async (filterBy) => {
   let queryBuilder;
   const { filter } = await fractionateHelper('location');
   queryBuilder = filter(filterBy);
-  const locations = await queryBuilder.select('*').withGraphFetched('[gallery, gallery.asset]');
+  const locations = await queryBuilder.select('*').withGraphFetched('[gallery.asset]');
   return locations;
 };
 
 export const getOne = async (id) => {
-  const location = await Location.query()
-    .findOne({ id })
-    .withGraphFetched('[gallery, gallery.asset]');
+  const location = await Location.query().findOne({ id }).withGraphFetched('[gallery.asset]');
   return location;
 };
 
 export const createLocation = async (input) => {
-  const newLocation = await Location.query().insertAndFetch({
-    name: input.name,
-    coords: input.coords,
-    address: input.address,
-    status: input.status,
-    type: input.type,
-    description: input.description
-  });
+  const newLocation = await Location.query()
+    .insertAndFetch({
+      name: input.name,
+      coords: input.coords,
+      address: input.address,
+      status: input.status,
+      type: input.type,
+      description: input.description
+    })
+    .withGraphFetched('[gallery.asset]');
   return newLocation;
 };
 
@@ -45,7 +45,7 @@ export const updateLocation = async (id, input) => {
       type: input.type,
       description: input.description
     })
-    .withGraphFetched('[gallery, gallery.asset]');
+    .withGraphFetched('[gallery.asset]');
 
   return updatedLocation;
 };

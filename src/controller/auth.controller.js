@@ -1,4 +1,5 @@
-import { authService, userLocationService } from '@/services';
+import { authService, userLocationService, pointService, locationService } from '@/services';
+import { ipToLocationInfo, convertIpFromV6ToV4 } from '@/helpers';
 
 export const authorize = async (req, res) => {
   try {
@@ -7,7 +8,6 @@ export const authorize = async (req, res) => {
     //TODO add auth Activity
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -19,7 +19,6 @@ export const refreshToken = async (req, res) => {
     //TODO add auth Activity
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -28,10 +27,11 @@ export const authorizeTablet = async (req, res) => {
   try {
     const { identifier, password } = req.body;
     const result = await authService.authorizeTablet(identifier, password, res);
+    const userLocation = await userLocationService.getOneByTablet(result.user.id);
+    const location = await locationService.getOne(userLocation.locationId);
     //TODO add auth Activity
-    res.status(200).json(result);
+    res.status(200).json({ ...result, location });
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -43,7 +43,6 @@ export const authorizeCustomer = async (req, res) => {
     //TODO add auth Activity
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -55,18 +54,11 @@ export const verifyPhone = async (req, res) => {
     const result = await authService.verifyPhone(token, res);
     if (tablet) {
       const userLocation = await userLocationService.checkIn(tablet.id, result.user.id);
-      // await pointService.checkIn(userLocation.id);
-      // await Point.query()
-      //   .increment('point', DEAULT_INC_POINT)
-      //   .where({ userLocationId: location.id });
-      // await Point.query().insert({
-      //   userLocationId: newLocation.id,
-      //   point: DEAULT_INC_POINT
-      // });
+      await pointService.checkIn(userLocation.id);
+      //TODO Check user can get the coupons
     }
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -74,11 +66,12 @@ export const verifyPhone = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const { phone, email, birthday } = req.body;
-    const result = await authService.register(phone, email, birthday, res);
+    // const clientIp = convertIpFromV6ToV4(req.clientIp);
+    const locationInfo = await ipToLocationInfo(req.clientIp);
+    const result = await authService.register(phone, email, birthday, locationInfo);
     //TODO add register Activity
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };

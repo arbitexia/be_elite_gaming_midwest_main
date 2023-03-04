@@ -35,6 +35,7 @@ provider:
     DEFAULT_REGION: ${ssm:/elitegame/DEFAULT_REGION}
     SUPPORT_EMAIL: ${ssm:/elitegame/SUPPORT_EMAIL}
     S3_ASSET_BUCKET: ${ssm:/elitegame/S3_ASSET_BUCKET}
+    IPDATA_API_KEY: ${ssm:/elitegame/IPDATA_API_KEY}
 
 functions:
   api:

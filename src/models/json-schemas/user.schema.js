@@ -21,6 +21,7 @@ export default {
         address2: { type: 'string' }
       }
     },
+    firstLogin: { type: 'object' },
     assetId: { type: 'integer' },
     status: {
       type: 'string',

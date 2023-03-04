@@ -150,8 +150,55 @@ Table gallery [note: 'assets gallery table'] {
 
 Ref: assets.id < gallery.asset_id
 
-Table point [note: 'point table'] {
+Table points [note: 'points table'] {
   id int [pk, increment]
   user_location_id int
-  
+  point int
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
 }
+
+Ref: user_locations.id < points.user_location_id
+
+Enum product_status {
+  AVAILABLE
+  DISABLED
+  OUTOFSTOCK
+}
+
+Table products [note: 'products table'] {
+  id int [pk, increment]
+  name varchar
+  location_id int
+  amount int
+  point int
+  status product_status
+  short varchar
+  description varchar
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: locations.id < products.location_id
+
+Enum award_status {
+  ACCEPTED
+  DECLINED
+  WAITING
+}
+
+Table awards [note: 'awards table'] {
+  id int [pk, increment]
+  user_location_id int
+  product_id int
+  assignee_id int
+  status award_status
+  note varchar
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: user_locations.id < awards.user_location_id
+Ref: products.id < awards.product_id
+Ref: users.id < awards.assignee_id
+

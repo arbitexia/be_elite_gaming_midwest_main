@@ -1,3 +1,4 @@
+import camelCase from 'lodash/camelCase';
 import camelCaseString from 'lodash/camelCase';
 import _knex from './knex';
 
@@ -29,7 +30,10 @@ export const Table = {
   EMAIL_TEMPLATE: camelCaseString('email_templates'),
   VERIFICATION: camelCaseString('verifications'),
   LOCATION: camelCaseString('locations'),
-  USER_LOCATION: camelCaseString('user_locations')
+  USER_LOCATION: camelCaseString('user_locations'),
+  POINT: camelCaseString('points'),
+  PRODUCT: camelCaseString('products'),
+  AWARD: camelCaseString('awards')
 };
 
 export const knex = _knex;

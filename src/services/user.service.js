@@ -13,7 +13,9 @@ export const loadUsers = async (filterBy, cursor) => {
 
   queryBuilder = filter(filterBy);
 
-  const { results, total } = await queryBuilder.page(pageCursor.page, pageCursor.size);
+  const { results, total } = await queryBuilder
+    .page(pageCursor.page, pageCursor.size)
+    .withGraphFetched('[role, avatar]');
 
   return {
     data: results,
@@ -26,7 +28,6 @@ export const loadUsers = async (filterBy, cursor) => {
 
 export const getOne = async (id) => {
   const user = await User.query().findOne({ id }).withGraphFetched('[role, avatar]');
-
   return user;
 };
 
@@ -56,7 +57,7 @@ export const deleteUser = async (id) => {
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'
   });
-  // await user.$query().delete();
+  await user.$query().delete();
   return {
     message: APP_MESSAGE.USER.SUCESS_USER_DELETE
   };

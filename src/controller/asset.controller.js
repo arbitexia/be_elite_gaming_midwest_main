@@ -6,7 +6,6 @@ export const createUploadForm = async (req, res) => {
     const result = await assetService.createUploadForm(fileName);
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -18,7 +17,6 @@ export const createAsset = async (req, res) => {
     const result = await assetService.createAsset(desc, name, type, url);
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -29,7 +27,6 @@ export const createGallery = async (req, res) => {
     const result = await assetService.createGallery(assetId, victimId, model);
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -41,7 +38,6 @@ export const updateGallery = async (req, res) => {
     const result = await assetService.updateGallery(id, assetId);
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };
@@ -52,7 +48,6 @@ export const deleteGallery = async (req, res) => {
     const result = await assetService.deleteGallery(id);
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
     res.status(500).json(e.message);
   }
 };

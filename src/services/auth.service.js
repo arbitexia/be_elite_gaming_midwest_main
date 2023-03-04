@@ -17,20 +17,18 @@ const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN)
 
 export const refreshToken = async (refreshToken, res) => {
   const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
-  console.log(refreshDecoded);
   const userId = refreshDecoded.userId;
   const newToken = await securityHelper.genJwtToken(userId, '8h');
   return { accessToken: newToken };
 };
 
-export const register = async (phone, email, birthday, res) => {
+export const register = async (phone, email, birthday, locationInfo) => {
   const user = await User.query().findOne({
     phone,
     roleId: USER_ROLE_MAPPER.USER
   });
   if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
   const token = securityHelper.genPhoneVerifyToken().toString();
-  console.log(token);
 
   // await client.messages
   //   .create({
@@ -48,6 +46,7 @@ export const register = async (phone, email, birthday, res) => {
       email,
       birthday,
       roleId: USER_ROLE_MAPPER.USER,
+      firstLogin: locationInfo,
       status: USER_STATUS_MAPPER.VERIFY_PHONE
     })
     .withGraphFetched('[role, avatar]');
@@ -145,8 +144,6 @@ export const authorizeCustomer = async (identifier, res) => {
       type: 'NOT_FOUND'
     });
   const token = securityHelper.genPhoneVerifyToken().toString();
-  console.log(token);
-
   // await client.messages
   //   .create({
   //     body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,

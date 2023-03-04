@@ -1,6 +1,14 @@
 import { Router } from 'express';
-import { authController, userController, locationController, assetController } from '@/controller';
-import { securityHelper } from '@/helpers';
+import {
+  authController,
+  awardController,
+  userController,
+  locationController,
+  assetController,
+  pointController,
+  productController
+} from '@/controller';
+import { securityHelper, ipMiddleware } from '@/helpers';
 
 const router = Router();
 router.post('/authorize', authController.authorize);
@@ -8,7 +16,7 @@ router.post('/refresh', authController.refreshToken);
 router.post('/authorize_tablet', authController.authorizeTablet);
 router.post('/authorize_customer', authController.authorizeCustomer);
 router.post('/verify_phone', authController.verifyPhone);
-router.post('/register', authController.register);
+router.post('/register', ipMiddleware, authController.register);
 router.post('/forgot_password', authController.forgotPassword);
 router.post('/reset_password', authController.resetPassword);
 router.post('/verify_email', authController.verifyEmail);
@@ -38,7 +46,7 @@ router.get(
   userController.getUsers
 );
 router.get(
-  '/user/:id',
+  '/users/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.getUser
 );
@@ -48,12 +56,12 @@ router.post(
   userController.updatePassword
 );
 router.put(
-  '/user',
+  '/users',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.updateUser
 );
 router.delete(
-  '/user/:id',
+  '/users/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.deleteUser
 );
@@ -64,22 +72,22 @@ router.get(
   locationController.getLocations
 );
 router.get(
-  '/location/:id',
+  '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.getLocation
 );
 router.post(
-  '/location',
+  '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.createLocation
 );
 router.put(
-  '/location/:id',
+  '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.updateLocation
 );
 router.delete(
-  '/location/:id',
+  '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.deleteLocation
 );
@@ -108,4 +116,68 @@ router.delete(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.deleteGallery
 );
+
+router.get(
+  '/points',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  pointController.getPoints
+);
+router.get(
+  '/points/:userId/:locationId',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  pointController.getPoint
+);
+
+router.get(
+  '/products',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.getProducts
+);
+router.get(
+  '/products/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.getProduct
+);
+router.post(
+  '/products',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.createProduct
+);
+router.put(
+  '/products/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.updateProduct
+);
+router.delete(
+  '/products/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.deleteProduct
+);
+
+router.get(
+  '/awards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.getAwards
+);
+router.get(
+  '/awards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.getAward
+);
+router.post(
+  '/awards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.createAward
+);
+router.put(
+  '/awards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.acceptAward
+);
+router.delete(
+  '/awards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  awardController.declineAward
+);
+
 export default router;
