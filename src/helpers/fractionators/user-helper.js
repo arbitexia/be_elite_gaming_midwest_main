@@ -65,6 +65,26 @@ export const filter = (params) => {
           fn.lower(ref('location:country').castText()),
           'like',
           `%${params.search.toLowerCase()}%`
+        )
+        .orWhere(
+          fn.lower(ref('first_login:region').castText()),
+          'like',
+          `%${params.search.toLowerCase()}%`
+        )
+        .orWhere(
+          fn.lower(ref('first_login:city').castText()),
+          'like',
+          `%${params.search.toLowerCase()}%`
+        )
+        .orWhere(
+          fn.lower(ref('first_login:country_name').castText()),
+          'like',
+          `%${params.search.toLowerCase()}%`
+        )
+        .orWhere(
+          fn.lower(ref('first_login:postal').castText()),
+          'like',
+          `%${params.search.toLowerCase()}%`
         );
     });
   }

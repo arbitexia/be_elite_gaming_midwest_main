@@ -6,7 +6,7 @@ export default {
   FRONTEND_URL: process.env.FRONTEND_URL || 'https://admin.elitegaming.rpatdev.com',
   APP_SECRET: process.env.APP_SECRET,
   APP_REFRESH_SECRET: process.env.APP_REFRESH_SECRET || process.env.APP_SECRET,
-  PORT: process.env.POORT || '8080',
+  PORT: process.env.PORT || '8080',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: process.env.DB_PORT || '5432',
   DB_NAME: process.env.DB_NAME || 'elitegame',
