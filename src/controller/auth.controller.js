@@ -1,5 +1,6 @@
 import { authService, userLocationService, pointService, locationService } from '@/services';
 import { ipToLocationInfo, convertIpFromV6ToV4 } from '@/helpers';
+import { APP_MESSAGE, USER_STATUS_MAPPER } from '@/constants';
 
 export const authorize = async (req, res) => {
   try {
@@ -40,9 +41,14 @@ export const authorizeCustomer = async (req, res) => {
   try {
     const { identifier } = req.body;
     const result = await authService.authorizeCustomer(identifier, res);
-    //TODO add auth Activity
-    res.status(200).json(result);
+    if (result.user.status === USER_STATUS_MAPPER.ACTIVATED) {
+      //TODO add auth Activity
+      res.status(200).json({ message: APP_MESSAGE.USER.SUCCESS, ...result });
+    } else {
+      res.status(500).json('Your number is not activated');
+    }
   } catch (e) {
+    console.log('err = ', e.message);
     res.status(500).json(e.message);
   }
 };
