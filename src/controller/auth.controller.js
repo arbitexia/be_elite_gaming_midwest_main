@@ -80,6 +80,17 @@ export const verifyPhone = async (req, res) => {
   }
 };
 
+export const createNewUser = async (req, res) => {
+  try {
+    const user = req.body;
+    const result = await authService.createNewUser(user);
+    //TODO add register Activity
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(e.message);
+  }
+};
+
 export const register = async (req, res) => {
   try {
     const { phone, email, birthday } = req.body;
