@@ -14,6 +14,7 @@ const router = Router();
 router.post('/authorize', authController.authorize);
 router.post('/refresh', authController.refreshToken);
 router.post('/authorize_tablet', authController.authorizeTablet);
+router.post('/authorize_customer_from_tablet', authController.authorizeCustomerFromTablet);
 router.post('/authorize_customer', authController.authorizeCustomer);
 router.post('/verify_phone', authController.verifyPhone);
 router.post('/register', ipMiddleware, authController.register);

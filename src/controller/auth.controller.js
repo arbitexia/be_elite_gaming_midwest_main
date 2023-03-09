@@ -41,6 +41,17 @@ export const authorizeCustomer = async (req, res) => {
   try {
     const { identifier } = req.body;
     const result = await authService.authorizeCustomer(identifier, res);
+    //TODO add auth Activity
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const authorizeCustomerFromTablet = async (req, res) => {
+  try {
+    const { identifier } = req.body;
+    const result = await authService.authorizeCustomerFromTablet(identifier, res);
     if (result.user.status === USER_STATUS_MAPPER.ACTIVATED) {
       //TODO add auth Activity
       res.status(200).json({ message: APP_MESSAGE.USER.SUCCESS, ...result });
