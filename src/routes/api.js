@@ -18,6 +18,7 @@ router.post('/authorize_customer_from_tablet', authController.authorizeCustomerF
 router.post('/authorize_customer', authController.authorizeCustomer);
 router.post('/verify_phone', authController.verifyPhone);
 router.post('/register', ipMiddleware, authController.register);
+router.post('/create_new_user', authController.createNewUser);
 router.post('/forgot_password', authController.forgotPassword);
 router.post('/reset_password', authController.resetPassword);
 router.post('/verify_email', authController.verifyEmail);

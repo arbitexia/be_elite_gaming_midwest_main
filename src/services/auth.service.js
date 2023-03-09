@@ -22,6 +22,26 @@ export const refreshToken = async (refreshToken, res) => {
   return { accessToken: newToken };
 };
 
+export const createNewUser = async (param) => {
+  const user = await User.query().findOne({ email: param.email });
+  if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_EMAIL);
+
+  const { firstName, lastName, email, address, phone, birthday, status, roleId } = param;
+  const newUser = await User.query()
+    .insertAndFetch({
+      firstName,
+      lastName,
+      email,
+      location: address,
+      phone,
+      birthday: '1991-10-10',
+      status,
+      roleId
+    })
+    .withGraphFetched('[role, avatar]');
+  return newUser;
+};
+
 export const register = async (phone, email, birthday, locationInfo) => {
   const user = await User.query().findOne({
     phone,
@@ -60,7 +80,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
   return {
-    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY,
+    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY + 'Token: ' + token,
     token
   };
 };
