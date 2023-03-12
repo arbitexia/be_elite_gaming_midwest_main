@@ -10,6 +10,16 @@ export const getProducts = async (req, res) => {
   }
 };
 
+export const getProductsByLocationId = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const result = await productService.getProductsByLocationId(id);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
 export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;

@@ -15,14 +15,6 @@ class Product extends BaseModel {
 
   static get relationMappings() {
     return {
-      location: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: path.join(__dirname, 'location'),
-        join: {
-          from: `${Table.PRODUCT}.locationId`,
-          to: `${Table.LOCATION}.id`
-        }
-      },
       gallery: {
         relation: Model.HasManyRelation,
         modelClass: path.join(__dirname, 'gallery'),

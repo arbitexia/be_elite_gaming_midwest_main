@@ -2,6 +2,7 @@ import { Product } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
+import { getRewardByLocationId } from './reward.service';
 
 const TEST = config.NODE_ENV === 'test';
 
@@ -14,7 +15,7 @@ export const loadProducts = async (filterBy, cursor) => {
 
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
-    .withGraphFetched('[gallery.asset, location]');
+    .withGraphFetched('[gallery.asset]');
 
   return {
     data: results,
@@ -25,8 +26,15 @@ export const loadProducts = async (filterBy, cursor) => {
   };
 };
 
+export const getProductsByLocationId = async (id) => {
+  const reward = await getRewardByLocationId(id);
+  const productIds = reward.productIds.split(',').map((id) => parseInt(id));
+  const products = await getProductsByIds(productIds);
+  return products;
+};
+
 export const getOne = async (id) => {
-  const user = await Product.query().findOne({ id }).withGraphFetched('[gallery.asset, location]');
+  const user = await Product.query().findOne({ id }).withGraphFetched('[gallery.asset]');
   return user;
 };
 
@@ -41,7 +49,7 @@ export const createProduct = async ({
 }) => {
   const product = await Product.query()
     .insertAndFetch({ name, locationId, amount, point, status, short, description })
-    .withGraphFetched('[gallery.asset, location]');
+    .withGraphFetched('[gallery.asset]');
   return product;
 };
 
@@ -65,7 +73,7 @@ export const updateProduct = async (
       short,
       description
     })
-    .withGraphFetched('[gallery.asset, location]');
+    .withGraphFetched('[gallery.asset]');
 
   return updatedProduct;
 };
@@ -79,4 +87,9 @@ export const deleteProduct = async (id) => {
   return {
     message: APP_MESSAGE.PRODUCT.SUCESS_DELETE
   };
+};
+
+export const getProductsByIds = async (ids) => {
+  const products = await Product.query().findByIds(ids).withGraphFetched('[gallery.asset]');
+  return products;
 };

@@ -6,7 +6,8 @@ import {
   locationController,
   assetController,
   pointController,
-  productController
+  productController,
+  rewardController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -180,6 +181,16 @@ router.delete(
   '/awards/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   awardController.declineAward
+);
+router.post(
+  '/rewards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.createReward
+);
+router.post(
+  '/rewards/get_products_by_location_id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  productController.getProductsByLocationId
 );
 
 export default router;

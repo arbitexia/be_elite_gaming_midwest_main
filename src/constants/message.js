@@ -43,6 +43,11 @@ const APP_MESSAGE = {
     NOT_FOUND: 'Product does not exist!',
     SUCESS_DELETE: 'Product has been deleted'
   },
+  REWARD: {
+    NOT_FOUND: 'Reward does not exist!',
+    SUCCESS_CREATE: 'Reward has been created!',
+    SUCCESS_UPDATE: 'Reward has been updated!'
+  },
   ASSET: {
     NOT_FOUND: 'Image does not exist!',
     SUCESS_DELETE: 'Image has been deleted'

@@ -9,3 +9,4 @@ export { default as Location } from './location';
 export { default as UserLocation } from './user-location';
 export { default as Product } from './product';
 export { default as Point } from './point';
+export { default as Reward } from './reward';
