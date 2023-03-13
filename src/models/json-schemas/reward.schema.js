@@ -4,6 +4,8 @@ export default {
   properties: {
     id: { type: 'integer' },
     locationId: { type: 'integer' },
-    productIds: { type: 'string' }
+    productId: { type: 'string' },
+    createdAt: { type: 'string', format: 'date-time' },
+    updatedAt: { type: 'string', format: 'date-time' }
   }
 };

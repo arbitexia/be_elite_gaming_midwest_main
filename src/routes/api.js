@@ -182,15 +182,11 @@ router.delete(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   awardController.declineAward
 );
+router.get('/rewards/:id');
 router.post(
   '/rewards',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  rewardController.createReward
-);
-router.post(
-  '/rewards/get_products_by_location_id',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  productController.getProductsByLocationId
+  rewardController.create
 );
 
 export default router;

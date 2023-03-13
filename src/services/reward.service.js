@@ -1,44 +1,43 @@
 import { Reward } from '@/models';
+import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
-import { getProductsByIds } from './product.service';
+import config from '@/config';
 
-export const getRewardById = async (id) => {
-  const reward = await Reward.query().findById(id);
-  return reward;
+const TEST = config.NODE_ENV === 'test';
+
+/**
+ * store records
+ * @param {Reward[]} inputs
+ * @returns
+ */
+export const create = async (inputs) => {
+  const rewards = await Reward.relatedQuery('rewards').insert(inputs);
+  return rewards;
 };
 
-export const getRewardByLocationId = async (id) => {
-  const reward = await Reward.query().findOne({ locationId: id });
-  return reward;
-};
-
-export const createReward = async ({ locationId, productIds }) => {
-  console.log(productIds);
-  const reward = await Reward.query().findOne({ locationId });
-  if (reward) {
-    return await updateReward({ locationId, productIds });
-  } else {
-    const newReward = await Reward.query().insertAndFetch({ locationId, productIds });
-    if (newReward.productIds) {
-      const newProductIds = newReward.productIds.split(',').map((id) => parseInt(id));
-      const products = await getProductsByIds(newProductIds);
-      return { message: APP_MESSAGE.REWARD.SUCCESS_CREATE, locationId, products };
-    } else {
-      return { message: APP_MESSAGE.REWARD.SUCCESS_CREATE, locationId, products: [] };
-    }
-  }
-};
-
-export const updateReward = async ({ locationId, productIds }) => {
+/**
+ * update record
+ * @param {Number} id
+ * @param {Reward} input
+ * @returns
+ */
+export const update = async (id, input) => {
   const reward = await Reward.query()
-    .findOne({ locationId })
+    .findById(id)
     .throwIfNotFound({ message: APP_MESSAGE.REWARD.NOT_FOUND, type: 'NOT_FOUND' });
-  const updateReward = await reward.$query().updateAndFetch({ locationId, productIds });
-  if (updateReward.productIds) {
-    const updateProductIds = updateReward.productIds.split(',').map((id) => parseInt(id));
-    const products = await getProductsByIds(updateProductIds);
-    return { message: APP_MESSAGE.REWARD.SUCCESS_UPDATE, locationId, products };
-  } else {
-    return { message: APP_MESSAGE.REWARD.SUCCESS_UPDATE, locationId, products: [] };
-  }
+  const updatedReward = await reward.$query().updateAndFetch(input);
+  return updatedReward;
+};
+
+/**
+ * delete record
+ * @param {Number} id
+ * @returns
+ */
+export const destroy = async (id) => {
+  const reward = await Reward.query()
+    .findById(id)
+    .throwIfNotFound({ message: APP_MESSAGE.REWARD.NOT_FOUND, type: 'NOT_FOUND' });
+  await reward.$query().delete();
+  return { message: APP_MESSAGE.REWARD.SUCCESS_DELETE };
 };

@@ -5,8 +5,8 @@
 exports.up = function (knex) {
   return knex.schema.createTable('rewards', function (table) {
     table.increments();
-    table.integer('location_id');
-    table.string('product_ids');
+    table.integer('location_id').references('locations.id').deferrable('deferred');
+    table.integer('product_id').references('products.id').deferrable('deferred');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });

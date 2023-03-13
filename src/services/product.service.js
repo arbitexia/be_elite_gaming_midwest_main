@@ -2,7 +2,6 @@ import { Product } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
-import { getRewardByLocationId } from './reward.service';
 
 const TEST = config.NODE_ENV === 'test';
 
@@ -24,21 +23,6 @@ export const loadProducts = async (filterBy, cursor) => {
       total
     }
   };
-};
-
-export const getProductsByLocationId = async (id) => {
-  const reward = await getRewardByLocationId(id);
-  if (reward) {
-    if (reward.productIds) {
-      const productIds = reward.productIds.split(',').map((id) => parseInt(id));
-      const products = await getProductsByIds(productIds);
-      return products;
-    } else {
-      return [];
-    }
-  } else {
-    return [];
-  }
 };
 
 export const getOne = async (id) => {
