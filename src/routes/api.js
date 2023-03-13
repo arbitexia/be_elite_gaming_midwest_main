@@ -72,27 +72,27 @@ router.delete(
 router.get(
   '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.getLocations
+  locationController.filter
 );
 router.get(
   '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.getLocation
+  locationController.getOne
 );
 router.post(
   '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.createLocation
+  locationController.create
 );
 router.put(
   '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.updateLocation
+  locationController.update
 );
 router.delete(
   '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.deleteLocation
+  locationController.destroy
 );
 router.post(
   '/new_upload_form',
