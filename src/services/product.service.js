@@ -28,9 +28,17 @@ export const loadProducts = async (filterBy, cursor) => {
 
 export const getProductsByLocationId = async (id) => {
   const reward = await getRewardByLocationId(id);
-  const productIds = reward.productIds.split(',').map((id) => parseInt(id));
-  const products = await getProductsByIds(productIds);
-  return products;
+  if (reward) {
+    if (reward.productIds) {
+      const productIds = reward.productIds.split(',').map((id) => parseInt(id));
+      const products = await getProductsByIds(productIds);
+      return products;
+    } else {
+      return [];
+    }
+  } else {
+    return [];
+  }
 };
 
 export const getOne = async (id) => {
