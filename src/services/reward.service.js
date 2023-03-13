@@ -6,6 +6,28 @@ import config from '@/config';
 const TEST = config.NODE_ENV === 'test';
 
 /**
+ *
+ * @param {Object} condition
+ * @returns
+ */
+export const filter = async (condition) => {
+  const { queryBuild } = await fractionateHelper('reward');
+  const queryBuilder = queryBuild(condition);
+  const rewards = await queryBuilder.select('*');
+  return rewards;
+};
+
+/**
+ *
+ * @param {Number} id
+ * @returns
+ */
+export const getOne = async (id) => {
+  const reward = await Reward.query().findById(id);
+  return reward;
+};
+
+/**
  * store records
  * @param {Reward[]} inputs
  * @returns

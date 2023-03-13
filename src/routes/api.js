@@ -182,11 +182,30 @@ router.delete(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   awardController.declineAward
 );
-router.get('/rewards/:id');
+router.get(
+  '/rewards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.filter
+);
+router.get(
+  '/rewards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.getOne
+);
 router.post(
   '/rewards',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   rewardController.create
+);
+router.put(
+  '/rewards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.update
+);
+router.delete(
+  '/rewards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.destroy
 );
 
 export default router;
