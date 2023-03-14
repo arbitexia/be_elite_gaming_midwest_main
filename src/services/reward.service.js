@@ -13,7 +13,7 @@ const TEST = config.NODE_ENV === 'test';
 export const filter = async (condition) => {
   const locations = await Location.query()
     .orderBy('id', 'asc')
-    .withGraphFetched('[gallery.asset, reward.[product]]');
+    .withGraphFetched('[gallery.asset, reward.[product.[gallery.asset]]]');
   return locations;
 };
 
