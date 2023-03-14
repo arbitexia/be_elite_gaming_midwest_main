@@ -1,14 +1,45 @@
-import { authService, userLocationService, pointService, locationService } from '@/services';
+import {
+  authService,
+  userLocationService,
+  pointService,
+  locationService,
+  activityService
+} from '@/services';
 import { ipToLocationInfo, convertIpFromV6ToV4 } from '@/helpers';
-import { APP_MESSAGE, USER_STATUS_MAPPER } from '@/constants';
+import {
+  ACTIVITY_MODEL,
+  ACTIVITY_TYPE,
+  APP_MESSAGE,
+  STATUS_MSG,
+  USER_STATUS_MAPPER
+} from '@/constants';
 
 export const authorize = async (req, res) => {
   try {
     const { identifier, password } = req.body;
     const result = await authService.authorize(identifier, password, res);
     //TODO add auth Activity
+    const activityToSave = {
+      userId: result.user.id,
+      victimId: result.user.id,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.AUTH,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(200).json(result);
   } catch (e) {
+    const activityToSave = {
+      type: ACTIVITY_TYPE.AUTH,
+      model: ACTIVITY_MODEL.USER,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'authorize'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -16,10 +47,29 @@ export const authorize = async (req, res) => {
 export const refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    const result = await authService.refreshToken(refreshToken, res);
+    const { accessToken, userId } = await authService.refreshToken(refreshToken, res);
     //TODO add auth Activity
-    res.status(200).json(result);
+    const activityToSave = {
+      userId,
+      victimId: userId,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.AUTH,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(200).json({ accessToken });
   } catch (e) {
+    const activityToSave = {
+      type: ACTIVITY_TYPE.AUTH,
+      model: ACTIVITY_MODEL.USER,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'refreshToken'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -31,8 +81,27 @@ export const authorizeTablet = async (req, res) => {
     const userLocation = await userLocationService.getOneByTablet(result.user.id);
     const location = await locationService.getOne(userLocation.locationId);
     //TODO add auth Activity
+    const activityToSave = {
+      userId: result.user.id,
+      victimId: result.user.id,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.AUTH,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(200).json({ ...result, location });
   } catch (e) {
+    const activityToSave = {
+      type: ACTIVITY_TYPE.AUTH,
+      model: ACTIVITY_MODEL.USER,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'authorizeTablet'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -42,8 +111,28 @@ export const authorizeCustomer = async (req, res) => {
     const { identifier } = req.body;
     const result = await authService.authorizeCustomer(identifier, res);
     //TODO add auth Activity
-    res.status(200).json(result);
+    const { userId, ...rest } = result;
+    const activityToSave = {
+      userId,
+      victimId: userId,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.AUTH,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(200).json(rest);
   } catch (e) {
+    const activityToSave = {
+      type: ACTIVITY_TYPE.AUTH,
+      model: ACTIVITY_MODEL.USER,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'authorizeCustomer'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -52,14 +141,41 @@ export const authorizeCustomerFromTablet = async (req, res) => {
   try {
     const { identifier } = req.body;
     const result = await authService.authorizeCustomerFromTablet(identifier, res);
+    const activityToSave = {
+      userId: result.user.id,
+      victimId: result.user.id,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.AUTH,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
     if (result.user.status === USER_STATUS_MAPPER.ACTIVATED) {
       //TODO add auth Activity
+      await activityService.createActivity(activityToSave);
       res.status(200).json({ message: APP_MESSAGE.USER.SUCCESS, ...result });
     } else {
+      await activityService.createActivity({
+        ...activityToSave,
+        metadata: {
+          ...req.body,
+          status: STATUS_MSG.FAILED,
+          error: 'Your number is not activated',
+          function: 'authorizeCustomerFromTablet'
+        }
+      });
       res.status(500).json('Your number is not activated');
     }
   } catch (e) {
-    console.log('err = ', e.message);
+    const activityToSave = {
+      type: ACTIVITY_TYPE.AUTH,
+      model: ACTIVITY_MODEL.USER,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'authorizeCustomerFromTablet'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -76,6 +192,14 @@ export const verifyPhone = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (e) {
+    const activityToSave = {
+      type: ACTIVITY_TYPE.CHECK_IN,
+      metadata: {},
+      event: 'authorizeCustomer',
+      status: REQUEST_STATUS.FAILED,
+      errorMessage: JSON.stringify(e.message)
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -85,8 +209,27 @@ export const createNewUser = async (req, res) => {
     const user = req.body;
     const result = await authService.createNewUser(user);
     //TODO add register Activity
+    const activityToSave = {
+      userId: result.id,
+      victimId: result.id,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.CREATE,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(200).json(result);
   } catch (error) {
+    const activityToSave = {
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.CREATE,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'createNewUser'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -98,8 +241,28 @@ export const register = async (req, res) => {
     const locationInfo = await ipToLocationInfo(req.clientIp);
     const result = await authService.register(phone, email, birthday, locationInfo);
     //TODO add register Activity
-    res.status(200).json(result);
+    const { userId, ...rest } = result;
+    const activityToSave = {
+      userId,
+      victimId: userId,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.CREATE,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(200).json(rest);
   } catch (e) {
+    const activityToSave = {
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.CREATE,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'register'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -108,8 +271,29 @@ export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const result = await authService.forgotPassword(email);
-    res.status(200).json(result);
+    //TODO add forgot password Activity
+    const { userId, ...rest } = result;
+    const activityToSave = {
+      userId,
+      victimId: userId,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.UPDATE,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(200).json(rest);
   } catch (e) {
+    const activityToSave = {
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.UPDATE,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'forgotPassword'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
@@ -128,8 +312,29 @@ export const resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
     const result = await authService.resetPassword(token, password);
-    res.status(200).json(result);
+    //TODO add reset password Activity
+    const { userId, ...rest } = result;
+    const activityToSave = {
+      userId,
+      victimId: userId,
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.UPDATE,
+      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(200).json(rest);
   } catch (e) {
+    const activityToSave = {
+      model: ACTIVITY_MODEL.USER,
+      type: ACTIVITY_TYPE.UPDATE,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'resetPassword'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };
