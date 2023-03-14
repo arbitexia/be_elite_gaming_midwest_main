@@ -6,3 +6,4 @@ export * as locationService from './location.service';
 export * as pointService from './point.service';
 export * as productService from './product.service';
 export * as userLocationService from './user-location.service';
+export * as rewardService from './reward.service';

@@ -2,7 +2,7 @@ import { Location } from '@/models';
 import { fractionateHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 
-export const loadLocations = async (filterBy) => {
+export const filter = async (filterBy) => {
   let queryBuilder;
   const { filter } = await fractionateHelper('location');
   queryBuilder = filter(filterBy);
@@ -15,7 +15,7 @@ export const getOne = async (id) => {
   return location;
 };
 
-export const createLocation = async (input) => {
+export const create = async (input) => {
   const newLocation = await Location.query()
     .insertAndFetch({
       name: input.name,
@@ -29,7 +29,7 @@ export const createLocation = async (input) => {
   return newLocation;
 };
 
-export const updateLocation = async (id, input) => {
+export const update = async (id, input) => {
   const location = await Location.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.LOCATION.NOT_FOUND,
     type: 'NOT_FOUND'
@@ -50,7 +50,7 @@ export const updateLocation = async (id, input) => {
   return updatedLocation;
 };
 
-export const deleteLocation = async (id) => {
+export const destroy = async (id) => {
   const location = await Location.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.LOCATION.NOT_FOUND,
     type: 'NOT_FOUND'

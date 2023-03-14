@@ -5,10 +5,6 @@ export const filter = (params) => {
   let queryBuilder;
   queryBuilder = Product.query();
 
-  if (params.location && params.location != 0) {
-    queryBuilder.where('locationId', params.location);
-  }
-
   if (params.pointFrom) {
     if (params.pointTo) queryBuilder.whereBetween('point', [params.pointFrom, params.pointTo]);
     else queryBuilder.where('point', '>', params.pointFrom);
@@ -20,5 +16,5 @@ export const filter = (params) => {
     });
   }
 
-  return queryBuilder;
+  return queryBuilder.orderBy('id', 'asc');
 };

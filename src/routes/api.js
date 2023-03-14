@@ -6,7 +6,8 @@ import {
   locationController,
   assetController,
   pointController,
-  productController
+  productController,
+  rewardController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -71,27 +72,27 @@ router.delete(
 router.get(
   '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.getLocations
+  locationController.filter
 );
 router.get(
   '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.getLocation
+  locationController.getOne
 );
 router.post(
   '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.createLocation
+  locationController.create
 );
 router.put(
   '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.updateLocation
+  locationController.update
 );
 router.delete(
   '/locations/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  locationController.deleteLocation
+  locationController.destroy
 );
 router.post(
   '/new_upload_form',
@@ -180,6 +181,31 @@ router.delete(
   '/awards/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   awardController.declineAward
+);
+router.get(
+  '/rewards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.filter
+);
+router.get(
+  '/rewards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.getOne
+);
+router.post(
+  '/rewards',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.create
+);
+router.put(
+  '/rewards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.update
+);
+router.delete(
+  '/rewards/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.destroy
 );
 
 export default router;
