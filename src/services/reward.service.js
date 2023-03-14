@@ -10,14 +10,7 @@ const TEST = config.NODE_ENV === 'test';
  * @param {Object} condition
  * @returns
  */
-// export const filter = async (condition) => {
-//   const { filter } = await fractionateHelper('reward');
-//   const queryBuilder = filter(condition);
-//   const rewards = await queryBuilder.select('*');
-//   return rewards;
-// };
-
-export const filter = async () => {
+export const filter = async (condition) => {
   const locations = await Location.query()
     .orderBy('id', 'asc')
     .withGraphFetched('[gallery.asset, reward.[product]]');
