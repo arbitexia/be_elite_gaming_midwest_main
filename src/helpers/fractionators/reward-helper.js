@@ -1,7 +1,6 @@
-import { ref, fn } from 'objection';
 import { Reward } from '@/models';
 
-export const queryBuild = (params) => {
+export const filter = (params) => {
   const { locationId, search } = params;
   let queryBuilder = Reward.query();
   if (locationId) {

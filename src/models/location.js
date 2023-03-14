@@ -30,6 +30,14 @@ class Location extends BaseModel {
           from: `${Table.LOCATION}.id`,
           to: `${Table.GALLERY}.victimId`
         }
+      },
+      reward: {
+        relation: Model.HasManyRelation,
+        modelClass: path.join(__dirname, 'reward'),
+        join: {
+          from: `${Table.LOCATION}.id`,
+          to: `${Table.REWARD}.locationId`
+        }
       }
     };
   }
