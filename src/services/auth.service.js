@@ -19,7 +19,7 @@ export const refreshToken = async (refreshToken, res) => {
   const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
   const userId = refreshDecoded.userId;
   const newToken = await securityHelper.genJwtToken(userId, '8h');
-  return { accessToken: newToken };
+  return { accessToken: newToken, userId };
 };
 
 export const createNewUser = async (param) => {
@@ -81,7 +81,8 @@ export const register = async (phone, email, birthday, locationInfo) => {
   });
   return {
     message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY + 'Token: ' + token,
-    token
+    token,
+    userId: updatedUser.id
   };
 };
 
@@ -184,7 +185,8 @@ export const authorizeCustomer = async (identifier, res) => {
   });
   return {
     message: token, //APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
-    token
+    token,
+    userId: user.id
   };
 };
 
@@ -328,7 +330,8 @@ export const forgotPassword = async (email) => {
   });
 
   return {
-    message: APP_MESSAGE.AUTH.SUCCESS_FORGOT_PASSWORD
+    message: APP_MESSAGE.AUTH.SUCCESS_FORGOT_PASSWORD,
+    userId: updatedUser.id
   };
 };
 
@@ -373,6 +376,7 @@ export const resetPassword = async (token, password) => {
     .where({ id: verification.id });
 
   return {
-    message: APP_MESSAGE.AUTH.SUCCESS_RESET_PASSWORD
+    message: APP_MESSAGE.AUTH.SUCCESS_RESET_PASSWORD,
+    userId: updatedUser.id
   };
 };
