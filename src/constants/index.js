@@ -16,3 +16,5 @@ export {
   VERIFICATION_TYPE_MAPPER,
   INVITATION_STATUS_MAPPER
 } from './verification';
+
+export { ACTIVITY_MODEL, ACTIVITY_TYPE, STATUS_MSG } from './activity';

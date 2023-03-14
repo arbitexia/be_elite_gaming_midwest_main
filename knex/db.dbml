@@ -202,3 +202,37 @@ Ref: user_locations.id < awards.user_location_id
 Ref: products.id < awards.product_id
 Ref: users.id < awards.assignee_id
 
+Enum activity_type {
+  CREATE
+  UPDATE    
+  DELETE
+  AUTH  
+}
+
+Enum activity_model {
+  ASSET
+  AWARD
+  GALLERY
+  LOCATION
+  POINT
+  PRODUCT
+  ROLE
+  USE_LOCATION
+  USER
+  VERIFICATION
+  EMAIL_TEMPLATE
+}
+
+Table activities [note: "activity table"] {
+  id int [pk, increment]
+  user_id int 
+  victim_id int
+  model activity_model
+  type activity_type 
+  metadata jsonb  
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: users.id < activities.user_id
+
