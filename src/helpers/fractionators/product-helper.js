@@ -16,5 +16,5 @@ export const filter = (params) => {
     });
   }
 
-  return queryBuilder;
+  return queryBuilder.orderBy('id', 'asc');
 };

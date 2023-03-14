@@ -39,5 +39,5 @@ export const filter = (params) => {
       .withGraphFetched('[gallery]');
   }
 
-  return queryBuilder;
+  return queryBuilder.orderBy('id', 'asc');
 };
