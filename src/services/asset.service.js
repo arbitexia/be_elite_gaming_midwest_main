@@ -16,10 +16,7 @@ export const createAsset = async (desc, name, type, url) => {
 };
 
 export const updateGallery = async (id, assetId) => {
-  const gallery = await Gallery.query().findOne({ id }).throwIfNotFound({
-    message: APP_MESSAGE.GALLERY.NOT_FOUND,
-    type: 'NOT_FOUND'
-  });
+  const gallery = await Gallery.query().findOne({ id });
   const updateGallery = await gallery
     .$query()
     .updateAndFetch({ assetId })

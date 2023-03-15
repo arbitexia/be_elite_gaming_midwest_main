@@ -2,8 +2,8 @@ import { rewardService } from '@/services';
 
 export const filter = async (req, res) => {
   try {
-    const { condition, cursor } = req.query;
-    const results = await rewardService.filter(condition);
+    const { filterBy, cursor } = req.query;
+    const results = await rewardService.filter(filterBy, cursor);
     res.status(200).json(results);
   } catch (error) {
     res.status(500).json(e.message);

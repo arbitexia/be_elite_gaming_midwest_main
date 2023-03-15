@@ -1,5 +1,5 @@
 import { Reward, Location } from '@/models';
-import { fractionateHelper } from '@/helpers';
+import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
 
@@ -10,11 +10,26 @@ const TEST = config.NODE_ENV === 'test';
  * @param {Object} condition
  * @returns
  */
-export const filter = async (condition) => {
-  const locations = await Location.query()
-    .orderBy('id', 'asc')
-    .withGraphFetched('[gallery.asset, reward.[product.[gallery.asset]]]');
-  return locations;
+export const filter = async (filterBy, cursor) => {
+  try {
+    let queryBuilder;
+    const pageCursor = cursorHelper('reward', cursor);
+    const { filter } = await fractionateHelper('reward');
+    queryBuilder = filter(filterBy);
+    const { results, total } = await queryBuilder
+      .page(pageCursor.page, pageCursor.size)
+      .withGraphFetched('[gallery.asset, reward.product]');
+
+    return {
+      data: results,
+      pageInfo: {
+        ...pageCursor,
+        total
+      }
+    };
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 /**

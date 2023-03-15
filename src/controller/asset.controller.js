@@ -23,7 +23,9 @@ export const createAsset = async (req, res) => {
 
 export const createGallery = async (req, res) => {
   try {
-    const { assetId, victimId, model } = req.body;
+    const {
+      input: { assetId, victimId, model }
+    } = req.body;
     const result = await assetService.createGallery(assetId, victimId, model);
     res.status(200).json(result);
   } catch (e) {
@@ -35,7 +37,7 @@ export const updateGallery = async (req, res) => {
   try {
     const { id } = req.params;
     const { assetId } = req.body;
-    const result = await assetService.updateGallery(id, assetId);
+    const result = await assetService.updateGallery(+id, +assetId);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);
