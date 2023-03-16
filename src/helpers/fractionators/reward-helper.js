@@ -1,13 +1,34 @@
-import { Reward } from '@/models';
+import { ref, fn } from 'objection';
+import { Location } from '@/models';
 
 export const filter = (params) => {
-  const { locationId, search } = params;
-  let queryBuilder = Reward.query();
-  if (locationId) {
+  let queryBuilder = Location.query();
+  if (params?.locationId) {
     queryBuilder.where((builder) => {
-      builder.where({ location_id: locationId });
+      builder.where({ id: Number(params.locationId) });
     });
   }
-  queryBuilder = queryBuilder.withGraphFetched('[location, product]');
-  return queryBuilder;
+  if (params?.search) {
+    queryBuilder.where((builder) => {
+      builder
+        .where(fn.lower(ref('name')), 'like', `%${params.search.toLowerCase()}%`)
+        .orWhere(
+          fn.lower(ref('address:city').castText()),
+          'like',
+          `%${params.search.toLowerCase()}%`
+        )
+        .orWhere(
+          fn.lower(ref('address:state').castText()),
+          'like',
+          `%${params.search.toLowerCase()}%`
+        )
+        .orWhere(
+          fn.lower(ref('address:country').castText()),
+          'like',
+          `%${params.search.toLowerCase()}%`
+        )
+        .orWhere(fn.lower(ref('description')), 'like', `%${params.search.toLowerCase()}%`);
+    });
+  }
+  return queryBuilder.orderBy('id', 'asc');
 };

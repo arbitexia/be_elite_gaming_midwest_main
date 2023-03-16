@@ -79,6 +79,7 @@ router.get(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   locationController.getOne
 );
+
 router.post(
   '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
@@ -110,12 +111,12 @@ router.post(
   assetController.createGallery
 );
 router.put(
-  '/gallery',
+  '/gallery/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.updateGallery
 );
 router.delete(
-  '/gallery',
+  '/gallery/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   assetController.deleteGallery
 );
