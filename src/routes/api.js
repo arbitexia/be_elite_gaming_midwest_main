@@ -7,7 +7,8 @@ import {
   assetController,
   pointController,
   productController,
-  rewardController
+  rewardController,
+  activityController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -207,6 +208,12 @@ router.delete(
   '/rewards/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   rewardController.destroy
+);
+
+router.get(
+  '/activities',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  activityController.filter
 );
 
 export default router;

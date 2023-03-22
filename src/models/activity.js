@@ -17,7 +17,7 @@ class Activity extends BaseModel {
     return {
       user: {
         relation: Model.BelongsToOneRelation,
-        modelClass: path.join(__dirname, 'activity'),
+        modelClass: path.join(__dirname, 'user'),
         join: {
           from: `${Table.ACTIVITY}.userId`,
           to: `${Table.USER}.id`
