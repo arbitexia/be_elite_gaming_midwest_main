@@ -23,14 +23,14 @@ export const authorize = async (req, res) => {
       userId: result.user.id,
       victimId: result.user.id,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.LOGIN,
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.LOGIN,
       model: ACTIVITY_MODEL.USER,
       metadata: {
         ...req.body,
@@ -53,7 +53,7 @@ export const refreshToken = async (req, res) => {
       userId,
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.GET,
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
@@ -61,7 +61,7 @@ export const refreshToken = async (req, res) => {
   } catch (e) {
     const activityToSave = {
       type: ACTIVITY_TYPE.AUTH,
-      model: ACTIVITY_MODEL.USER,
+      model: ACTIVITY_MODEL.GET,
       metadata: {
         ...req.body,
         status: STATUS_MSG.FAILED,
@@ -85,14 +85,14 @@ export const authorizeTablet = async (req, res) => {
       userId: result.user.id,
       victimId: result.user.id,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.CHECKIN,
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json({ ...result, location });
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.CHECKIN,
       model: ACTIVITY_MODEL.USER,
       metadata: {
         ...req.body,
@@ -116,14 +116,14 @@ export const authorizeCustomer = async (req, res) => {
       userId,
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.SIGNUP,
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(rest);
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.SIGNUP,
       model: ACTIVITY_MODEL.USER,
       metadata: {
         ...req.body,
@@ -145,7 +145,7 @@ export const authorizeCustomerFromTablet = async (req, res) => {
       userId: result.user.id,
       victimId: result.user.id,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.SIGNUP,
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     if (result.user.status === USER_STATUS_MAPPER.ACTIVATED) {
@@ -166,7 +166,7 @@ export const authorizeCustomerFromTablet = async (req, res) => {
     }
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.AUTH,
+      type: ACTIVITY_TYPE.SIGNUP,
       model: ACTIVITY_MODEL.USER,
       metadata: {
         ...req.body,
@@ -193,7 +193,7 @@ export const verifyPhone = async (req, res) => {
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.CHECK_IN,
+      type: ACTIVITY_TYPE.CHECKIN,
       metadata: {},
       event: 'authorizeCustomer',
       status: REQUEST_STATUS.FAILED,

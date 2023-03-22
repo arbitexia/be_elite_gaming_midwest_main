@@ -18,12 +18,13 @@ export default {
         'USE_LOCATION',
         'USER',
         'VERIFICATION',
-        'EMAIL_TEMPLATE'
+        'EMAIL_TEMPLATE',
+        'REWARD'
       ]
     },
     type: {
       type: 'string',
-      enum: ['CREATE', 'UPDATE', 'DELETE', 'AUTH']
+      enum: ['CREATE', 'UPDATE', 'DELETE', 'CHECKIN', 'SIGNUP', 'LOGIN', 'GET', 'VIEW']
     },
     metadata: { type: 'object' }
   }

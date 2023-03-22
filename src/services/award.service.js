@@ -9,13 +9,10 @@ export const loadAwards = async (filterBy, cursor) => {
   let queryBuilder;
   const pageCursor = cursorHelper('award', cursor);
   const { filter } = await fractionateHelper('award');
-
   queryBuilder = filter(filterBy);
-
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
     .withGraphFetched('[userLocation.[user, location], product, assignee]');
-
   return {
     data: results,
     pageInfo: {

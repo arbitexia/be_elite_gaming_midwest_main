@@ -202,11 +202,15 @@ Ref: user_locations.id < awards.user_location_id
 Ref: products.id < awards.product_id
 Ref: users.id < awards.assignee_id
 
-Enum activity_type {
+Enum activity_type {  
+  CHECKIN
+  SIGNUP
+  LOGIN
+  GET
+  VIEW
   CREATE
   UPDATE    
   DELETE
-  AUTH  
 }
 
 Enum activity_model {
@@ -221,6 +225,7 @@ Enum activity_model {
   USER
   VERIFICATION
   EMAIL_TEMPLATE
+  REWARD  
 }
 
 Table activities [note: "activity table"] {
