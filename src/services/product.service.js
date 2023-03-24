@@ -9,9 +9,7 @@ export const loadProducts = async (filterBy, cursor) => {
   let queryBuilder;
   const pageCursor = cursorHelper('product', cursor);
   const { filter } = await fractionateHelper('product');
-
   queryBuilder = filter(filterBy);
-
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
     .withGraphFetched('[gallery.asset]');
