@@ -18,7 +18,7 @@ export const filter = async (filterBy, cursor) => {
     queryBuilder = filter(filterBy);
     const { results, total } = await queryBuilder
       .page(pageCursor.page, pageCursor.size)
-      .withGraphFetched('[gallery.asset, reward.product]');
+      .withGraphFetched('[gallery.asset, reward.product.[gallery.asset]]');
 
     return {
       data: results,
