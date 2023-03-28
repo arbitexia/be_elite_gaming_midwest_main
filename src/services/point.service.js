@@ -21,6 +21,7 @@ export const getPoint = async (userId, locationId) => {
   const point = await Point.query()
     .findOne({ userLocationId: location.id })
     .withGraphFetched('[userLocation.[user, location]]');
+
   return point;
 };
 
@@ -32,4 +33,17 @@ export const checkIn = async (userLocationId) => {
       point: DEAULT_INC_POINT
     });
   else await Point.query().increment('point', DEAULT_INC_POINT).where({ userLocationId });
+};
+
+export const addPoint = async (userLocationId, pointCount) => {
+  const point = await Point.query().findOne({ userLocationId });
+  if (!point) {
+    await Point.query().insert({
+      userLocationId,
+      point: pointCount,
+      updatedAt: new Date()
+    });
+  } else {
+    await Point.query().increment('point', pointCount).where({ userLocationId });
+  }
 };

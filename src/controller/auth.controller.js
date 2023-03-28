@@ -79,7 +79,6 @@ export const authorizeTablet = async (req, res) => {
     const { identifier, password } = req.body;
     const result = await authService.authorizeTablet(identifier, password, res);
     const userLocation = await userLocationService.getOneByTablet(result.user.id);
-    const location = await locationService.getOne(userLocation.locationId);
     //TODO add auth Activity
     const activityToSave = {
       userId: result.user.id,
@@ -89,7 +88,7 @@ export const authorizeTablet = async (req, res) => {
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
-    res.status(200).json({ ...result, location });
+    res.status(200).json({ ...result, location: userLocation?.location ?? null });
   } catch (e) {
     const activityToSave = {
       type: ACTIVITY_TYPE.CHECKIN,
