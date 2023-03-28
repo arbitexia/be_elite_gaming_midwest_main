@@ -35,7 +35,8 @@ export const Table = {
   PRODUCT: camelCaseString('products'),
   AWARD: camelCaseString('awards'),
   REWARD: camelCaseString('rewards'),
-  ACTIVITY: camelCaseString('activities')
+  ACTIVITY: camelCaseString('activities'),
+  CONFIG: camelCaseString('configs')
 };
 
 export const knex = _knex;

@@ -52,6 +52,10 @@ const APP_MESSAGE = {
   ASSET: {
     NOT_FOUND: 'Image does not exist!',
     SUCESS_DELETE: 'Image has been deleted'
+  },
+  CONFIG: {
+    NOT_FOUND: 'Config does not exist!',
+    SUCESS_UPDATE: 'Config has been updated!'
   }
 };
 

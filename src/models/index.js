@@ -11,3 +11,4 @@ export { default as Product } from './product';
 export { default as Point } from './point';
 export { default as Reward } from './reward';
 export { default as Activity } from './activity';
+export { default as Config } from './config';

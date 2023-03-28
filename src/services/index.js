@@ -8,3 +8,4 @@ export * as productService from './product.service';
 export * as userLocationService from './user-location.service';
 export * as rewardService from './reward.service';
 export * as activityService from './activity.service';
+export * as configService from './config.service';

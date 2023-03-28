@@ -8,7 +8,8 @@ import {
   pointController,
   productController,
   rewardController,
-  activityController
+  activityController,
+  configController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -214,6 +215,18 @@ router.get(
   '/activities',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   activityController.filter
+);
+
+router.get(
+  '/configs',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  configController.getConfig
+);
+
+router.post(
+  '/configs',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  configController.createConfig
 );
 
 export default router;

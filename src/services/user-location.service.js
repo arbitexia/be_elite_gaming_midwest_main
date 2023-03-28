@@ -28,9 +28,6 @@ export const getOneByTablet = async (tabletId) => {
     .findOne({
       userId: tabletId
     })
-    .throwIfNotFound({
-      message: APP_MESSAGE.USER.NOT_FOUND
-    });
-
+    .withGraphFetched('[location.[gallery.asset]]');
   return userLocation;
 };

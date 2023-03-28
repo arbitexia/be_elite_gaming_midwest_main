@@ -241,3 +241,13 @@ Table activities [note: "activity table"] {
 
 Ref: users.id < activities.user_id
 
+Table configs [note: "config table"] {
+  id int [pk, increment]
+  daily int 
+  weekly int 
+  monthly int 
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+}
+
+

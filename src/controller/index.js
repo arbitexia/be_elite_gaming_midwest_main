@@ -7,3 +7,4 @@ export * as pointController from './point.controller';
 export * as productController from './product.controller';
 export * as rewardController from './reward.controller';
 export * as activityController from './activity.controller';
+export * as configController from './config.controller';
