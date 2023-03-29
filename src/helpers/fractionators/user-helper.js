@@ -28,7 +28,6 @@ export const filter = (params) => {
       return builder;
     });
   }
-
   if (params.type) {
     queryBuilder.joinRelated('role').where('role.shortCode', params.type);
   }

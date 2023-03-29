@@ -251,3 +251,14 @@ Table configs [note: "config table"] {
 }
 
 
+Table tablets [note: "tablet table"] {
+  id int [pk, increment]
+  name int 
+  password varchar   
+  location_id int
+  status user_status
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: locations.id < tablets.location_id

@@ -78,17 +78,16 @@ export const authorizeTablet = async (req, res) => {
   try {
     const { identifier, password } = req.body;
     const result = await authService.authorizeTablet(identifier, password, res);
-    const userLocation = await userLocationService.getOneByTablet(result.user.id);
     //TODO add auth Activity
     const activityToSave = {
-      userId: result.user.id,
-      victimId: result.user.id,
+      userId: result.id,
+      victimId: result.id,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.CHECKIN,
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
-    res.status(200).json({ ...result, location: userLocation?.location ?? null });
+    res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
       type: ACTIVITY_TYPE.CHECKIN,
@@ -181,22 +180,23 @@ export const authorizeCustomerFromTablet = async (req, res) => {
 
 export const verifyPhone = async (req, res) => {
   try {
-    const tablet = req.user;
-    const { token } = req.body;
+    const { token, locationId } = req.body;
     const result = await authService.verifyPhone(token, res);
-    if (tablet) {
-      const userLocation = await userLocationService.checkIn(tablet.id, result.user.id);
-      await pointService.checkIn(userLocation.id);
-      //TODO Check user can get the coupons
-    }
+    const userLocation = await userLocationService.checkIn(locationId, result.user.id);
+    await pointService.checkIn(userLocation.id);
+    //TODO Check user can get the coupons
+
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
+      model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.CHECKIN,
-      metadata: {},
-      event: 'authorizeCustomer',
-      status: REQUEST_STATUS.FAILED,
-      errorMessage: JSON.stringify(e.message)
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'verifyPhone'
+      }
     };
     await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);

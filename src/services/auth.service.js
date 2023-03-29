@@ -1,4 +1,4 @@
-import { User, Verification, EmailTemplate, Point, Config, UserLocation } from '@/models';
+import { User, Verification, EmailTemplate, Point, Config, UserLocation, Tablet } from '@/models';
 import { securityHelper, placeholderHelper } from '@/helpers';
 import {
   APP_MESSAGE,
@@ -89,31 +89,25 @@ export const register = async (phone, email, birthday, locationInfo) => {
 };
 
 export const authorizeTablet = async (identifier, password, res) => {
-  const user = await User.query()
-    .findOne({
-      userName: identifier,
-      status: USER_STATUS_MAPPER.ACTIVATED,
-      roleId: USER_ROLE_MAPPER.TABLET
-    })
-    .withGraphFetched('[role, avatar]')
+  const tablet = await Tablet.query()
+    .findOne({ name: identifier, status: USER_STATUS_MAPPER.ACTIVATED })
+    .withGraphFetched('[location]')
     .throwIfNotFound({
       message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
       type: 'NOT_FOUND'
     });
-
-  const isValidated = await securityHelper.validatePassword(password, user.password);
+  const isValidated = await securityHelper.validatePassword(password, tablet.password);
   if (!isValidated) {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = await securityHelper.genJwtToken(user.id, '24h');
-  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
+  const accessToken = await securityHelper.genJwtToken(tablet.id, '24h');
+  const refreshToken = await securityHelper.genRefreshToken(tablet.id, '24h');
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
-  const { role, ...rest } = user;
+
   return {
-    user: rest,
-    role,
+    ...tablet,
     accessToken,
     refreshToken
   };
@@ -227,6 +221,44 @@ export const authorizeCustomerFromTablet = async (identifier, res) => {
     }
   }
   const { role, ...rest } = user;
+  return {
+    user: rest,
+    role,
+    accessToken,
+    refreshToken
+  };
+};
+
+export const verifyPhone = async (token, res) => {
+  const verification = await Verification.query()
+    .findOne({
+      token,
+      status: VERIFICATION_STATUS_MAPPER.ACTIVATED,
+      type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE
+    })
+    .throwIfNotFound({
+      message: APP_MESSAGE.VERIFICATION.NOT_FOUND
+    });
+
+  const user = await User.query()
+    .updateAndFetchById(verification.victimId, {
+      status: USER_STATUS_MAPPER.ACTIVATED
+    })
+    .withGraphFetched('[role, avatar]');
+
+  await Verification.query()
+    .update({
+      status: VERIFICATION_STATUS_MAPPER.VERIFIED
+    })
+    .where({ id: verification.id });
+
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
+
+  if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
+
+  const { role, ...rest } = user;
+
   return {
     user: rest,
     role,

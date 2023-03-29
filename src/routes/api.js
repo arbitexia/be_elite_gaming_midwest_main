@@ -9,7 +9,8 @@ import {
   productController,
   rewardController,
   activityController,
-  configController
+  configController,
+  tabletController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -227,6 +228,34 @@ router.post(
   '/configs',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   configController.createConfig
+);
+router.get(
+  '/tablets',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  tabletController.getTablets
+);
+
+router.post(
+  '/tablet',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  tabletController.createTablet
+);
+
+router.put(
+  '/tablet',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  tabletController.updateTablet
+);
+router.delete(
+  '/tablet/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  tabletController.deleteTablet
+);
+
+router.post(
+  '/tablet/password',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  tabletController.changePasswordTablet
 );
 
 export default router;
