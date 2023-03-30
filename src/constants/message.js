@@ -56,6 +56,13 @@ const APP_MESSAGE = {
   CONFIG: {
     NOT_FOUND: 'Config does not exist!',
     SUCESS_UPDATE: 'Config has been updated!'
+  },
+  TABLET: {
+    DUPLICATED_NAME: 'Current tablet ID already exists!',
+    NOT_FOUND: 'Tablet ID does not exist!',
+    SUCESS_UPDATE: 'Tablet ID has been updated!',
+    SUCESS_CREATE: 'Tablet ID has been created!',
+    SUCCESS_USER_DELETE: 'Tablet ID has been deleted!'
   }
 };
 

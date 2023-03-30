@@ -1,4 +1,4 @@
-import { Point, UserLocation } from '@/models';
+import { Point, UserLocation, Config } from '@/models';
 import { APP_MESSAGE, DEAULT_INC_POINT } from '@/constants';
 import config from '@/config';
 
@@ -27,12 +27,17 @@ export const getPoint = async (userId, locationId) => {
 
 export const checkIn = async (userLocationId) => {
   const point = await Point.query().findOne({ userLocationId });
-  if (!point)
+  const configItem = await Config.query().first();
+  const dailyConfig = configItem?.daily ?? DEAULT_INC_POINT;
+  if (!point) {
     await Point.query().insert({
       userLocationId,
-      point: DEAULT_INC_POINT
+      point: dailyConfig,
+      updatedAt: new Date()
     });
-  else await Point.query().increment('point', DEAULT_INC_POINT).where({ userLocationId });
+  } else {
+    await Point.query().increment('point', dailyConfig).where({ userLocationId });
+  }
 };
 
 export const addPoint = async (userLocationId, pointCount) => {

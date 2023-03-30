@@ -15,7 +15,7 @@ export const loadUsers = async (filterBy, cursor) => {
 
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
-    .withGraphFetched('[role, avatar]');
+    .withGraphFetched('[role, avatar, userLocations]');
 
   return {
     data: results,
@@ -27,7 +27,7 @@ export const loadUsers = async (filterBy, cursor) => {
 };
 
 export const getOne = async (id) => {
-  const user = await User.query().findOne({ id }).withGraphFetched('[role, avatar]');
+  const user = await User.query().findOne({ id }).withGraphFetched('[role, avatar, userLocations]');
   return user;
 };
 

@@ -9,3 +9,4 @@ export * as userLocationService from './user-location.service';
 export * as rewardService from './reward.service';
 export * as activityService from './activity.service';
 export * as configService from './config.service';
+export * as tabletService from './tablet.service';
