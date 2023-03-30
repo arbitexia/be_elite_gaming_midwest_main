@@ -56,6 +56,7 @@ router.get(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.getUser
 );
+//TODO: Remove
 router.post(
   '/password',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),

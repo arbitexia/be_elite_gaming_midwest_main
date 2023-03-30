@@ -16,7 +16,6 @@ export const loadUsers = async (filterBy, cursor) => {
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
     .withGraphFetched('[role, avatar, userLocations]');
-
   return {
     data: results,
     pageInfo: {
@@ -37,15 +36,23 @@ export const loadRoles = async () => {
 };
 
 export const updateUser = async (id, input) => {
+  const { firstName, lastName, birthday, email, firstLogin, status, roleId } = input;
   const user = await User.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'
   });
-
+  const userName = firstName && lastName ? `${firstName}${lastName}` : null;
   const updatedUser = await user
     .$query()
     .updateAndFetch({
-      ...input
+      firstName,
+      lastName,
+      email,
+      birthday,
+      firstLogin,
+      status,
+      roleId,
+      userName
     })
     .withGraphFetched('[role, avatar]');
 

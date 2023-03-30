@@ -27,7 +27,7 @@ const getPartialLink = (useFor) => {
   return null;
 };
 
-const placeholderHelper = async ({ template, userInfo, adminInfo, ...rest }) => {
+const placeholderHelper = async ({ template, userInfo, adminInfo, pointInfo, ...rest }) => {
   let htmlBody = template.body;
   let token;
   const { subject } = template;
@@ -45,6 +45,15 @@ const placeholderHelper = async ({ template, userInfo, adminInfo, ...rest }) => 
     const expression = /~USER_FULL_NAME!/g;
     const value = `${userInfo.firstName} ${userInfo.lastName}`;
     htmlBody = htmlBody.replace(expression, value);
+  }
+
+  if (placeholders.includes('TOTAL_POINT')) {
+    const pointEx = /~POINT!/g;
+    const totalPointEx = /~TOTAL_POINT!/g;
+    const pointValue = pointInfo.point;
+    const totalPointValue = pointInfo.totalPoint;
+    htmlBody = htmlBody.replace(pointEx, pointValue);
+    htmlBody = htmlBody.replace(totalPointEx, totalPointValue);
   }
 
   return { htmlBody, subject, token };

@@ -14,7 +14,6 @@ export const createConfig = async (req, res) => {
     const {
       input: { id, daily, weekly, monthly }
     } = req.body;
-    console.log(req.body);
     const result = await configService.save({ id, daily, weekly, monthly });
     res.status(200).json(result);
   } catch (e) {

@@ -36,7 +36,7 @@ export const createNewUser = async (param) => {
       email,
       location: address,
       phone,
-      birthday: '1991-10-10',
+      birthday: birthday ?? '1991-10-10',
       status,
       roleId
     })
@@ -214,7 +214,22 @@ export const authorizeCustomerFromTablet = async (identifier, res) => {
         ' '
       )[0];
       if (Number(distance) > 0) {
-        await pointService.addPoint(userLocation.id, dailyConfig);
+        const pointResult = await pointService.addPoint(userLocation.id, dailyConfig);
+        if (user?.email) {
+          const template = await EmailTemplate.query().findOne({
+            useFor: EMAIL_TEMPLATE_MAPPER.ADD_POINT_EMAIL
+          });
+          const { subject, htmlBody } = await placeholderHelper({
+            template,
+            userInfo: user,
+            pointInfo: { point: dailyConfig, totalPoint: pointResult?.totalPoint ?? dailyConfig }
+          });
+          try {
+            const awsProvider = new AWSProvider();
+            await awsProvider.sendEmail(user.email, subject, htmlBody);
+          } finally {
+          }
+        }
       }
     } else {
       await pointService.addPoint(userLocation.id, dailyConfig);

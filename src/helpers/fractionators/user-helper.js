@@ -7,8 +7,11 @@ export const filter = (params) => {
   queryBuilder = User.query();
   if (params.status) {
     queryBuilder.where((builder) => {
-      if (params.status === USER_FILTER_TYPE_MAPPER.ALL) {
-        return builder.whereNot({ status: USER_STATUS_MAPPER.ARCHIVED });
+      if (params.status === USER_STATUS_MAPPER.VERIFY_PHONE) {
+        return builder.where({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
+      }
+      if (params.status === USER_STATUS_MAPPER.VERIFY_EMAIL) {
+        return builder.where({ status: USER_STATUS_MAPPER.VERIFY_EMAIL });
       }
       if (params.status === USER_FILTER_TYPE_MAPPER.ACTIVE_USER) {
         return builder
