@@ -12,7 +12,12 @@ export const loadProducts = async (filterBy, cursor) => {
   queryBuilder = filter(filterBy);
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
-    .withGraphFetched('[gallery.asset]');
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'PRODUCT');
+      }
+    });
 
   return {
     data: results,
@@ -24,7 +29,14 @@ export const loadProducts = async (filterBy, cursor) => {
 };
 
 export const getOne = async (id) => {
-  const user = await Product.query().findOne({ id }).withGraphFetched('[gallery.asset]');
+  const user = await Product.query()
+    .findOne({ id })
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'PRODUCT');
+      }
+    });
   return user;
 };
 
@@ -39,7 +51,12 @@ export const createProduct = async ({
 }) => {
   const product = await Product.query()
     .insertAndFetch({ name, locationId, amount, point, status, short, description })
-    .withGraphFetched('[gallery.asset]');
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'PRODUCT');
+      }
+    });
   return product;
 };
 
@@ -63,7 +80,12 @@ export const updateProduct = async (
       short,
       description
     })
-    .withGraphFetched('[gallery.asset]');
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'PRODUCT');
+      }
+    });
 
   return updatedProduct;
 };
@@ -80,6 +102,13 @@ export const deleteProduct = async (id) => {
 };
 
 export const getProductsByIds = async (ids) => {
-  const products = await Product.query().findByIds(ids).withGraphFetched('[gallery.asset]');
+  const products = await Product.query()
+    .findByIds(ids)
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'PRODUCT');
+      }
+    });
   return products;
 };

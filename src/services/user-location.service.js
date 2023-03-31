@@ -1,14 +1,6 @@
-import { UserLocation, Point } from '@/models';
-import { APP_MESSAGE } from '@/constants';
+import { UserLocation } from '@/models';
 
 export const checkIn = async (locationId, userId) => {
-  // const userLocation = await UserLocation.query()
-  //   .findOne({
-  //     userId: tabletId
-  //   })
-  //   .throwIfNotFound({
-  //     message: APP_MESSAGE.USER.NOT_FOUND
-  //   });
   const location = await UserLocation.query().findOne({
     userId,
     locationId
@@ -28,6 +20,11 @@ export const getOneByTablet = async (tabletId) => {
     .findOne({
       userId: tabletId
     })
-    .withGraphFetched('[location.[gallery.asset]]');
+    .withGraphFetched('[location.[gallery(filterByModel).asset]]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'LOCATION');
+      }
+    });
   return userLocation;
 };

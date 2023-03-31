@@ -13,7 +13,7 @@ import { BadRequest } from '@/provider/error';
 import config from '@/config';
 import twilio from 'twilio';
 import { formatDistanceStrict } from 'date-fns';
-import { pointService } from '@/services';
+import { pointService, userLocationService } from '@/services';
 
 const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN);
 
@@ -186,7 +186,7 @@ export const authorizeCustomer = async (identifier, res) => {
   };
 };
 
-export const authorizeCustomerFromTablet = async (identifier, res) => {
+export const authorizeCustomerFromTablet = async (identifier, locationId, res) => {
   const user = await User.query()
     .findOne({
       phone: identifier,
@@ -206,7 +206,7 @@ export const authorizeCustomerFromTablet = async (identifier, res) => {
 
   const configItem = await Config.query().first();
   const dailyConfig = configItem?.daily ?? 50;
-  const userLocation = await UserLocation.query().findOne({ userId: user.id });
+  const userLocation = await userLocationService.checkIn(locationId, user.id);
   if (userLocation) {
     const point = await Point.query().findOne({ userLocationId: userLocation.id });
     if (point?.updatedAt) {
@@ -235,45 +235,8 @@ export const authorizeCustomerFromTablet = async (identifier, res) => {
       await pointService.addPoint(userLocation.id, dailyConfig);
     }
   }
-  const { role, ...rest } = user;
-  return {
-    user: rest,
-    role,
-    accessToken,
-    refreshToken
-  };
-};
-
-export const verifyPhone = async (token, res) => {
-  const verification = await Verification.query()
-    .findOne({
-      token,
-      status: VERIFICATION_STATUS_MAPPER.ACTIVATED,
-      type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE
-    })
-    .throwIfNotFound({
-      message: APP_MESSAGE.VERIFICATION.NOT_FOUND
-    });
-
-  const user = await User.query()
-    .updateAndFetchById(verification.victimId, {
-      status: USER_STATUS_MAPPER.ACTIVATED
-    })
-    .withGraphFetched('[role, avatar]');
-
-  await Verification.query()
-    .update({
-      status: VERIFICATION_STATUS_MAPPER.VERIFIED
-    })
-    .where({ id: verification.id });
-
-  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
-  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
-
-  if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
 
   const { role, ...rest } = user;
-
   return {
     user: rest,
     role,

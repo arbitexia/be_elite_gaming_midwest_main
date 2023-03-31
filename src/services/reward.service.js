@@ -18,7 +18,12 @@ export const filter = async (filterBy, cursor) => {
     queryBuilder = filter(filterBy);
     const { results, total } = await queryBuilder
       .page(pageCursor.page, pageCursor.size)
-      .withGraphFetched('[gallery.asset, reward.product.[gallery.asset]]');
+      .withGraphFetched('[gallery.asset, reward.product.[gallery(filterByModel).asset]]')
+      .modifiers({
+        filterByModel(builder) {
+          builder.where('model', 'PRODUCT');
+        }
+      });
 
     return {
       data: results,

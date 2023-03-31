@@ -41,7 +41,7 @@ export const updateUser = async (id, input) => {
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'
   });
-  const userName = firstName && lastName ? `${firstName}${lastName}` : null;
+  const userName = firstName && lastName ? `${firstName}${lastName}` : undefined;
   const updatedUser = await user
     .$query()
     .updateAndFetch({
@@ -49,7 +49,7 @@ export const updateUser = async (id, input) => {
       lastName,
       email,
       birthday,
-      firstLogin,
+      firstLogin: firstLogin ?? undefined,
       status,
       roleId,
       userName
