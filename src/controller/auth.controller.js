@@ -137,8 +137,8 @@ export const authorizeCustomer = async (req, res) => {
 
 export const authorizeCustomerFromTablet = async (req, res) => {
   try {
-    const { identifier } = req.body;
-    const result = await authService.authorizeCustomerFromTablet(identifier, res);
+    const { identifier, locationId } = req.body;
+    const result = await authService.authorizeCustomerFromTablet(identifier, locationId, res);
     const activityToSave = {
       userId: result.user.id,
       victimId: result.user.id,
@@ -182,8 +182,10 @@ export const verifyPhone = async (req, res) => {
   try {
     const { token, locationId } = req.body;
     const result = await authService.verifyPhone(token, res);
-    const userLocation = await userLocationService.checkIn(locationId, result.user.id);
-    await pointService.checkIn(userLocation.id);
+    if (locationId) {
+      const userLocation = await userLocationService.checkIn(locationId, result.user.id);
+      await pointService.checkIn(userLocation.id);
+    }
     //TODO Check user can get the coupons
 
     res.status(200).json(result);

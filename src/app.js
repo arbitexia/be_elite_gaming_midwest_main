@@ -21,6 +21,7 @@ app.use(
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://localhost:3002',
       'https://admin.elitegaming.rpatdev.com',
       'https://customer.elitegaming.rpatdev.com',
       'https://tablet.elitegaming.rpatdev.com',

@@ -2,7 +2,7 @@ import { ref, fn } from 'objection';
 import { Location } from '@/models';
 
 export const filter = (params) => {
-  let queryBuilder = Location.query();
+  let queryBuilder = Location.query().where('status', 'OPEN');
   if (params?.locationId) {
     queryBuilder.where((builder) => {
       builder.where({ id: Number(params.locationId) });

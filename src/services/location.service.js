@@ -6,12 +6,26 @@ export const filter = async (filterBy) => {
   let queryBuilder;
   const { filter } = await fractionateHelper('location');
   queryBuilder = filter(filterBy);
-  const locations = await queryBuilder.select('*').withGraphFetched('[gallery.asset]');
+  const locations = await queryBuilder
+    .select('*')
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'LOCATION');
+      }
+    });
   return locations;
 };
 
 export const getOne = async (id) => {
-  const location = await Location.query().findOne({ id }).withGraphFetched('[gallery.asset]');
+  const location = await Location.query()
+    .findOne({ id })
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'LOCATION');
+      }
+    });
   return location;
 };
 
@@ -25,7 +39,12 @@ export const create = async (input) => {
       type: input.type,
       description: input.description
     })
-    .withGraphFetched('[gallery.asset]');
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'LOCATION');
+      }
+    });
   return newLocation;
 };
 
@@ -45,7 +64,12 @@ export const update = async (id, input) => {
       type: input.type,
       description: input.description
     })
-    .withGraphFetched('[gallery.asset]');
+    .withGraphFetched('[gallery(filterByModel).asset]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'LOCATION');
+      }
+    });
 
   return updatedLocation;
 };
