@@ -107,19 +107,29 @@ export const getByUserId = async (userId) => {
 };
 
 export const getRewards = async (filter) => {
-  let qb = Reward.query();
-  if (filter?.locationId && Number(filter.locationId) !== 0) {
-    qb.where('locationId', Number(filter.locationId));
-  }
-  //TODO add the filter by point
-  qb.withGraphJoined('[location,  product.[gallery(filterByModel).asset]]')
-    .modifiers({
-      filterByModel(builder) {
-        builder.where('model', 'PRODUCT');
+  try {
+    let qb = Reward.query();
+    if (Number(filter.fromPoint) >= 0 && Number(filter.toPoint) > 0) {
+      if (Number(filter.toPoint) === 1) {
+        qb.joinRelated('product').where('product.point', '>', filter.fromPoint);
+      } else {
+        qb.joinRelated('product').whereBetween('product.point', [filter.fromPoint, filter.toPoint]);
       }
-    })
-    .orderBy('createdAt', 'DESC');
+    }
+    if (filter?.locationId && Number(filter.locationId) !== 0) {
+      qb.where('locationId', Number(filter.locationId));
+    }
+    qb.withGraphFetched('[location,  product.[gallery(filterByModel).asset]]')
+      .modifiers({
+        filterByModel(builder) {
+          builder.where('model', 'PRODUCT');
+        }
+      })
+      .orderBy('createdAt', 'DESC');
 
-  const result = await qb.withGraphJoined('[location, product]').orderBy('createdAt', 'DESC');
-  return result;
+    const result = await qb;
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
 };

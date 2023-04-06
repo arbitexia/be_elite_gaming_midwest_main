@@ -22,8 +22,8 @@ export const getTransaction = async (req, res) => {
 };
 
 export const createTransaction = async (req, res) => {
+  const { input } = req.body;
   try {
-    const { input } = req.body;
     const result = await transactionService.createTransaction(input);
     //TODO Send Email to customer
     const activityToSave = {
@@ -37,14 +37,14 @@ export const createTransaction = async (req, res) => {
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
-      userId: user.id,
+      userId: input.userId,
       model: ACTIVITY_MODEL.AWARD,
       type: ACTIVITY_TYPE.CREATE,
       metadata: {
         ...req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
-        function: 'createAward'
+        function: 'createTransaction'
       }
     };
     await activityService.createActivity(activityToSave);
@@ -53,9 +53,9 @@ export const createTransaction = async (req, res) => {
 };
 
 export const updateTransaction = async (req, res) => {
+  const { assignee, status } = req.body;
+  const { id } = req.params;
   try {
-    const { assignee, status } = req.body;
-    const { id } = req.params;
     const result = await transactionService.updateTransaction(id, assignee.id, status);
     //TODO Send Email to customer
     //TODO Activity
@@ -70,7 +70,7 @@ export const updateTransaction = async (req, res) => {
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
-      userId: user.id,
+      userId: assignee.id,
       model: ACTIVITY_MODEL.AWARD,
       type: ACTIVITY_TYPE.UPDATE,
       metadata: {

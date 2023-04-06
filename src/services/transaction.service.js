@@ -57,7 +57,7 @@ export const updateTransaction = async (id, assigneeId, status) => {
     .updateAndFetch({
       assigneeId,
       status: status,
-      acceptedA: new Date()
+      acceptedAt: new Date()
     })
     .withGraphFetched('[user, reward.[product], location, assignee ]');
 
