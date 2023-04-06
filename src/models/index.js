@@ -13,3 +13,4 @@ export { default as Reward } from './reward';
 export { default as Activity } from './activity';
 export { default as Config } from './config';
 export { default as Tablet } from './tablet';
+export { default as Transaction } from './transaction';

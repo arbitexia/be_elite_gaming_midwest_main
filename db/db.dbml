@@ -26,6 +26,7 @@ Table users [note: 'user table'] {
   status user_status
   provider user_provider
   role_id int [not null, note: 'role id']
+  coupon  int
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }

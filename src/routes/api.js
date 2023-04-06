@@ -10,7 +10,8 @@ import {
   rewardController,
   activityController,
   configController,
-  tabletController
+  tabletController,
+  transactionController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -187,26 +188,43 @@ router.delete(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   awardController.declineAward
 );
+
 router.get(
   '/rewards',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   rewardController.filter
 );
+
 router.get(
   '/rewards/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   rewardController.getOne
 );
+
+router.get(
+  '/reward/items',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.getRewards
+);
+
+router.get(
+  '/rewards/user/:userId',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  rewardController.getByUserId
+);
+
 router.post(
   '/rewards',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   rewardController.create
 );
+
 router.put(
   '/rewards/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   rewardController.update
 );
+
 router.delete(
   '/rewards/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
@@ -257,6 +275,32 @@ router.post(
   '/tablet/password',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   tabletController.changePasswordTablet
+);
+
+router.get(
+  '/transactions',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  transactionController.getTransactions
+);
+router.get(
+  '/transactions/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  transactionController.getTransaction
+);
+router.post(
+  '/transaction',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  transactionController.createTransaction
+);
+router.put(
+  '/transaction/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  transactionController.updateTransaction
+);
+router.delete(
+  '/transaction/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  transactionController.deleteTransaction
 );
 
 export default router;

@@ -27,6 +27,7 @@ export default {
       type: 'string',
       enum: ['ACTIVATED', 'DISABLED', 'ARCHIVED', 'VERIFY_PHONE', 'VERIFY_EMAIL']
     },
-    roleId: { type: 'integer' }
+    roleId: { type: 'integer' },
+    coupon: { type: 'integer' }
   }
 };

@@ -72,6 +72,7 @@ CREATE TABLE "users" (
   "location" jsonb,
   "birthday" date,
   "asset_id" int,
+  "coupon" int,
   "status" user_status,
   "role_id" int NOT NULL,
   "created_at" timestamp DEFAULT (now()),

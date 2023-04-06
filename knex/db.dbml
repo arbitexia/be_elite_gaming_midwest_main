@@ -253,7 +253,7 @@ Table configs [note: "config table"] {
 
 Table tablets [note: "tablet table"] {
   id int [pk, increment]
-  name int 
+  name varchar 
   password varchar   
   location_id int
   status user_status
@@ -262,3 +262,31 @@ Table tablets [note: "tablet table"] {
 }
 
 Ref: locations.id < tablets.location_id
+
+Enum transaction_status {
+  WAITING
+  ACCEPTED
+  DECLINED
+}
+Enum transaction_type {
+  POINT
+  COUPON  
+}
+
+Table transactions [note: "transactions table"] {
+  id int [pk, increment]
+  user_id int
+  reword_id int   
+  location_id int
+  assignee_id int
+  status transaction_status
+  type transaction_type
+  amount float
+  accepted_at timestamp
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: locations.id < transactions.location_id
+Ref: users.id < transactions.user_id
+Ref: users.id < transactions.assignee_id

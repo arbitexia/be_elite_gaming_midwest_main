@@ -1,0 +1,10 @@
+export const TRANSACTION_STATUS = {
+  WAITING: 'WAITING',
+  ACCEPTED: 'ACCEPTED',
+  DECLINED: 'DECLINED'
+};
+
+export const TRANSACTION_TYPE = {
+  POINT: 'POINT',
+  COUPON: 'COUPON'
+};

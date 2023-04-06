@@ -3,6 +3,9 @@ import { Activity } from '@/models';
 export const filter = (params) => {
   let queryBuilder;
   queryBuilder = Activity.query();
+  if (params?.userId) {
+    queryBuilder.where('userId', params.userId);
+  }
   if (params?.modelType && params.modelType !== 'ALL') {
     queryBuilder.where('model', params.modelType);
   }
