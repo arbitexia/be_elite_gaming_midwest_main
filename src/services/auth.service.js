@@ -6,7 +6,8 @@ import {
   USER_ROLE_MAPPER,
   VERIFICATION_TYPE_MAPPER,
   VERIFICATION_STATUS_MAPPER,
-  EMAIL_TEMPLATE_MAPPER
+  EMAIL_TEMPLATE_MAPPER,
+  DEFAULT_COUPON
 } from '@/constants';
 import { AWSProvider } from '@/provider';
 import { BadRequest } from '@/provider/error';
@@ -38,7 +39,8 @@ export const createNewUser = async (param) => {
       phone,
       birthday: birthday ?? '1991-10-10',
       status,
-      roleId
+      roleId,
+      coupon: DEFAULT_COUPON
     })
     .withGraphFetched('[role, avatar]');
   return newUser;
@@ -69,6 +71,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
       birthday,
       roleId: USER_ROLE_MAPPER.USER,
       firstLogin: locationInfo,
+      coupon: DEFAULT_COUPON,
       status: USER_STATUS_MAPPER.VERIFY_PHONE
     })
     .withGraphFetched('[role, avatar]');
@@ -237,6 +240,44 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
   }
 
   const { role, ...rest } = user;
+  return {
+    user: rest,
+    role,
+    accessToken,
+    refreshToken
+  };
+};
+
+export const verifyPhone = async (token, res) => {
+  const verification = await Verification.query()
+    .findOne({
+      token,
+      status: VERIFICATION_STATUS_MAPPER.ACTIVATED,
+      type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE
+    })
+    .throwIfNotFound({
+      message: APP_MESSAGE.VERIFICATION.NOT_FOUND
+    });
+
+  const user = await User.query()
+    .updateAndFetchById(verification.victimId, {
+      status: USER_STATUS_MAPPER.ACTIVATED
+    })
+    .withGraphFetched('[role, avatar]');
+
+  await Verification.query()
+    .update({
+      status: VERIFICATION_STATUS_MAPPER.VERIFIED
+    })
+    .where({ id: verification.id });
+
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
+
+  if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
+
+  const { role, ...rest } = user;
+
   return {
     user: rest,
     role,

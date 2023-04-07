@@ -1,4 +1,4 @@
-import { Reward, Location } from '@/models';
+import { Reward, Location, UserLocation } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
@@ -18,10 +18,15 @@ export const filter = async (filterBy, cursor) => {
     queryBuilder = filter(filterBy);
     const { results, total } = await queryBuilder
       .page(pageCursor.page, pageCursor.size)
-      .withGraphFetched('[gallery.asset, reward.product.[gallery(filterByModel).asset]]')
+      .withGraphFetched(
+        '[gallery(filterLocationByModel).asset, reward.[location, product.[gallery(filterByModel).asset]]]'
+      )
       .modifiers({
         filterByModel(builder) {
           builder.where('model', 'PRODUCT');
+        },
+        filterLocationByModel(builder) {
+          builder.where('model', 'LOCATION');
         }
       });
 
@@ -89,4 +94,42 @@ export const destroy = async (id) => {
     .throwIfNotFound({ message: APP_MESSAGE.REWARD.NOT_FOUND, type: 'NOT_FOUND' });
   await reward.$query().delete();
   return { message: APP_MESSAGE.REWARD.SUCCESS_DELETE };
+};
+
+export const getByUserId = async (userId) => {
+  const userLocation = await UserLocation.query().where('userId', userId);
+  const locationList = userLocation?.map((obj) => obj.locationId);
+  const qb = await Reward.query()
+    .withGraphJoined('[location, product]')
+    .whereIn('locationId', locationList)
+    .orderBy('createdAt', 'DESC');
+  return qb;
+};
+
+export const getRewards = async (filter) => {
+  try {
+    let qb = Reward.query();
+    if (Number(filter.fromPoint) >= 0 && Number(filter.toPoint) > 0) {
+      if (Number(filter.toPoint) === 1) {
+        qb.joinRelated('product').where('product.point', '>', filter.fromPoint);
+      } else {
+        qb.joinRelated('product').whereBetween('product.point', [filter.fromPoint, filter.toPoint]);
+      }
+    }
+    if (filter?.locationId && Number(filter.locationId) !== 0) {
+      qb.where('locationId', Number(filter.locationId));
+    }
+    qb.withGraphFetched('[location,  product.[gallery(filterByModel).asset]]')
+      .modifiers({
+        filterByModel(builder) {
+          builder.where('model', 'PRODUCT');
+        }
+      })
+      .orderBy('createdAt', 'DESC');
+
+    const result = await qb;
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
 };
