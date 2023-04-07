@@ -143,11 +143,10 @@ export const authorizeCustomerFromTablet = async (req, res) => {
       userId: result.user.id,
       victimId: result.user.id,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.SIGNUP,
+      type: ACTIVITY_TYPE.CHECKIN,
       metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
     };
     if (result.user.status === USER_STATUS_MAPPER.ACTIVATED) {
-      //TODO add auth Activity
       await activityService.createActivity(activityToSave);
       res.status(200).json({ message: APP_MESSAGE.USER.SUCCESS, ...result });
     } else {
@@ -164,7 +163,7 @@ export const authorizeCustomerFromTablet = async (req, res) => {
     }
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.SIGNUP,
+      type: ACTIVITY_TYPE.CHECKIN,
       model: ACTIVITY_MODEL.USER,
       metadata: {
         ...req.body,

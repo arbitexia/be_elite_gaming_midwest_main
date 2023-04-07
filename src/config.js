@@ -14,13 +14,13 @@ export default {
   DB_USER: process.env.DB_USER,
   IPDATA_API_KEY: process.env.IPDATA_API_KEY,
   AWS: {
-    REGION: process.env.DEFAULT_REGION,
-    ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
-    ACCESS_SECRET_KEY: process.env.SECRET_ACCESS_KEY,
+    REGION: process.env.AWS_DEFAULT_REGION,
+    ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    ACCESS_SECRET_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     SES: {
-      SUPPORT_EMAIL: process.env.SUPPORT_EMAIL
+      SUPPORT_EMAIL: process.env.AWS_SUPPORT_EMAIL
     },
-    S3_ASSET_BUCKET: process.env.S3_ASSET_BUCKET
+    S3_ASSET_BUCKET: process.env.AWS_S3_ASSET_BUCKET
   },
   TWILLIO: {
     ACCOUNT_SID: process.env.TWILLIO_ACCOUNT_SID,
