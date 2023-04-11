@@ -36,7 +36,7 @@ export const loadRoles = async () => {
 };
 
 export const updateUser = async (id, input) => {
-  const { firstName, lastName, birthday, email, firstLogin, status, roleId } = input;
+  const { firstName, lastName, birthday, email, firstLogin, status, roleId, avatar } = input;
   const user = await User.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'
@@ -52,6 +52,7 @@ export const updateUser = async (id, input) => {
       firstLogin: firstLogin ?? undefined,
       status,
       roleId,
+      assetId: avatar?.id ?? undefined,
       userName
     })
     .withGraphFetched('[role, avatar]');
