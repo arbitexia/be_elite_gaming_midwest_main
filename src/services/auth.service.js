@@ -29,17 +29,20 @@ export const createNewUser = async (param) => {
   const user = await User.query().findOne({ email: param.email });
   if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_EMAIL);
 
-  const { firstName, lastName, email, address, phone, birthday, status, roleId } = param;
+  const { firstName, lastName, email, address, phone, birthday, status, roleId, avatar } = param;
+  const userName = firstName && lastName ? `${firstName}${lastName}` : undefined;
   const newUser = await User.query()
     .insertAndFetch({
       firstName,
       lastName,
+      userName,
       email,
       location: address,
       phone,
       birthday: birthday ?? '1991-10-10',
       status,
       roleId,
+      assetId: avatar?.id ?? undefined,
       coupon: DEFAULT_COUPON
     })
     .withGraphFetched('[role, avatar]');
