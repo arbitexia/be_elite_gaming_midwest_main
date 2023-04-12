@@ -1,6 +1,6 @@
-import { Reward, Location, UserLocation } from '@/models';
+import { Reward, UserLocation } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
-import { APP_MESSAGE } from '@/constants';
+import { APP_MESSAGE, DEFAULT_REWARD_POINT, DEFAULT_REWARD_COUPON } from '@/constants';
 import config from '@/config';
 
 const TEST = config.NODE_ENV === 'test';
@@ -60,25 +60,22 @@ export const getOne = async (id) => {
 export const create = async (inputs) => {
   let insertPromises = [];
   inputs.forEach((input) => {
-    insertPromises.push(Reward.query().insert(input).withGraphFetched('[location, product]'));
+    const dataToInsert = { ...input, point: DEFAULT_REWARD_POINT, coupon: DEFAULT_REWARD_COUPON };
+    insertPromises.push(
+      Reward.query().insert(dataToInsert).withGraphFetched('[location, product]')
+    );
   });
   const rewards = await Promise.all(insertPromises).then((res) => res);
   return rewards;
 };
 
-/**
- * update record
- * @param {Number} id
- * @param {Object} input
- * @returns
- */
-export const update = async (id, input) => {
+export const update = async (id, data) => {
   const reward = await Reward.query()
     .findById(id)
     .throwIfNotFound({ message: APP_MESSAGE.REWARD.NOT_FOUND, type: 'NOT_FOUND' });
   const updatedReward = await reward
     .$query()
-    .updateAndFetch(input)
+    .updateAndFetch(data)
     .withGraphFetched('[location, product]');
   return updatedReward;
 };
@@ -107,29 +104,25 @@ export const getByUserId = async (userId) => {
 };
 
 export const getRewards = async (filter) => {
-  try {
-    let qb = Reward.query();
-    if (Number(filter.fromPoint) >= 0 && Number(filter.toPoint) > 0) {
-      if (Number(filter.toPoint) === 1) {
-        qb.joinRelated('product').where('product.point', '>', filter.fromPoint);
-      } else {
-        qb.joinRelated('product').whereBetween('product.point', [filter.fromPoint, filter.toPoint]);
-      }
+  let qb = Reward.query();
+  if (Number(filter.fromPoint) >= 0 && Number(filter.toPoint) > 0) {
+    if (Number(filter.toPoint) === 1) {
+      qb.joinRelated('product').where('product.point', '>', filter.fromPoint);
+    } else {
+      qb.joinRelated('product').whereBetween('product.point', [filter.fromPoint, filter.toPoint]);
     }
-    if (filter?.locationId && Number(filter.locationId) !== 0) {
-      qb.where('locationId', Number(filter.locationId));
-    }
-    qb.withGraphFetched('[location,  product.[gallery(filterByModel).asset]]')
-      .modifiers({
-        filterByModel(builder) {
-          builder.where('model', 'PRODUCT');
-        }
-      })
-      .orderBy('createdAt', 'DESC');
-
-    const result = await qb;
-    return result;
-  } catch (error) {
-    console.log(error);
   }
+  if (filter?.locationId && Number(filter.locationId) !== 0) {
+    qb.where('locationId', Number(filter.locationId));
+  }
+  qb.withGraphFetched('[location,  product.[gallery(filterByModel).asset]]')
+    .modifiers({
+      filterByModel(builder) {
+        builder.where('model', 'PRODUCT');
+      }
+    })
+    .orderBy('createdAt', 'DESC');
+
+  const result = await qb;
+  return result;
 };

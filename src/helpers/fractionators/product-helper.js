@@ -5,17 +5,11 @@ export const filter = (params) => {
   try {
     let queryBuilder;
     queryBuilder = Product.query();
-    if (params?.pointFrom) {
-      if (params.pointTo) queryBuilder.whereBetween('point', [params.pointFrom, params.pointTo]);
-      else queryBuilder.where('point', '>', params.pointFrom);
-    }
-
     if (params?.search) {
       queryBuilder.where((builder) => {
         builder
           .where(fn.lower(ref('name')), 'like', `%${params.search.toLowerCase()}%`)
           .orWhere(fn.lower(ref('short')), 'like', `%${params.search.toLowerCase()}%`)
-          .orWhere(fn.lower(ref('point').castText()), 'like', `%${params.search.toLowerCase()}%`)
           .orWhere(fn.lower(ref('amount').castText()), 'like', `%${params.search.toLowerCase()}%`);
       });
     }
@@ -32,9 +26,6 @@ export const filter = (params) => {
           break;
         case 'short':
           queryBuilder.orderBy('short', sortBy);
-          break;
-        case 'point':
-          queryBuilder.orderBy('point', sortBy);
           break;
         case 'status':
           queryBuilder.orderBy('status', sortBy);

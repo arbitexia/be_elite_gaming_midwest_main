@@ -279,6 +279,7 @@ Table transactions [note: "transactions table"] {
   reword_id int   
   location_id int
   assignee_id int
+  point_id int
   status transaction_status
   type transaction_type
   amount float
@@ -290,3 +291,17 @@ Table transactions [note: "transactions table"] {
 Ref: locations.id < transactions.location_id
 Ref: users.id < transactions.user_id
 Ref: users.id < transactions.assignee_id
+Ref: points.id < transactions.point_id
+
+Table rewards [note: "rewards table"] {
+  id int [pk, increment]    
+  location_id int
+  product_id int
+  point int
+  coupon int
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Ref: locations.id < rewards.location_id
+Ref: products.id < rewards.product_id

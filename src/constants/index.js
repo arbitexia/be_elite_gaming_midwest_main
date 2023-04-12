@@ -1,4 +1,4 @@
-export { DEAULT_INC_POINT } from './common';
+export { DEAULT_INC_POINT, DEFAULT_REWARD_POINT, DEFAULT_REWARD_COUPON } from './common';
 
 export { default as APP_MESSAGE } from './message';
 export {

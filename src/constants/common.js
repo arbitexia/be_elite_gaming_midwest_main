@@ -1,1 +1,3 @@
 export const DEAULT_INC_POINT = 50;
+export const DEFAULT_REWARD_POINT = 10000;
+export const DEFAULT_REWARD_COUPON = 10000;

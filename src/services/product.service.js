@@ -40,17 +40,9 @@ export const getOne = async (id) => {
   return user;
 };
 
-export const createProduct = async ({
-  name,
-  locationId,
-  amount,
-  point,
-  status,
-  short,
-  description
-}) => {
+export const createProduct = async ({ name, locationId, amount, status, short, description }) => {
   const product = await Product.query()
-    .insertAndFetch({ name, locationId, amount, point, status, short, description })
+    .insertAndFetch({ name, locationId, amount, status, short, description })
     .withGraphFetched('[gallery(filterByModel).asset]')
     .modifiers({
       filterByModel(builder) {
@@ -62,7 +54,7 @@ export const createProduct = async ({
 
 export const updateProduct = async (
   id,
-  { name, locationId, amount, point, status, short, description }
+  { name, locationId, amount, status, short, description }
 ) => {
   const product = await Product.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.PRODUCT.NOT_FOUND,
@@ -75,7 +67,6 @@ export const updateProduct = async (
       name,
       locationId,
       amount,
-      point,
       status,
       short,
       description
