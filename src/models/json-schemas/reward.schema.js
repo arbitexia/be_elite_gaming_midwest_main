@@ -4,6 +4,8 @@ export default {
   properties: {
     id: { type: 'integer' },
     locationId: { type: 'integer' },
-    productId: { type: 'integer' }
+    productId: { type: 'integer' },
+    point: { type: 'integer' },
+    coupon: { type: 'integer' }
   }
 };

@@ -7,6 +7,7 @@ export default {
     rewardId: { type: 'integer' },
     locationId: { type: 'integer' },
     assigneeId: { type: 'integer' },
+    pointId: { type: 'integer' },
     status: {
       type: 'string',
       enum: ['ACCEPTED', 'DECLINED', 'WAITING']

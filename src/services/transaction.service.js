@@ -1,7 +1,8 @@
-import { Point, Transaction } from '@/models';
+import { Point, Transaction, User } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
-import { APP_MESSAGE } from '@/constants';
+import { APP_MESSAGE, TRANSACTION_TYPE } from '@/constants';
 import config from '@/config';
+import { ref, raw } from 'objection';
 
 const TEST = config.NODE_ENV === 'test';
 
@@ -12,7 +13,7 @@ export const loadTransactions = async (filterBy, cursor) => {
   queryBuilder = filter(filterBy);
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
-    .withGraphFetched('[user, reward.[product], location, assignee ]');
+    .withGraphFetched('[user, reward.[product], location, assignee, point ]');
   return {
     data: results,
     pageInfo: {
@@ -25,7 +26,7 @@ export const loadTransactions = async (filterBy, cursor) => {
 export const getOne = async (id) => {
   const transaction = await Transaction.query()
     .findOne({ id })
-    .withGraphFetched('[user, reward.[product], location, assignee ]');
+    .withGraphFetched('[user, reward.[product], location, assignee, point ]');
   return transaction;
 };
 
@@ -39,10 +40,23 @@ export const createTransaction = async ({
   type,
   amount
 }) => {
-  await Point.query().updateAndFetchById(pointId, { point: balance });
+  if (type === TRANSACTION_TYPE.POINT) {
+    await Point.query().updateAndFetchById(pointId, { point: balance });
+  }
+  if (type === TRANSACTION_TYPE.COUPON) {
+    await User.query().updateAndFetchById(userId, { coupon: balance });
+  }
   const transaction = await Transaction.query()
-    .insertAndFetch({ userId, rewardId, locationId, status, type, amount })
-    .withGraphFetched('[user, reward.[product], location, assignee ]');
+    .insertAndFetch({
+      userId,
+      rewardId,
+      locationId,
+      status,
+      type,
+      amount,
+      pointId: pointId > 0 ? pointId : undefined
+    })
+    .withGraphFetched('[user, reward.[product], location, assignee , point]');
   return transaction;
 };
 
@@ -59,18 +73,19 @@ export const updateTransaction = async (id, assigneeId, status) => {
       status: status,
       acceptedAt: new Date()
     })
-    .withGraphFetched('[user, reward.[product], location, assignee ]');
+    .withGraphFetched('[user, reward.[product], location, assignee, point ]');
 
   if (status === 'DECLINED') {
+    if (transaction.type === TRANSACTION_TYPE.POINT) {
+      await Point.query()
+        .patch({ point: raw(`point + ${Number(transaction.amount)}`) })
+        .where('id', transaction.pointId);
+    }
+    if (transaction.type === TRANSACTION_TYPE.COUPON) {
+      await User.query()
+        .patch({ coupon: raw(`coupon + ${Number(transaction.amount)}`) })
+        .where('id', transaction.userId);
+    }
   }
   return updatedTransaction;
-};
-
-export const deleteTransaction = async (id) => {
-  const transaction = await Transaction.query().deleteById(id).throwIfNotFound({
-    message: APP_MESSAGE.PRODUCT.NOT_FOUND,
-    type: 'NOT_FOUND'
-  });
-
-  return transaction;
 };

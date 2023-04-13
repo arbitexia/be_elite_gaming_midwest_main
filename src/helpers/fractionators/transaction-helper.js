@@ -15,23 +15,23 @@ export const filter = (params) => {
   if (params?.sort) {
     const _sortBy = params?.sort.split('|');
     const sortBy = _sortBy[1].toLocaleLowerCase() === 'desc' ? 'DESC' : 'ASC';
-    // switch (_sortBy[0]) {
-    //   case 'user':
-    //     queryBuilder.joinRelated('user').orderBy('user.firstName', sortBy);
-    //     break;
-    //   case 'createAt':
-    //     queryBuilder.orderBy('createdAt', sortBy);
-    //     break;
-    //   case 'model':
-    //     queryBuilder.orderBy('model', sortBy);
-    //     break;
-    //   case 'type':
-    //     queryBuilder.orderBy('type', sortBy);
-    //     break;
-    //   default:
-    //     queryBuilder.orderBy('id', sortBy);
-    //     break;
-    // }
+    switch (_sortBy[0]) {
+      // case 'user':
+      //   queryBuilder.joinRelated('user').orderBy('user.firstName', sortBy);
+      //   break;
+      case 'createAt':
+        queryBuilder.orderBy('createdAt', sortBy);
+        break;
+      case 'amount':
+        queryBuilder.orderBy('amount', sortBy);
+        break;
+      case 'type':
+        queryBuilder.orderBy('type', sortBy);
+        break;
+      default:
+        queryBuilder.orderBy('id', sortBy);
+        break;
+    }
   } else {
     queryBuilder.orderBy('id', 'DESC');
   }

@@ -46,6 +46,14 @@ class Transaction extends BaseModel {
           from: `${Table.TRANSACTION}.assigneeId`,
           to: `${Table.USER}.id`
         }
+      },
+      point: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: path.join(__dirname, 'point'),
+        join: {
+          from: `${Table.TRANSACTION}.pointId`,
+          to: `${Table.POINT}.id`
+        }
       }
     };
   }

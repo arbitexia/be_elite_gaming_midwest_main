@@ -43,8 +43,8 @@ export const create = async (req, res) => {
 export const update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { input } = req.body;
-    const result = await rewardService.update(id, input);
+    const data = req.body;
+    const result = await rewardService.update(id, data);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(e.message);
