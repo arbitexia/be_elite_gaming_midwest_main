@@ -8,3 +8,6 @@ Thanks",VERIFY_EMAIL_FORGOT_PASSWORD
 Your new password has been set to your profile, now you can goto the login and try to access the service.
 Please feel free to contact us if your credentials are not working. 
 Thanks",CONFIRM_EMAIL_RESET_PASSWORD
+3,Add Point,Got a point,"Hi ~USER_FULL_NAME!.
+You earned ~POINT! points today. At the moment, you have ~TOTAL_POINT! points.
+Thanks.",ADD_POINT_EMAIL

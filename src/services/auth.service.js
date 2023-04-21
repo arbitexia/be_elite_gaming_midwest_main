@@ -7,14 +7,17 @@ import {
   VERIFICATION_TYPE_MAPPER,
   VERIFICATION_STATUS_MAPPER,
   EMAIL_TEMPLATE_MAPPER,
-  DEFAULT_COUPON
+  DEFAULT_COUPON,
+  ACTIVITY_MODEL,
+  ACTIVITY_TYPE,
+  STATUS_MSG
 } from '@/constants';
 import { AWSProvider } from '@/provider';
 import { BadRequest } from '@/provider/error';
 import config from '@/config';
 import twilio from 'twilio';
 import { formatDistanceStrict } from 'date-fns';
-import { pointService, userLocationService } from '@/services';
+import { activityService, emailService, pointService, userLocationService } from '@/services';
 
 const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN);
 
@@ -221,66 +224,35 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
       )[0];
       if (Number(distance) > 0) {
         const pointResult = await pointService.addPoint(userLocation.id, dailyConfig);
+        //TODO add point activity
+        const activityToSave = {
+          userId: user.id,
+          victimId: point.id,
+          model: ACTIVITY_MODEL.POINT,
+          type: ACTIVITY_TYPE.UPDATE,
+          metadata: { body: { ...userLocation, dailyConfig }, status: STATUS_MSG.SUCCEED }
+        };
+        await activityService.createActivity(activityToSave);
+
         if (user?.email) {
-          const template = await EmailTemplate.query().findOne({
-            useFor: EMAIL_TEMPLATE_MAPPER.ADD_POINT_EMAIL
-          });
-          const { subject, htmlBody } = await placeholderHelper({
-            template,
-            userInfo: user,
-            pointInfo: { point: dailyConfig, totalPoint: pointResult?.totalPoint ?? dailyConfig }
-          });
-          try {
-            const awsProvider = new AWSProvider();
-            await awsProvider.sendEmail(user.email, subject, htmlBody);
-          } finally {
-          }
+          await emailService.addPointEmail({ user, dailyConfig, point: pointResult });
         }
       }
     } else {
-      await pointService.addPoint(userLocation.id, dailyConfig);
+      //TODO add point activity
+      const point = await pointService.addPoint(userLocation.id, dailyConfig);
+      const activityToSave = {
+        userId: user.id,
+        victimId: point.id,
+        model: ACTIVITY_MODEL.POINT,
+        type: ACTIVITY_TYPE.UPDATE,
+        metadata: { body: { ...userLocation, dailyConfig }, status: STATUS_MSG.SUCCEED }
+      };
+      await activityService.createActivity(activityToSave);
     }
   }
 
   const { role, ...rest } = user;
-  return {
-    user: rest,
-    role,
-    accessToken,
-    refreshToken
-  };
-};
-
-export const verifyPhone = async (token, res) => {
-  const verification = await Verification.query()
-    .findOne({
-      token,
-      status: VERIFICATION_STATUS_MAPPER.ACTIVATED,
-      type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE
-    })
-    .throwIfNotFound({
-      message: APP_MESSAGE.VERIFICATION.NOT_FOUND
-    });
-
-  const user = await User.query()
-    .updateAndFetchById(verification.victimId, {
-      status: USER_STATUS_MAPPER.ACTIVATED
-    })
-    .withGraphFetched('[role, avatar]');
-
-  await Verification.query()
-    .update({
-      status: VERIFICATION_STATUS_MAPPER.VERIFIED
-    })
-    .where({ id: verification.id });
-
-  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
-  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
-
-  if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
-
-  const { role, ...rest } = user;
-
   return {
     user: rest,
     role,
@@ -303,23 +275,7 @@ export const verifyEmail = async (token) => {
   const user = await User.query().updateAndFetchById(verification.victimId, {
     status: USER_STATUS_MAPPER.ACTIVATED
   });
-
-  const template = await EmailTemplate.query()
-    .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.CONFIRM_EMAIL_USER_REGISTER
-    })
-    .throwIfNotFound({
-      message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
-    });
-
-  const { subject, htmlBody } = await placeholderHelper({
-    template,
-    userInfo: user
-  });
-
-  const awsProvider = new AWSProvider();
-  await awsProvider.sendEmail(user.email, subject, htmlBody);
-
+  await emailService.confirmUserRegisterEmail(user);
   await Verification.query()
     .update({
       status: VERIFICATION_STATUS_MAPPER.VERIFIED
@@ -336,20 +292,7 @@ export const forgotPassword = async (email) => {
     message: APP_MESSAGE.USER.NOT_FOUND
   });
 
-  const template = await EmailTemplate.query()
-    .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.VERIFY_EMAIL_FORGOT_PASSWORD
-    })
-    .throwIfNotFound({
-      message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
-    });
-
-  const { subject, htmlBody, token } = await placeholderHelper({
-    template,
-    userInfo: user
-  });
-  const awsProvider = new AWSProvider();
-  await awsProvider.sendEmail(user.email, subject, htmlBody);
+  await emailService.forgotPasswordEmail(user);
 
   const updatedUser = await user
     .$query()
@@ -381,27 +324,13 @@ export const resetPassword = async (token, password) => {
 
   const user = await User.query().findById(verification.victimId).throwIfNotFound();
 
-  const template = await EmailTemplate.query()
-    .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.CONFIRM_EMAIL_RESET_PASSWORD
-    })
-    .throwIfNotFound({
-      message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
-    });
-
   const hashedPassword = await securityHelper.hashPassword(password);
   const updatedUser = await user.$query().updateAndFetch({
     password: hashedPassword,
     status: USER_STATUS_MAPPER.ACTIVATED
   });
 
-  const { subject, htmlBody } = await placeholderHelper({
-    template,
-    userInfo: updatedUser
-  });
-  const awsProvider = new AWSProvider();
-  await awsProvider.sendEmail(user.email, subject, htmlBody);
-
+  await emailService.resetPasswordEmail({ user, updatedUser });
   await Verification.query()
     .update({
       status: VERIFICATION_STATUS_MAPPER.VERIFIED

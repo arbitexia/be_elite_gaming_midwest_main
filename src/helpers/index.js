@@ -3,4 +3,5 @@ export { default as logHelper } from './logHelper';
 export { default as cursorHelper } from './cursor';
 export { default as fractionateHelper } from './fractionators';
 export { default as placeholderHelper } from './placeholder';
+export { default as emailContentHelper } from './emailContent';
 export { ipToLocationInfo, convertIpFromV6ToV4, ipMiddleware } from './ipdata';

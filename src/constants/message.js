@@ -29,7 +29,8 @@ const APP_MESSAGE = {
     SUCCESS: 'Success!'
   },
   EMAIL_TEMPLATE: {
-    NOT_FOUND: 'Email Template Not Found!'
+    NOT_FOUND: 'Email Template Not Found',
+    SUCCESS_DELETE: 'Template has been deleted'
   },
   VERIFICATION: {
     NOT_FOUND: 'Sorry we are not process your request with current token!',
@@ -63,6 +64,10 @@ const APP_MESSAGE = {
     SUCESS_UPDATE: 'Tablet ID has been updated!',
     SUCESS_CREATE: 'Tablet ID has been created!',
     SUCCESS_USER_DELETE: 'Tablet ID has been deleted!'
+  },
+  ACTIVITY: {
+    NOT_FOUND: 'Activity does not exist!',
+    SUCCESS_DELETE: 'Activity has been deleted!'
   }
 };
 

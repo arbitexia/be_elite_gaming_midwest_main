@@ -3,6 +3,7 @@ import { securityHelper, fractionateHelper, placeholderHelper, cursorHelper } fr
 import { AWSProvider } from '@/provider';
 import { APP_MESSAGE, EMAIL_TEMPLATE_MAPPER } from '@/constants';
 import config from '@/config';
+import { emailService } from '.';
 
 const TEST = config.NODE_ENV === 'test';
 
@@ -103,24 +104,6 @@ export const forceResetPassword = async (id) => {
       password: hashedPassword
     })
     .withGraphFetched('[role, avatar]');
-
-  const template = await EmailTemplate.query()
-    .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.FORCE_RESET_PASSWORD
-    })
-    .throwIfNotFound({
-      message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
-    });
-
-  if (!TEST) {
-    const { subject, htmlBody } = await placeholderHelper({
-      template,
-      userInfo: updatedUser,
-      tempPassword: randomPassword
-    });
-    const awsProvider = new AWSProvider();
-    await awsProvider.sendEmail(updatedUser.email, subject, htmlBody);
-  }
-
+  await emailService.forceResetPasswordEmail({ user: updatedUser, randomPassword });
   return updatedUser;
 };

@@ -10,3 +10,5 @@ export * as activityController from './activity.controller';
 export * as configController from './config.controller';
 export * as tabletController from './tablet.controller';
 export * as transactionController from './transaction.controller';
+export * as emailTemplateController from './emailTemplate.controller';
+export * as hashCodeController from './hashCode.controller';

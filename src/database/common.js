@@ -38,7 +38,8 @@ export const Table = {
   ACTIVITY: camelCaseString('activities'),
   CONFIG: camelCaseString('configs'),
   TABLET: camelCaseString('tablets'),
-  TRANSACTION: camelCaseString('transactions')
+  TRANSACTION: camelCaseString('transactions'),
+  HashCode: camelCaseString('hash_codes')
 };
 
 export const knex = _knex;

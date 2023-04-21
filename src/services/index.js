@@ -11,3 +11,5 @@ export * as activityService from './activity.service';
 export * as configService from './config.service';
 export * as tabletService from './tablet.service';
 export * as transactionService from './transaction.service';
+export * as emailService from './email.service';
+export * as hashCodeService from './hashCode.service';
