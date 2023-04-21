@@ -9,7 +9,6 @@ export default {
       type: 'string',
       enum: [
         'ASSET',
-        'AWARD',
         'GALLERY',
         'LOCATION',
         'POINT',
@@ -19,12 +18,26 @@ export default {
         'USER',
         'VERIFICATION',
         'EMAIL_TEMPLATE',
-        'REWARD'
+        'REWARD',
+        'TRANSACTION',
+        'TABLET'
       ]
     },
     type: {
       type: 'string',
-      enum: ['CREATE', 'UPDATE', 'DELETE', 'CHECKIN', 'SIGNUP', 'LOGIN', 'GET', 'VIEW']
+      enum: [
+        'CREATE',
+        'UPDATE',
+        'DELETE',
+        'CHECKIN',
+        'SIGNUP',
+        'LOGIN',
+        'GET',
+        'VIEW',
+        'REQUEST',
+        'ACCEPT',
+        'DECLINE'
+      ]
     },
     metadata: { type: 'object' }
   }

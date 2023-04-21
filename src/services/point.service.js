@@ -43,14 +43,14 @@ export const checkIn = async (userLocationId) => {
 export const addPoint = async (userLocationId, pointCount) => {
   const point = await Point.query().findOne({ userLocationId });
   if (!point) {
-    await Point.query().insert({
+    const result = await Point.query().insertAndFetch({
       userLocationId,
       point: pointCount,
       updatedAt: new Date()
     });
-    return { totalPoint: pointCount };
+    return { totalPoint: pointCount, id: result.id };
   } else {
     await Point.query().increment('point', pointCount).where({ userLocationId });
-    return { totalPoint: point.point + pointCount };
+    return { totalPoint: point.point + pointCount, id: point.id };
   }
 };

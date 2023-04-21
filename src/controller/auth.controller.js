@@ -24,7 +24,7 @@ export const authorize = async (req, res) => {
       victimId: result.user.id,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.LOGIN,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(result);
@@ -33,7 +33,7 @@ export const authorize = async (req, res) => {
       type: ACTIVITY_TYPE.LOGIN,
       model: ACTIVITY_MODEL.USER,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'authorize'
@@ -54,16 +54,16 @@ export const refreshToken = async (req, res) => {
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.GET,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json({ accessToken });
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.AUTH,
-      model: ACTIVITY_MODEL.GET,
+      type: ACTIVITY_TYPE.GET,
+      model: ACTIVITY_MODEL.USER,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'refreshToken'
@@ -82,18 +82,18 @@ export const authorizeTablet = async (req, res) => {
     const activityToSave = {
       userId: result.id,
       victimId: result.id,
-      model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.CHECKIN,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      model: ACTIVITY_MODEL.TABLET,
+      type: ACTIVITY_TYPE.LOGIN,
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.CHECKIN,
-      model: ACTIVITY_MODEL.USER,
+      model: ACTIVITY_MODEL.TABLET,
+      type: ACTIVITY_TYPE.LOGIN,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'authorizeTablet'
@@ -114,17 +114,17 @@ export const authorizeCustomer = async (req, res) => {
       userId,
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.SIGNUP,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      type: ACTIVITY_TYPE.LOGIN,
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(rest);
   } catch (e) {
     const activityToSave = {
-      type: ACTIVITY_TYPE.SIGNUP,
+      type: ACTIVITY_TYPE.LOGIN,
       model: ACTIVITY_MODEL.USER,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'authorizeCustomer'
@@ -144,7 +144,7 @@ export const authorizeCustomerFromTablet = async (req, res) => {
       victimId: result.user.id,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.CHECKIN,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     if (result.user.status === USER_STATUS_MAPPER.ACTIVATED) {
       await activityService.createActivity(activityToSave);
@@ -153,7 +153,7 @@ export const authorizeCustomerFromTablet = async (req, res) => {
       await activityService.createActivity({
         ...activityToSave,
         metadata: {
-          ...req.body,
+          body: req.body,
           status: STATUS_MSG.FAILED,
           error: 'Your number is not activated',
           function: 'authorizeCustomerFromTablet'
@@ -166,7 +166,7 @@ export const authorizeCustomerFromTablet = async (req, res) => {
       type: ACTIVITY_TYPE.CHECKIN,
       model: ACTIVITY_MODEL.USER,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'authorizeCustomerFromTablet'
@@ -190,10 +190,10 @@ export const verifyPhone = async (req, res) => {
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
-      model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.CHECKIN,
+      model: ACTIVITY_MODEL.VERIFICATION,
+      type: ACTIVITY_TYPE.UPDATE,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'verifyPhone'
@@ -214,7 +214,7 @@ export const createNewUser = async (req, res) => {
       victimId: result.id,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.CREATE,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(result);
@@ -223,7 +223,7 @@ export const createNewUser = async (req, res) => {
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.CREATE,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'createNewUser'
@@ -246,17 +246,17 @@ export const register = async (req, res) => {
       userId,
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.CREATE,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      type: ACTIVITY_TYPE.SIGNUP,
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(rest);
   } catch (e) {
     const activityToSave = {
       model: ACTIVITY_MODEL.USER,
-      type: ACTIVITY_TYPE.CREATE,
+      type: ACTIVITY_TYPE.SIGNUP,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'register'
@@ -278,7 +278,7 @@ export const forgotPassword = async (req, res) => {
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.UPDATE,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(rest);
@@ -287,7 +287,7 @@ export const forgotPassword = async (req, res) => {
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.UPDATE,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'forgotPassword'
@@ -319,7 +319,7 @@ export const resetPassword = async (req, res) => {
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.UPDATE,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(rest);
@@ -328,7 +328,7 @@ export const resetPassword = async (req, res) => {
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.UPDATE,
       metadata: {
-        ...req.body,
+        body: req.body,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'resetPassword'

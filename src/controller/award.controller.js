@@ -25,16 +25,14 @@ export const createAward = async (req, res) => {
   try {
     const { input } = req.body;
     const result = await awardService.createAward(input);
-    //TODO Send Email to customer
-    //TODO Activity
-    const activityToSave = {
-      userId: req.user.id,
-      victimId: result.id,
-      model: ACTIVITY_MODEL.AWARD,
-      type: ACTIVITY_TYPE.CREATE,
-      metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
-    };
-    await activityService.createActivity(activityToSave);
+    // const activityToSave = {
+    //   userId: req.user.id,
+    //   victimId: result.id,
+    //   model: ACTIVITY_MODEL.AWARD,
+    //   type: ACTIVITY_TYPE.CREATE,
+    //   metadata: { ...req.body, status: STATUS_MSG.SUCCEED }
+    // };
+    // await activityService.createActivity(activityToSave);
     res.status(200).json(result);
   } catch (e) {
     const activityToSave = {
@@ -65,7 +63,7 @@ export const acceptAward = async (req, res) => {
       victimId: result.id,
       model: ACTIVITY_MODEL.AWARD,
       type: ACTIVITY_TYPE.UPDATE,
-      metadata: { ...req.params, status: STATUS_MSG.SUCCEED }
+      metadata: { body: req.params, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(result);
@@ -75,7 +73,7 @@ export const acceptAward = async (req, res) => {
       model: ACTIVITY_MODEL.AWARD,
       type: ACTIVITY_TYPE.UPDATE,
       metadata: {
-        ...req.body,
+        body: req.params,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'acceptAward'

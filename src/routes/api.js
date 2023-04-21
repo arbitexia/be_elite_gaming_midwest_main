@@ -11,7 +11,9 @@ import {
   activityController,
   configController,
   tabletController,
-  transactionController
+  transactionController,
+  emailTemplateController,
+  hashCodeController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -57,7 +59,7 @@ router.get(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userController.getUser
 );
-//TODO: Remove
+
 router.post(
   '/password',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
@@ -237,6 +239,12 @@ router.get(
   activityController.filter
 );
 
+router.delete(
+  '/activity/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  activityController.deleteActivity
+);
+
 router.get(
   '/configs',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
@@ -301,6 +309,42 @@ router.delete(
   '/transaction/:id',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   transactionController.deleteTransaction
+);
+
+router.get(
+  '/email_templates',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.getEmailTemplates
+);
+
+router.get(
+  '/email_template/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.getEmailTemplateById
+);
+
+router.post(
+  '/email_template',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.saveEmailTemplate
+);
+
+router.delete(
+  '/email_template/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.deleteEmailTemplate
+);
+
+router.get(
+  '/test_email_template',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.testEmail
+);
+
+router.get(
+  '/hashCodes',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  hashCodeController.getHashCodes
 );
 
 export default router;

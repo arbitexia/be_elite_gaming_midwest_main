@@ -10,7 +10,7 @@ export {
   DEFAULT_COUPON
 } from './user';
 
-export { EMAIL_TEMPLATE_MAPPER } from './email';
+export { EMAIL_TEMPLATE_MAPPER, EMAIL_TEMPLATE_TYPE, EMAIL_TEMPLATE_STATUS } from './email';
 
 export {
   VERIFICATION_STATUS_MAPPER,

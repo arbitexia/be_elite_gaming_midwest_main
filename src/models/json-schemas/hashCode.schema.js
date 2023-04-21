@@ -4,18 +4,14 @@ export default {
   properties: {
     id: { type: 'integer' },
     name: { type: 'string' },
-    subject: { type: 'string' },
-    body: { type: 'string' },
+    model: { type: 'string' },
+    field: { type: 'string' },
+    description: {
+      type: 'string'
+    },
     status: {
       type: 'string',
       enum: ['PENDING', 'PUBLISHED', 'ARCHIVED']
-    },
-    type: {
-      type: 'string',
-      enum: ['DEFAULT', 'DYNAMIC']
-    },
-    attachedFiles: {
-      type: 'string'
     }
   }
 };
