@@ -1,18 +1,17 @@
-import { User, Verification, EmailTemplate, Point, Config, UserLocation, Tablet } from '@/models';
-import { securityHelper, placeholderHelper } from '@/helpers';
+import { User, Verification, Point, Config, Tablet } from '@/models';
+import { securityHelper } from '@/helpers';
 import {
   APP_MESSAGE,
   USER_STATUS_MAPPER,
   USER_ROLE_MAPPER,
   VERIFICATION_TYPE_MAPPER,
   VERIFICATION_STATUS_MAPPER,
-  EMAIL_TEMPLATE_MAPPER,
   DEFAULT_COUPON,
   ACTIVITY_MODEL,
   ACTIVITY_TYPE,
-  STATUS_MSG
+  STATUS_MSG,
+  DEFAULT_INC_POINT
 } from '@/constants';
-import { AWSProvider } from '@/provider';
 import { BadRequest } from '@/provider/error';
 import config from '@/config';
 import twilio from 'twilio';
@@ -214,7 +213,7 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
 
   const configItem = await Config.query().first();
-  const dailyConfig = configItem?.daily ?? 50;
+  const dailyConfig = configItem?.daily ?? DEFAULT_INC_POINT;
   const userLocation = await userLocationService.checkIn(locationId, user.id);
   if (userLocation) {
     const point = await Point.query().findOne({ userLocationId: userLocation.id });

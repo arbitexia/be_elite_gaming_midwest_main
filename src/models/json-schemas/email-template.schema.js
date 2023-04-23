@@ -5,7 +5,7 @@ export default {
     id: { type: 'integer' },
     name: { type: 'string' },
     subject: { type: 'string' },
-    body: { type: 'string' },
+    htmlBody: { type: 'string' },
     status: {
       type: 'string',
       enum: ['PENDING', 'PUBLISHED', 'ARCHIVED']
@@ -14,6 +14,7 @@ export default {
       type: 'string',
       enum: ['DEFAULT', 'DYNAMIC']
     },
+    category: { type: 'string' },
     attachedFiles: {
       type: 'string'
     }

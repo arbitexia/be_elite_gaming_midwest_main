@@ -3,7 +3,7 @@ import { APP_MESSAGE } from '@/constants';
 
 export const getHashCodes = async () => {
   const hashCodes = await HashCode.query().throwIfNotFound({
-    message: APP_MESSAGE.LOCATION.NOT_FOUND,
+    message: APP_MESSAGE.HASH_CODE.NOT_FOUND,
     type: 'NOT_FOUND'
   });
   return hashCodes;

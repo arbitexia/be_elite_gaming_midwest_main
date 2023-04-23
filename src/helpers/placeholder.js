@@ -1,6 +1,6 @@
 import config from '@/config';
 import { securityHelper } from '@/helpers';
-import { EMAIL_TEMPLATE_MAPPER } from '@/constants';
+import { EMAIL_TEMPLATE_CATEGORY } from '@/constants';
 
 const getPlaceholders = (html) => {
   const placeholderLocations = [];
@@ -22,8 +22,8 @@ const getPlaceholders = (html) => {
 };
 
 const getPartialLink = (useFor) => {
-  if (useFor === EMAIL_TEMPLATE_MAPPER.VERIFY_EMAIL_USER_REGISTER) return 'verify/email';
-  if (useFor === EMAIL_TEMPLATE_MAPPER.VERIFY_EMAIL_FORGOT_PASSWORD) return 'reset-password';
+  if (useFor === EMAIL_TEMPLATE_CATEGORY.VERIFY_USER_REGISTER) return 'verify/email';
+  if (useFor === EMAIL_TEMPLATE_CATEGORY.VERIFY_FORGOT_PASSWORD) return 'reset-password';
   return null;
 };
 

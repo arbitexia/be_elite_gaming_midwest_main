@@ -1,5 +1,5 @@
 import { Point, UserLocation, Config } from '@/models';
-import { APP_MESSAGE, DEAULT_INC_POINT } from '@/constants';
+import { APP_MESSAGE, DEFAULT_INC_POINT } from '@/constants';
 import config from '@/config';
 
 const TEST = config.NODE_ENV === 'test';
@@ -28,7 +28,7 @@ export const getPoint = async (userId, locationId) => {
 export const checkIn = async (userLocationId) => {
   const point = await Point.query().findOne({ userLocationId });
   const configItem = await Config.query().first();
-  const dailyConfig = configItem?.daily ?? DEAULT_INC_POINT;
+  const dailyConfig = configItem?.daily ?? DEFAULT_INC_POINT;
   if (!point) {
     await Point.query().insert({
       userLocationId,

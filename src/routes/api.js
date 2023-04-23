@@ -335,8 +335,8 @@ router.delete(
   emailTemplateController.deleteEmailTemplate
 );
 
-router.get(
-  '/test_email_template',
+router.post(
+  '/send_test_email',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   emailTemplateController.testEmail
 );
