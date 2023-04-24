@@ -1,4 +1,4 @@
-export { DEAULT_INC_POINT, DEFAULT_REWARD_POINT, DEFAULT_REWARD_COUPON } from './common';
+export { DEFAULT_INC_POINT, DEFAULT_REWARD_POINT, DEFAULT_REWARD_COUPON } from './common';
 
 export { default as APP_MESSAGE } from './message';
 export {
@@ -10,7 +10,13 @@ export {
   DEFAULT_COUPON
 } from './user';
 
-export { EMAIL_TEMPLATE_MAPPER, EMAIL_TEMPLATE_TYPE, EMAIL_TEMPLATE_STATUS } from './email';
+export {
+  EMAIL_TEMPLATE_CATEGORY,
+  EMAIL_TEMPLATE_TYPE,
+  EMAIL_TEMPLATE_STATUS,
+  HASH_CODE_MODEL,
+  EMAIL_SPECIAL_FIELD
+} from './email';
 
 export {
   VERIFICATION_STATUS_MAPPER,

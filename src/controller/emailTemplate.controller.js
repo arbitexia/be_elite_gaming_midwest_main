@@ -42,7 +42,8 @@ export const deleteEmailTemplate = async (req, res) => {
 
 export const testEmail = async (req, res) => {
   try {
-    const result = await emailService.testEmail();
+    const { id, to } = req.body;
+    const result = await emailService.testEmail({ id, toEmail: to, user: req.user });
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);

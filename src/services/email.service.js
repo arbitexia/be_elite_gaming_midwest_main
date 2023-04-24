@@ -1,6 +1,6 @@
-import { APP_MESSAGE, EMAIL_TEMPLATE_MAPPER } from '@/constants';
-import { cursorHelper, emailContentHelper, fractionateHelper, placeholderHelper } from '@/helpers';
-import { EmailTemplate, HashCode, User } from '@/models';
+import { APP_MESSAGE, DEFAULT_INC_POINT, EMAIL_TEMPLATE_CATEGORY } from '@/constants';
+import { cursorHelper, emailContentHelper, fractionateHelper, securityHelper } from '@/helpers';
+import { EmailTemplate } from '@/models';
 import { AWSProvider } from '@/provider';
 import { hashCodeService } from '.';
 
@@ -29,7 +29,15 @@ export const getEmailTemplateById = async (id) => {
   return emailTemplate;
 };
 
-export const saveEmailTemplate = async ({ id, name, subject, htmlBody, status, type }) => {
+export const saveEmailTemplate = async ({
+  id,
+  name,
+  subject,
+  htmlBody,
+  status,
+  type,
+  category
+}) => {
   let emailTemplate;
   if (id > 0) {
     const retEmailTemplate = await EmailTemplate.query().findOne({ id }).throwIfNotFound({
@@ -41,7 +49,8 @@ export const saveEmailTemplate = async ({ id, name, subject, htmlBody, status, t
       subject,
       htmlBody,
       status,
-      type
+      type,
+      category
     });
   } else {
     emailTemplate = await EmailTemplate.query().insertAndFetch({
@@ -49,7 +58,8 @@ export const saveEmailTemplate = async ({ id, name, subject, htmlBody, status, t
       subject,
       htmlBody,
       status,
-      type
+      type,
+      category
     });
   }
 
@@ -67,36 +77,45 @@ export const deleteEmailTemplate = async (id) => {
   };
 };
 
+//send email
 export const requestTransactionEmail = async ({ user, transaction }) => {
+  const hashCodes = await hashCodeService.getHashCodes();
   const template = await EmailTemplate.query().findOne({
-    useFor: EMAIL_TEMPLATE_MAPPER.REQUEST_TRANSACTION_EMAIL
+    category: EMAIL_TEMPLATE_CATEGORY.REQUEST_TRANSACTION
   });
-  const { subject, htmlBody } = await placeholderHelper({
+  if (template) {
+    const { subject, htmlBody } = await emailContentHelper({
+      template,
+      hashCodes,
+      userInfo: user
+    });
+    const awsProvider = new AWSProvider();
+    await awsProvider.sendEmail(user.email, subject, htmlBody);
+  }
+};
+
+export const acceptTransactionEmail = async ({ user, transaction }) => {
+  const hashCodes = await hashCodeService.getHashCodes();
+  const template = await EmailTemplate.query().findOne({
+    category: EMAIL_TEMPLATE_CATEGORY.ACCEPT_TRANSACTION
+  });
+  const { subject, htmlBody } = await emailContentHelper({
     template,
+    hashCodes,
     userInfo: user
   });
   const awsProvider = new AWSProvider();
   await awsProvider.sendEmail(user.email, subject, htmlBody);
 };
 
-export const acceptTransactionEmail = async (user, transaction) => {
+export const declineTransactionEmail = async ({ user, transaction }) => {
+  const hashCodes = await hashCodeService.getHashCodes();
   const template = await EmailTemplate.query().findOne({
-    useFor: EMAIL_TEMPLATE_MAPPER.ACCEPT_TRANSACTION_EMAIL
+    category: EMAIL_TEMPLATE_CATEGORY.DECLINE_TRANSACTION
   });
-  const { subject, htmlBody } = await placeholderHelper({
+  const { subject, htmlBody } = await emailContentHelper({
     template,
-    userInfo: user
-  });
-  const awsProvider = new AWSProvider();
-  await awsProvider.sendEmail(user.email, subject, htmlBody);
-};
-
-export const declineTransactionEmail = async (user, transaction) => {
-  const template = await EmailTemplate.query().findOne({
-    useFor: EMAIL_TEMPLATE_MAPPER.ACCEPT_TRANSACTION_EMAIL
-  });
-  const { subject, htmlBody } = await placeholderHelper({
-    template,
+    hashCodes,
     userInfo: user
   });
   const awsProvider = new AWSProvider();
@@ -104,11 +123,13 @@ export const declineTransactionEmail = async (user, transaction) => {
 };
 
 export const addPointEmail = async ({ user, dailyConfig, point }) => {
+  const hashCodes = await hashCodeService.getHashCodes();
   const template = await EmailTemplate.query().findOne({
-    useFor: EMAIL_TEMPLATE_MAPPER.ADD_POINT_EMAIL
+    category: EMAIL_TEMPLATE_CATEGORY.ADD_POINT
   });
-  const { subject, htmlBody } = await placeholderHelper({
+  const { subject, htmlBody } = await emailContentHelper({
     template,
+    hashCodes,
     userInfo: user,
     pointInfo: { point: dailyConfig, totalPoint: point?.totalPoint ?? dailyConfig }
   });
@@ -120,16 +141,18 @@ export const addPointEmail = async ({ user, dailyConfig, point }) => {
 };
 
 export const confirmUserRegisterEmail = async (user) => {
+  const hashCodes = await hashCodeService.getHashCodes();
   const template = await EmailTemplate.query()
     .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.CONFIRM_EMAIL_USER_REGISTER
+      category: EMAIL_TEMPLATE_CATEGORY.CONFIRM_USER_REGISTER
     })
     .throwIfNotFound({
       message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
     });
 
-  const { subject, htmlBody } = await placeholderHelper({
+  const { subject, htmlBody } = await emailContentHelper({
     template,
+    hashCodes,
     userInfo: user
   });
 
@@ -138,32 +161,38 @@ export const confirmUserRegisterEmail = async (user) => {
 };
 
 export const forgotPasswordEmail = async (user) => {
+  const hashCodes = await hashCodeService.getHashCodes();
   const template = await EmailTemplate.query()
     .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.VERIFY_EMAIL_FORGOT_PASSWORD
+      category: EMAIL_TEMPLATE_CATEGORY.VERIFY_FORGOT_PASSWORD
     })
     .throwIfNotFound({
       message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
     });
-  const { subject, htmlBody, token } = await placeholderHelper({
+
+  const { subject, htmlBody, token } = await emailContentHelper({
     template,
+    hashCodes,
     userInfo: user
   });
+
   const awsProvider = new AWSProvider();
   await awsProvider.sendEmail(user.email, subject, htmlBody);
 };
 
 export const resetPasswordEmail = async ({ user, updatedUser }) => {
+  const hashCodes = await hashCodeService.getHashCodes();
   const template = await EmailTemplate.query()
     .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.CONFIRM_EMAIL_RESET_PASSWORD
+      category: EMAIL_TEMPLATE_CATEGORY.CONFIRM_RESET_PASSWORD
     })
     .throwIfNotFound({
       message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
     });
 
-  const { subject, htmlBody } = await placeholderHelper({
+  const { subject, htmlBody } = await emailContentHelper({
     template,
+    hashCodes,
     userInfo: updatedUser
   });
   const awsProvider = new AWSProvider();
@@ -171,17 +200,19 @@ export const resetPasswordEmail = async ({ user, updatedUser }) => {
 };
 
 export const forceResetPasswordEmail = async ({ user, randomPassword }) => {
+  const hashCodes = await hashCodeService.getHashCodes();
   const template = await EmailTemplate.query()
     .findOne({
-      useFor: EMAIL_TEMPLATE_MAPPER.FORCE_RESET_PASSWORD
+      category: EMAIL_TEMPLATE_CATEGORY.FORCE_RESET_PASSWORD
     })
     .throwIfNotFound({
       message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
     });
   // if (!TEST) {
-  const { subject, htmlBody } = await placeholderHelper({
+  const { subject, htmlBody } = await emailContentHelper({
     template,
     userInfo: user,
+    hashCodes,
     tempPassword: randomPassword
   });
   const awsProvider = new AWSProvider();
@@ -189,28 +220,43 @@ export const forceResetPasswordEmail = async ({ user, randomPassword }) => {
   // }
 };
 
-export const testEmail = async () => {
-  const hashCodes = await hashCodeService.getHashCodes();
-  const user = await User.query().findOne({ id: 1 }).throwIfNotFound({
-    message: APP_MESSAGE.USER.NOT_FOUND
+export const testEmail = async ({ id, toEmail, user }) => {
+  const template = await EmailTemplate.query().findById(id).throwIfNotFound({
+    message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
   });
-
-  const template = await EmailTemplate.query()
-    .findOne({
-      name: 'Welcome Message'
-    })
-    .throwIfNotFound({
-      message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
-    });
-
-  const { subject, emailContent } = await emailContentHelper({
-    hashCodes,
-    template,
-    userInfo: user,
-    tempPassword: 'randomPassword'
-  });
-  // console.log(htmlBody);
-  // const awsProvider = new AWSProvider();
-  // // await awsProvider.sendEmail(user.email, subject, htmlBody);
-  return { message: 'Success', body: emailContent };
+  const testUser = { ...user, email: toEmail };
+  switch (template.category) {
+    case EMAIL_TEMPLATE_CATEGORY.REQUEST_TRANSACTION:
+      await requestTransactionEmail({ user: testUser });
+      break;
+    case EMAIL_TEMPLATE_CATEGORY.ACCEPT_TRANSACTION:
+      await acceptTransactionEmail({ user: testUser });
+      break;
+    case EMAIL_TEMPLATE_CATEGORY.DECLINE_TRANSACTION:
+      await declineTransactionEmail({ user: testUser });
+      break;
+    case EMAIL_TEMPLATE_CATEGORY.ADD_POINT:
+      await addPointEmail({
+        user,
+        dailyConfig: DEFAULT_INC_POINT,
+        point: { totalPoint: 1000, id: 1 }
+      });
+      break;
+    case EMAIL_TEMPLATE_CATEGORY.CONFIRM_USER_REGISTER:
+      await confirmUserRegisterEmail(testUser);
+      break;
+    case EMAIL_TEMPLATE_CATEGORY.VERIFY_FORGOT_PASSWORD:
+      await forgotPasswordEmail(testUser);
+      break;
+    case EMAIL_TEMPLATE_CATEGORY.CONFIRM_RESET_PASSWORD:
+      await resetPasswordEmail({ user: testUser, updatedUser: testUser });
+      break;
+    case EMAIL_TEMPLATE_CATEGORY.FORCE_RESET_PASSWORD:
+      const randomPassword = securityHelper.genRandomTokenString(16);
+      await forceResetPasswordEmail({ user: testUser, randomPassword });
+      break;
+    default:
+      break;
+  }
+  return { message: 'Sent the email' };
 };

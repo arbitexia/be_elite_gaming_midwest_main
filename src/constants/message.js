@@ -41,17 +41,17 @@ const APP_MESSAGE = {
     SUCESS_DELETE: 'Location has been deleted'
   },
   PRODUCT: {
-    NOT_FOUND: 'Product does not exist!',
+    NOT_FOUND: 'Product does not exist',
     SUCESS_DELETE: 'Product has been deleted'
   },
   REWARD: {
-    NOT_FOUND: 'Reward does not exist!',
-    SUCCESS_CREATE: 'Reward has been created!',
-    SUCCESS_UPDATE: 'Reward has been updated!',
+    NOT_FOUND: 'Reward does not exist',
+    SUCCESS_CREATE: 'Reward has been created',
+    SUCCESS_UPDATE: 'Reward has been updated',
     SUCCESS_DELETE: 'Reward has been deleted'
   },
   ASSET: {
-    NOT_FOUND: 'Image does not exist!',
+    NOT_FOUND: 'Image does not exist',
     SUCESS_DELETE: 'Image has been deleted'
   },
   CONFIG: {
@@ -59,15 +59,18 @@ const APP_MESSAGE = {
     SUCESS_UPDATE: 'Config has been updated!'
   },
   TABLET: {
-    DUPLICATED_NAME: 'Current tablet ID already exists!',
-    NOT_FOUND: 'Tablet ID does not exist!',
-    SUCESS_UPDATE: 'Tablet ID has been updated!',
-    SUCESS_CREATE: 'Tablet ID has been created!',
-    SUCCESS_USER_DELETE: 'Tablet ID has been deleted!'
+    DUPLICATED_NAME: 'Current tablet ID already exists',
+    NOT_FOUND: 'Tablet ID does not exist',
+    SUCESS_UPDATE: 'Tablet ID has been updated',
+    SUCESS_CREATE: 'Tablet ID has been created',
+    SUCCESS_USER_DELETE: 'Tablet ID has been deleted'
   },
   ACTIVITY: {
-    NOT_FOUND: 'Activity does not exist!',
-    SUCCESS_DELETE: 'Activity has been deleted!'
+    NOT_FOUND: 'Activity does not exist',
+    SUCCESS_DELETE: 'Activity has been deleted'
+  },
+  HASH_CODE: {
+    NOT_FOUND: 'HashCode does not exist'
   }
 };
 

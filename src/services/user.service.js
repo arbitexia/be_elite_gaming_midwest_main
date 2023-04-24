@@ -1,7 +1,6 @@
-import { User, Role, EmailTemplate } from '@/models';
-import { securityHelper, fractionateHelper, placeholderHelper, cursorHelper } from '@/helpers';
-import { AWSProvider } from '@/provider';
-import { APP_MESSAGE, EMAIL_TEMPLATE_MAPPER } from '@/constants';
+import { User, Role } from '@/models';
+import { securityHelper, fractionateHelper, cursorHelper } from '@/helpers';
+import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
 import { emailService } from '.';
 
