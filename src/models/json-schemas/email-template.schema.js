@@ -4,6 +4,7 @@ export default {
   properties: {
     id: { type: 'integer' },
     name: { type: 'string' },
+    templateId: { type: 'integer' },
     subject: { type: 'string' },
     htmlBody: { type: 'string' },
     status: {

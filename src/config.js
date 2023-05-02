@@ -26,5 +26,13 @@ export default {
     ACCOUNT_SID: process.env.TWILLIO_ACCOUNT_SID,
     AUTH_TOKEN: process.env.TWILLIO_AUTH_TOKEN,
     MESSAGE_SID: process.env.TWILLIO_MESSAGE_SID
+  },
+  SEND_IN_BLUE: {
+    EMAIL_FROM: process.env.EMAIL_FROM,
+    EMAIL_HOST: process.env.EMAIL_HOST,
+    EMAIL_PORT: process.env.EMAIL_PORT,
+    EMAIL_USERNAME: process.env.EMAIL_USERNAME,
+    EMAIL_PASS: process.env.EMAIL_PASS,
+    EMAIL_API_KEY: process.env.EMAIL_API_KEY
   }
 };

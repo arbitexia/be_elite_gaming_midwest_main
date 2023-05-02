@@ -1,3 +1,5 @@
+import { sendInBlue } from '@/helpers';
+import { GetTransactionEmailTemplateById } from '@/helpers/sendInBlue';
 import { emailService } from '@/services';
 
 export const getEmailTemplates = async (req, res) => {
@@ -13,8 +15,19 @@ export const getEmailTemplates = async (req, res) => {
 export const getEmailTemplateById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await emailService.getEmailTemplateById(id);
-    res.status(200).json(result);
+    const emailTemplate = await emailService.getEmailTemplateById(id);
+    if (emailTemplate) {
+      const templateInfo = await GetTransactionEmailTemplateById({
+        templateId: emailTemplate.templateId
+      });
+      res.status(200).json({
+        ...emailTemplate,
+        htmlBody: templateInfo.htmlContent,
+        subject: templateInfo.subject
+      });
+      return;
+    }
+    res.status(200).json(emailTemplate);
   } catch (e) {
     res.status(500).json(e.message);
   }
@@ -42,9 +55,35 @@ export const deleteEmailTemplate = async (req, res) => {
 
 export const testEmail = async (req, res) => {
   try {
+    // const { id, to } = req.body;
+    // const result = await emailService.testEmail({ id, toEmail: to, user: req.user });
+    // res.status(200).json(result);
+    ////send the email using nodemailer
+    // await emailDelivery({
+    //   to: 'p.winty1030@hotmail.com',
+    //   subject: 'Reminder to create transactions!',
+    //   content: 'hello!, test email'
+    // });
+    // await SendWelcomeEmail({ email: 'minidolls1030@gmail.com', name: 'Mini', templateId: 1 });
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const sendTestEmail = async (req, res) => {
+  try {
     const { id, to } = req.body;
     const result = await emailService.testEmail({ id, toEmail: to, user: req.user });
     res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const getSendinBlueEmailTemplates = async (req, res) => {
+  try {
+    const result = await sendInBlue.GetTransactionEmailTemplates();
+    res.status(200).json(result.templates);
   } catch (e) {
     res.status(500).json(e.message);
   }

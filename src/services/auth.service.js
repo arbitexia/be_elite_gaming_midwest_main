@@ -274,7 +274,7 @@ export const verifyEmail = async (token) => {
   const user = await User.query().updateAndFetchById(verification.victimId, {
     status: USER_STATUS_MAPPER.ACTIVATED
   });
-  await emailService.confirmUserRegisterEmail(user);
+  await emailService.confirmUserRegisterEmail({ user });
   await Verification.query()
     .update({
       status: VERIFICATION_STATUS_MAPPER.VERIFIED
@@ -291,7 +291,7 @@ export const forgotPassword = async (email) => {
     message: APP_MESSAGE.USER.NOT_FOUND
   });
 
-  await emailService.forgotPasswordEmail(user);
+  await emailService.forgotPasswordEmail({ user });
 
   const updatedUser = await user
     .$query()
