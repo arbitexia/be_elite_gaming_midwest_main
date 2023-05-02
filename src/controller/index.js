@@ -1,5 +1,4 @@
 export * as assetController from './asset.controller';
-export * as awardController from './award.controller';
 export * as authController from './auth.controller';
 export * as userController from './user.controller';
 export * as locationController from './location.controller';
@@ -11,4 +10,3 @@ export * as configController from './config.controller';
 export * as tabletController from './tablet.controller';
 export * as transactionController from './transaction.controller';
 export * as emailTemplateController from './emailTemplate.controller';
-export * as hashCodeController from './hashCode.controller';

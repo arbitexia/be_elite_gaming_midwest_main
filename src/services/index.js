@@ -1,5 +1,4 @@
 export * as assetService from './asset.service';
-export * as awardService from './award.service';
 export * as authService from './auth.service';
 export * as userService from './user.service';
 export * as locationService from './location.service';
@@ -12,4 +11,3 @@ export * as configService from './config.service';
 export * as tabletService from './tablet.service';
 export * as transactionService from './transaction.service';
 export * as emailService from './email.service';
-export * as hashCodeService from './hashCode.service';

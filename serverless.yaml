@@ -36,6 +36,12 @@ provider:
     SUPPORT_EMAIL: ${ssm:/elitegame/SUPPORT_EMAIL}
     S3_ASSET_BUCKET: ${ssm:/elitegame/S3_ASSET_BUCKET}
     IPDATA_API_KEY: ${ssm:/elitegame/IPDATA_API_KEY}
+    EMAIL_FROM: ${ssm:/elitegame/EMAIL_FROM}
+    EMAIL_HOST: ${ssm:/elitegame/EMAIL_HOST}
+    EMAIL_PORT: ${ssm:/elitegame/EMAIL_PORT}
+    EMAIL_USERNAME: ${ssm:/elitegame/EMAIL_USERNAME}
+    EMAIL_PASS: ${ssm:/elitegame/EMAIL_PASS}
+    EMAIL_API_KEY: ${ssm:/elitegame/EMAIL_API_KEY}
 
 functions:
   api:

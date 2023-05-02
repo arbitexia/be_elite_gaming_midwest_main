@@ -9,7 +9,7 @@ const contactsApiInstance = new SibApiV3Sdk.ContactsApi();
 export const GetTransactionEmailTemplates = async () => {
   const opts = {
     templateStatus: true,
-    limit: 50,
+    limit: 1000,
     offset: 0
   };
   const ret = await transactionApiInstance.getSmtpTemplates(opts);
@@ -36,7 +36,6 @@ export const GetContactEmails = async () => {
     const opts = {
       limit: 1000,
       offset: 0
-      // modifiedSince: new Date('2021-09-07T19:20:30+01:00')
     };
     const { contacts } = await contactsApiInstance.getContacts(opts);
     return contacts;
