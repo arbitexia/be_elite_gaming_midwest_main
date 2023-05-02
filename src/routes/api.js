@@ -338,13 +338,25 @@ router.delete(
 router.post(
   '/send_test_email',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  emailTemplateController.testEmail
+  emailTemplateController.sendTestEmail
 );
 
 router.get(
   '/hashCodes',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   hashCodeController.getHashCodes
+);
+
+router.get(
+  '/test/email',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.testEmail
+);
+
+router.get(
+  '/sendinblue/email_templates',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.getSendinBlueEmailTemplates
 );
 
 export default router;
