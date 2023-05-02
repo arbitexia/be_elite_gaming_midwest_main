@@ -1,6 +1,5 @@
 export { default as User } from './user';
 export { default as Asset } from './asset';
-export { default as Award } from './award';
 export { default as Gallery } from './gallery';
 export { default as Role } from './role';
 export { default as Verification } from './verification';
@@ -14,4 +13,3 @@ export { default as Activity } from './activity';
 export { default as Config } from './config';
 export { default as Tablet } from './tablet';
 export { default as Transaction } from './transaction';
-export { default as HashCode } from './hashCode';

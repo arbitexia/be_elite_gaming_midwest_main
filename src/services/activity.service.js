@@ -53,9 +53,6 @@ const parseActivities = async (data) => {
     data.map(async (activity) => {
       const { metadata, victimId, ...rest } = activity;
       if (activity.model === ACTIVITY_MODEL.USER) {
-        // victim = await User.query()
-        //   .findOne({ id: victimId })
-        //   .withGraphFetched('[role, avatar, userLocations]');
         victim = rest.user;
       } else if (activity.model === ACTIVITY_MODEL.TABLET) {
         victim = await Tablet.query().findOne({ id: victimId }).withGraphFetched('[location]');

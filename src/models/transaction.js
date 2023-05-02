@@ -2,7 +2,7 @@ import path from 'path';
 import { Model } from 'objection';
 import { Table } from '@/database/common';
 import BaseModel from './__base';
-import jsonSchema from './json-schemas/award.schema';
+import jsonSchema from './json-schemas/transaction.schema';
 
 class Transaction extends BaseModel {
   static get tableName() {

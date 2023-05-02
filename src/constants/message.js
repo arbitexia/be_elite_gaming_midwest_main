@@ -69,8 +69,8 @@ const APP_MESSAGE = {
     NOT_FOUND: 'Activity does not exist',
     SUCCESS_DELETE: 'Activity has been deleted'
   },
-  HASH_CODE: {
-    NOT_FOUND: 'HashCode does not exist'
+  TRANSACTION: {
+    NOT_FOUND: 'Transaction does not exist'
   }
 };
 

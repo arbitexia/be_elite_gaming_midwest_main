@@ -1,6 +1,4 @@
 import { ACTIVITY_MODEL, ACTIVITY_TYPE, STATUS_MSG } from '@/constants';
-import { placeholderHelper } from '@/helpers';
-import { AWSProvider } from '@/provider';
 import { transactionService, activityService, emailService } from '@/services';
 
 export const getTransactions = async (req, res) => {
@@ -107,30 +105,29 @@ export const updateTransaction = async (req, res) => {
 export const deleteTransaction = async (req, res) => {
   try {
     const { id } = req.params;
-    // const result = await transactionService.deleteTransaction(id);
-    // const activityToSave = {
-    //   userId: req.user.id,
-    //   victimId: Number(id),
-    //   model: ACTIVITY_MODEL.TRANSACTION,
-    //   type: ACTIVITY_TYPE.DELETE,
-    //   metadata: { ...req.params, status: STATUS_MSG.SUCCEED }
-    // };
-    // await activityService.createActivity(activityToSave);
-    // res.status(200).json(result);
-    res.status(200).json({});
+    const result = await transactionService.deleteTransaction(id);
+    const activityToSave = {
+      userId: req.user.id,
+      victimId: id,
+      model: ACTIVITY_MODEL.TRANSACTION,
+      type: ACTIVITY_TYPE.DELETE,
+      metadata: { body: req.params, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(200).json(result);
   } catch (e) {
-    // const activityToSave = {
-    //   userId: req.user.id,
-    //   model: ACTIVITY_MODEL.AWARD,
-    //   type: ACTIVITY_TYPE.DELETE,
-    //   metadata: {
-    //     ...req.body,
-    //     status: STATUS_MSG.FAILED,
-    //     error: e.message,
-    //     function: 'deleteTransaction'
-    //   }
-    // };
-    // await activityService.createActivity(activityToSave);
+    const activityToSave = {
+      userId: req.user.id,
+      model: ACTIVITY_MODEL.TRANSACTION,
+      type: ACTIVITY_TYPE.DELETE,
+      metadata: {
+        ...req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'deleteTransaction'
+      }
+    };
+    await activityService.createActivity(activityToSave);
     res.status(500).json(e.message);
   }
 };

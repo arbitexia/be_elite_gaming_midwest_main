@@ -203,12 +203,6 @@ export const forgotPasswordEmail = async ({ user, templateId }) => {
       templateId: template.templateId
     });
   }
-
-  // const { subject, htmlBody, token } = await emailContentHelper({
-  //   template,
-  //   hashCodes,
-  //   userInfo: user
-  // });
 };
 
 export const resetPasswordEmail = async ({ user, templateId, updatedUser }) => {
@@ -233,12 +227,6 @@ export const resetPasswordEmail = async ({ user, templateId, updatedUser }) => {
       templateId: template.templateId
     });
   }
-
-  // const { subject, htmlBody } = await emailContentHelper({
-  //   template,
-  //   hashCodes,
-  //   userInfo: updatedUser
-  // });
 };
 
 export const forceResetPasswordEmail = async ({ user, templateId, randomPassword }) => {
@@ -264,12 +252,6 @@ export const forceResetPasswordEmail = async ({ user, templateId, randomPassword
       templateId: template.templateId,
       tempPassword: randomPassword
     });
-    // const { subject, htmlBody } = await emailContentHelper({
-    //   template,
-    //   userInfo: user,
-    //   hashCodes,
-    //   tempPassword: randomPassword
-    // });
   }
 };
 

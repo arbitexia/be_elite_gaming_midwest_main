@@ -89,3 +89,12 @@ export const updateTransaction = async (id, assigneeId, status) => {
   }
   return updatedTransaction;
 };
+
+export const deleteTransaction = async (id) => {
+  const transaction = await Transaction.query().deleteById(id).throwIfNotFound({
+    message: APP_MESSAGE.TRANSACTION.NOT_FOUND,
+    type: 'NOT_FOUND'
+  });
+
+  return transaction;
+};

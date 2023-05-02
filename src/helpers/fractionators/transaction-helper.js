@@ -16,9 +16,6 @@ export const filter = (params) => {
     const _sortBy = params?.sort.split('|');
     const sortBy = _sortBy[1].toLocaleLowerCase() === 'desc' ? 'DESC' : 'ASC';
     switch (_sortBy[0]) {
-      // case 'user':
-      //   queryBuilder.joinRelated('user').orderBy('user.firstName', sortBy);
-      //   break;
       case 'createAt':
         queryBuilder.orderBy('createdAt', sortBy);
         break;

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import {
   authController,
-  awardController,
   userController,
   locationController,
   assetController,
@@ -12,8 +11,7 @@ import {
   configController,
   tabletController,
   transactionController,
-  emailTemplateController,
-  hashCodeController
+  emailTemplateController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -166,32 +164,6 @@ router.delete(
 );
 
 router.get(
-  '/awards',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  awardController.getAwards
-);
-router.get(
-  '/awards/:id',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  awardController.getAward
-);
-router.post(
-  '/awards',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  awardController.createAward
-);
-router.put(
-  '/awards/:id',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  awardController.acceptAward
-);
-router.delete(
-  '/awards/:id',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  awardController.declineAward
-);
-
-router.get(
   '/rewards',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   rewardController.filter
@@ -339,18 +311,6 @@ router.post(
   '/send_test_email',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   emailTemplateController.sendTestEmail
-);
-
-router.get(
-  '/hashCodes',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  hashCodeController.getHashCodes
-);
-
-router.get(
-  '/test/email',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  emailTemplateController.testEmail
 );
 
 router.get(

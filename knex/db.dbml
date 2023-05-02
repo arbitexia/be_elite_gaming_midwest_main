@@ -181,27 +181,6 @@ Table products [note: 'products table'] {
 
 Ref: locations.id < products.location_id
 
-Enum award_status {
-  ACCEPTED
-  DECLINED
-  WAITING
-}
-
-Table awards [note: 'awards table'] {
-  id int [pk, increment]
-  user_location_id int
-  product_id int
-  assignee_id int
-  status award_status
-  note varchar
-  created_at timestamp [default: `now()`]
-  updated_at timestamp
-}
-
-Ref: user_locations.id < awards.user_location_id
-Ref: products.id < awards.product_id
-Ref: users.id < awards.assignee_id
-
 Enum activity_type {  
   CHECKIN
   SIGNUP
@@ -214,8 +193,7 @@ Enum activity_type {
 }
 
 Enum activity_model {
-  ASSET
-  AWARD
+  ASSET  
   GALLERY
   LOCATION
   POINT
