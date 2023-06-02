@@ -1,4 +1,4 @@
-import { Reward, UserLocation } from '@/models';
+import { Reward, UserLocation, Product } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE, DEFAULT_REWARD_POINT, DEFAULT_REWARD_COUPON } from '@/constants';
 import config from '@/config';
@@ -66,6 +66,15 @@ export const create = async (inputs) => {
     );
   });
   const rewards = await Promise.all(insertPromises).then((res) => res);
+
+  let updateLocationPromises = [];
+  inputs.forEach((input) => {
+    updateLocationPromises.push(
+      Product.query().decrement('amount', 1).where({ id: input.productId })
+    );
+  });
+  await Promise.all(updateLocationPromises).then((res) => res);
+
   return rewards;
 };
 

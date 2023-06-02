@@ -23,8 +23,11 @@ export const filter = (params) => {
   }
 
   if (params?.search) {
+    queryBuilder.joinRelated('location');
     queryBuilder.where((builder) => {
-      builder.where(fn.lower(ref('name')), 'like', `%${params.search.toLowerCase()}%`);
+      builder
+        .where(fn.lower(ref('tablets.name')), 'like', `%${params.search.toLowerCase()}%`)
+        .orWhere(fn.lower(ref('location.name')), 'like', `%${params.search.toLowerCase()}%`);
     });
   }
 

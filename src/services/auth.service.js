@@ -31,8 +31,9 @@ export const createNewUser = async (param) => {
   const user = await User.query().findOne({ email: param.email });
   if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_EMAIL);
 
-  const { firstName, lastName, email, address, phone, birthday, status, roleId, avatar } = param;
-  const userName = firstName && lastName ? `${firstName}${lastName}` : undefined;
+  const { firstName, lastName, userName, email, address, phone, birthday, status, roleId, avatar } =
+    param;
+
   const newUser = await User.query()
     .insertAndFetch({
       firstName,
@@ -41,7 +42,7 @@ export const createNewUser = async (param) => {
       email,
       location: address,
       phone,
-      birthday: birthday ?? '1991-10-10',
+      ...(birthday && { birthday }),
       status,
       roleId,
       assetId: avatar?.id ?? undefined,

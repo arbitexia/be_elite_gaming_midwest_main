@@ -36,12 +36,12 @@ export const loadRoles = async () => {
 };
 
 export const updateUser = async (id, input) => {
-  const { firstName, lastName, birthday, email, firstLogin, status, roleId, avatar } = input;
+  const { firstName, lastName, birthday, email, firstLogin, status, userName, roleId, avatar } =
+    input;
   const user = await User.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'
   });
-  const userName = firstName && lastName ? `${firstName}${lastName}` : undefined;
   const updatedUser = await user
     .$query()
     .updateAndFetch({

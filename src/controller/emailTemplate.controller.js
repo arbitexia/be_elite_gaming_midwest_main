@@ -1,4 +1,4 @@
-import { sendInBlue } from '@/helpers';
+import { emailDelivery, sendInBlue } from '@/helpers';
 import { GetTransactionEmailTemplateById } from '@/helpers/sendInBlue';
 import { emailService } from '@/services';
 
@@ -67,6 +67,31 @@ export const getSendinBlueEmailTemplates = async (req, res) => {
   try {
     const result = await sendInBlue.GetTransactionEmailTemplates();
     res.status(200).json(result.templates);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const sendCampaignEmail = async (req, res) => {
+  try {
+    const { locationId, templateId, customerIds } = req.body; // templateId is one of sendinblue TemplateID.
+    const result = await emailService.sendEmails({ locationId, templateId, customerIds });
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const followUpEmail = async (req, res) => {
+  try {
+    const { from, to, subject, content } = req.body;
+    const result = await emailDelivery({
+      from,
+      to,
+      subject,
+      content
+    });
+    res.status(200).json('Sent the email successfully.');
   } catch (e) {
     res.status(500).json(e.message);
   }

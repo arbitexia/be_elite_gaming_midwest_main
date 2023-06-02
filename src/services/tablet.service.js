@@ -68,15 +68,15 @@ export const updatePassword = async (id, oldPassword, password) => {
   const tablet = await Tablet.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.TABLET.NOT_FOUND
   });
-
-  if (!securityHelper.validatePassword(oldPassword, tablet.password)) {
-    throw new UserInputError(APP_MESSAGE.USER.INVALID_PASSWORD);
+  const isValid = await securityHelper.validatePassword(oldPassword, tablet.password);
+  if (!isValid) {
+    throw new Error(APP_MESSAGE.USER.INVALID_PASSWORD);
   }
   await tablet.$query().updateAndFetch({
     password: hashedPassword
   });
 
   return {
-    message: APP_MESSAGE.TABLET.SUCESS_UPDATE
+    message: APP_MESSAGE.TABLET.SUCESS_PASSWORD_UPDATE
   };
 };

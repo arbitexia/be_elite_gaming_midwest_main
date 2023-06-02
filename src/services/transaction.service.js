@@ -2,7 +2,7 @@ import { Point, Transaction, User } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE, TRANSACTION_TYPE } from '@/constants';
 import config from '@/config';
-import { ref, raw } from 'objection';
+import { raw } from 'objection';
 
 const TEST = config.NODE_ENV === 'test';
 
@@ -71,7 +71,7 @@ export const updateTransaction = async (id, assigneeId, status) => {
     .updateAndFetch({
       assigneeId,
       status: status,
-      acceptedAt: new Date()
+      acceptedAt: new Date().toISOString()
     })
     .withGraphFetched('[user, reward.[product], location, assignee, point ]');
 

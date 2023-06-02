@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import config from '@/config';
 
-const emailDelivery = async ({ to, subject, content }) => {
+const emailDelivery = async ({ from, to, subject, content }) => {
   const transporter = nodemailer.createTransport({
     service: 'SendinBlue',
     auth: {
@@ -11,7 +11,7 @@ const emailDelivery = async ({ to, subject, content }) => {
   });
 
   const options = {
-    from: `${config.SEND_IN_BLUE.EMAIL_FROM}`,
+    from: from ?? `${config.SEND_IN_BLUE.EMAIL_FROM}`,
     to: to,
     subject: subject,
     html: content

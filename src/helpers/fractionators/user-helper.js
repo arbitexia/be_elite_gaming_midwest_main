@@ -22,11 +22,8 @@ export const filter = (params) => {
       }
       if (params.status === USER_FILTER_TYPE_MAPPER.DISABLED_USER) {
         return builder
-          .where({ status: USER_STATUS_MAPPER.DISABLED })
+          .whereIn('status', [USER_STATUS_MAPPER.DISABLED, USER_STATUS_MAPPER.ARCHIVED])
           .where('roleId', '<', USER_ROLE_MAPPER.ADMIN);
-      }
-      if (params.status === USER_FILTER_TYPE_MAPPER.ARCHIVED_USER) {
-        return builder.where({ status: USER_STATUS_MAPPER.ARCHIVED }).orWhere({ status: null });
       }
       return builder;
     });
@@ -34,7 +31,9 @@ export const filter = (params) => {
   if (params.type) {
     queryBuilder.joinRelated('role').where('role.shortCode', params.type);
   }
-
+  if (params.location && params.location !== 'ALL') {
+    queryBuilder.joinRelated('userLocations').where('userLocations.locationId', params.location);
+  }
   if (params.search) {
     queryBuilder.where((builder) => {
       builder
@@ -42,32 +41,7 @@ export const filter = (params) => {
         .orWhere(fn.lower(ref('lastName')), 'like', `%${params.search.toLowerCase()}%`)
         .orWhere(fn.lower(ref('userName')), 'like', `%${params.search.toLowerCase()}%`)
         .orWhere(fn.lower(ref('email')), 'like', `%${params.search.toLowerCase()}%`)
-        .orWhere(fn.lower(ref('phone')), 'like', `%${params.search.toLowerCase()}%`)
-        .orWhere(
-          fn.lower(ref('location:city').castText()),
-          'like',
-          `%${params.search.toLowerCase()}%`
-        )
-        .orWhere(
-          fn.lower(ref('location:zipcode').castText()),
-          'like',
-          `%${params.search.toLowerCase()}%`
-        )
-        .orWhere(
-          fn.lower(ref('location:state').castText()),
-          'like',
-          `%${params.search.toLowerCase()}%`
-        )
-        .orWhere(
-          fn.lower(ref('location:address1').castText()),
-          'like',
-          `%${params.search.toLowerCase()}%`
-        )
-        .orWhere(
-          fn.lower(ref('location:country').castText()),
-          'like',
-          `%${params.search.toLowerCase()}%`
-        );
+        .orWhere(fn.lower(ref('phone')), 'like', `%${params.search.toLowerCase()}%`);
     });
   }
 

@@ -22,8 +22,8 @@ const APP_MESSAGE = {
     NOT_FOUND: 'Current user does not exist!',
     TABLET_NOT_FOUND: 'Location does not exist',
     ALREADY_DEFINED: 'Current parameter already set on the user.',
-    INVALID_USER: 'Unable to process the not matched user!',
-    INVALID_PASSWORD: 'Unable to process the update password!',
+    INVALID_USER: 'Unable to process the not matched user',
+    INVALID_PASSWORD: 'Unable to process the update password',
     SUCESS_PASSWORD_CHANGE: 'Successfully, Your password has been updated!',
     SUCESS_USER_DELETE: 'User has been deleted',
     SUCCESS: 'Success!'
@@ -61,6 +61,7 @@ const APP_MESSAGE = {
   TABLET: {
     DUPLICATED_NAME: 'Current tablet ID already exists',
     NOT_FOUND: 'Tablet ID does not exist',
+    SUCESS_PASSWORD_UPDATE: 'The password has been changed',
     SUCESS_UPDATE: 'Tablet ID has been updated',
     SUCESS_CREATE: 'Tablet ID has been created',
     SUCCESS_USER_DELETE: 'Tablet ID has been deleted'
@@ -71,6 +72,10 @@ const APP_MESSAGE = {
   },
   TRANSACTION: {
     NOT_FOUND: 'Transaction does not exist'
+  },
+  EMAIL: {
+    SEND_SUCCESS: 'Sent the email successfully.',
+    SEND_FAILED: 'Failed to send the email.'
   }
 };
 

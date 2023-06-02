@@ -11,7 +11,8 @@ import {
   configController,
   tabletController,
   transactionController,
-  emailTemplateController
+  emailTemplateController,
+  userLocationController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -317,6 +318,24 @@ router.get(
   '/sendinblue/email_templates',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   emailTemplateController.getSendinBlueEmailTemplates
+);
+
+router.post(
+  '/send_campaign_email',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.sendCampaignEmail
+);
+
+router.post(
+  '/followup_email',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.followUpEmail
+);
+
+router.get(
+  '/user_locations',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  userLocationController.filter
 );
 
 export default router;

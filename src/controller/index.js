@@ -10,3 +10,4 @@ export * as configController from './config.controller';
 export * as tabletController from './tablet.controller';
 export * as transactionController from './transaction.controller';
 export * as emailTemplateController from './emailTemplate.controller';
+export * as userLocationController from './userLocation.controller';

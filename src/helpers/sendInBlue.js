@@ -56,6 +56,6 @@ export const SendEmailSendinBlue = async ({ email, name, templateId, pointInfo }
     sendSmtpEmail.params = params;
     await transactionApiInstance.sendTransacEmail(sendSmtpEmail);
   } catch (error) {
-    console.log(error);
+    throw new Error('failed');
   }
 };

@@ -1,4 +1,5 @@
 import { UserLocation } from '@/models';
+import { fractionateHelper, cursorHelper } from '@/helpers';
 
 export const checkIn = async (locationId, userId) => {
   const location = await UserLocation.query().findOne({
@@ -27,4 +28,21 @@ export const getOneByTablet = async (tabletId) => {
       }
     });
   return userLocation;
+};
+
+export const filterByLocationId = async (filterBy, cursor) => {
+  let queryBuilder;
+  const pageCursor = cursorHelper('userLocation', cursor);
+  const { filter } = await fractionateHelper('userLocation');
+  queryBuilder = filter(filterBy);
+  const { results, total } = await queryBuilder
+    .page(pageCursor.page, pageCursor.size)
+    .withGraphFetched('[user, location]');
+  return {
+    data: results,
+    pageInfo: {
+      ...pageCursor,
+      total
+    }
+  };
 };

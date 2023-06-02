@@ -5,7 +5,7 @@ import {
   EMAIL_TEMPLATE_STATUS
 } from '@/constants';
 import { cursorHelper, fractionateHelper, securityHelper } from '@/helpers';
-import { EmailTemplate } from '@/models';
+import { EmailTemplate, User, UserLocation } from '@/models';
 import { SendEmailSendinBlue } from '@/helpers/sendInBlue';
 
 export const getEmailTemplates = async (filterBy, cursor) => {
@@ -303,4 +303,40 @@ export const testEmail = async ({ id, toEmail, user }) => {
       break;
   }
   return { message: 'Sent the email' };
+};
+
+export const sendEmails = async ({ locationId, templateId, customerIds }) => {
+  if (customerIds) {
+    const users = await User.query().whereIn('id', customerIds);
+    if (users.length > 0) {
+      await Promise.all(
+        users.map(async (user) => {
+          await SendEmailSendinBlue({
+            email: user.email,
+            name: user.firstName,
+            templateId
+          });
+        })
+      );
+    }
+  } else {
+    const userLocation = await UserLocation.query()
+      .where({ locationId })
+      .withGraphFetched('[user]');
+    if (userLocation.length > 0) {
+      await Promise.all(
+        userLocation.map(async ({ user }) => {
+          console.log(user.email);
+          await SendEmailSendinBlue({
+            email: user.email,
+            name: user.firstName,
+            templateId
+          });
+        })
+      );
+    } else {
+      return APP_MESSAGE.COMMON.NOT_FOUND;
+    }
+  }
+  return APP_MESSAGE.EMAIL.SEND_SUCCESS;
 };
