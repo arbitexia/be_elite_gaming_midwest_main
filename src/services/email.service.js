@@ -181,11 +181,12 @@ export const confirmUserRegisterEmail = async ({ user, templateId }) => {
   }
 };
 
-export const forgotPasswordEmail = async ({ user, templateId }) => {
+export const forgotPasswordEmail = async ({ user, templateId, token }) => {
   if (templateId) {
     await SendEmailSendinBlue({
       email: user.email,
       name: user.firstName,
+      token: '1234',
       templateId
     });
   } else {
@@ -200,6 +201,7 @@ export const forgotPasswordEmail = async ({ user, templateId }) => {
     await SendEmailSendinBlue({
       email: user.email,
       name: user.firstName,
+      token,
       templateId: template.templateId
     });
   }
@@ -221,11 +223,13 @@ export const resetPasswordEmail = async ({ user, templateId, updatedUser }) => {
       .throwIfNotFound({
         message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
       });
-    await SendEmailSendinBlue({
-      email: user.email,
-      name: user.firstName,
-      templateId: template.templateId
-    });
+    if (template) {
+      await SendEmailSendinBlue({
+        email: user.email,
+        name: user.firstName,
+        templateId: template.templateId
+      });
+    }
   }
 };
 
@@ -245,13 +249,14 @@ export const forceResetPasswordEmail = async ({ user, templateId, randomPassword
       .throwIfNotFound({
         message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
       });
-
-    await SendEmailSendinBlue({
-      email: user.email,
-      name: user.firstName,
-      templateId: template.templateId,
-      tempPassword: randomPassword
-    });
+    if (template) {
+      await SendEmailSendinBlue({
+        email: user.email,
+        name: user.firstName,
+        templateId: template.templateId,
+        tempPassword: randomPassword
+      });
+    }
   }
 };
 

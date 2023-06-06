@@ -291,12 +291,11 @@ export const forgotPassword = async (email) => {
     message: APP_MESSAGE.USER.NOT_FOUND
   });
 
-  await emailService.forgotPasswordEmail({ user });
-
   const updatedUser = await user
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_EMAIL });
 
+  const token = securityHelper.genRandomTokenString(40);
   await Verification.query().insert({
     victimId: updatedUser.id,
     type: VERIFICATION_TYPE_MAPPER.VERIFY_EMAIL,
@@ -304,6 +303,7 @@ export const forgotPassword = async (email) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
 
+  await emailService.forgotPasswordEmail({ user, token });
   return {
     message: APP_MESSAGE.AUTH.SUCCESS_FORGOT_PASSWORD,
     userId: updatedUser.id
@@ -339,5 +339,43 @@ export const resetPassword = async (token, password) => {
   return {
     message: APP_MESSAGE.AUTH.SUCCESS_RESET_PASSWORD,
     userId: updatedUser.id
+  };
+};
+
+export const verifyPhone = async (token, res) => {
+  const verification = await Verification.query()
+    .findOne({
+      token,
+      status: VERIFICATION_STATUS_MAPPER.ACTIVATED,
+      type: VERIFICATION_TYPE_MAPPER.VERIFY_PHONE
+    })
+    .throwIfNotFound({
+      message: APP_MESSAGE.VERIFICATION.NOT_FOUND
+    });
+
+  const user = await User.query()
+    .updateAndFetchById(verification.victimId, {
+      status: USER_STATUS_MAPPER.ACTIVATED
+    })
+    .withGraphFetched('[role, avatar]');
+
+  await Verification.query()
+    .update({
+      status: VERIFICATION_STATUS_MAPPER.VERIFIED
+    })
+    .where({ id: verification.id });
+
+  const accessToken = await securityHelper.genJwtToken(user.id, '8h');
+  const refreshToken = await securityHelper.genRefreshToken(user.id, '24h');
+
+  if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
+
+  const { role, ...rest } = user;
+
+  return {
+    user: rest,
+    role,
+    accessToken,
+    refreshToken
   };
 };

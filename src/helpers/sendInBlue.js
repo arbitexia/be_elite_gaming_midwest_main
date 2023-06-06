@@ -44,7 +44,7 @@ export const GetContactEmails = async () => {
   }
 };
 
-export const SendEmailSendinBlue = async ({ email, name, templateId, pointInfo }) => {
+export const SendEmailSendinBlue = async ({ email, name, templateId, pointInfo, token }) => {
   try {
     let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
     sendSmtpEmail.to = [{ email, name }];
@@ -53,6 +53,11 @@ export const SendEmailSendinBlue = async ({ email, name, templateId, pointInfo }
     if (pointInfo) {
       params = { ...params, TOTAL_POINT: pointInfo.totalPoint, POINT_COUNT: pointInfo.point };
     }
+    if (token) {
+      const resetPwdLink = `${config.FRONTEND_URL}/reset-password?token=${token}`;
+      params = { ...params, RESET_PASSWORD_LINK: resetPwdLink };
+    }
+
     sendSmtpEmail.params = params;
     await transactionApiInstance.sendTransacEmail(sendSmtpEmail);
   } catch (error) {
