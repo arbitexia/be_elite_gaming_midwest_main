@@ -6,6 +6,8 @@ export default {
     locationId: { type: 'integer' },
     productId: { type: 'integer' },
     point: { type: 'integer' },
-    coupon: { type: 'integer' }
+    coupon: { type: 'integer' },
+    pointThreshold: { type: 'integer' },
+    couponThreshold: { type: 'integer' }
   }
 };

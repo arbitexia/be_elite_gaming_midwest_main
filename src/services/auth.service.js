@@ -98,6 +98,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
 };
 
 export const authorizeTablet = async (identifier, password, res) => {
+  console.log(identifier, '***', password);
   const tablet = await Tablet.query()
     .findOne({ name: identifier, status: USER_STATUS_MAPPER.ACTIVATED })
     .withGraphFetched('[location]')
@@ -250,7 +251,8 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
       await activityService.createActivity(activityToSave);
     }
   }
-
+  // increase the count whenever a customer checkin
+  await user.$query().updateAndFetch({ checkinCount: (user?.checkinCount ?? 0) + 1 });
   const { role, ...rest } = user;
   return {
     user: rest,

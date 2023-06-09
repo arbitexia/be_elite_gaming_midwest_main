@@ -12,9 +12,16 @@ export const getConfig = async (req, res) => {
 export const createConfig = async (req, res) => {
   try {
     const {
-      input: { id, daily, weekly, monthly }
+      input: { id, daily, weekly, monthly, checkinThreshold, coupon }
     } = req.body;
-    const result = await configService.save({ id, daily, weekly, monthly });
+    const result = await configService.save({
+      id,
+      daily,
+      weekly,
+      monthly,
+      checkinThreshold,
+      coupon
+    });
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);
