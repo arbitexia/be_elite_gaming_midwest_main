@@ -250,7 +250,8 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
       await activityService.createActivity(activityToSave);
     }
   }
-
+  // increase the count whenever a customer checkin
+  await user.$query().updateAndFetch({ checkinCount: (user?.checkinCount ?? 0) + 1 });
   const { role, ...rest } = user;
   return {
     user: rest,
@@ -378,4 +379,16 @@ export const verifyPhone = async (token, res) => {
     accessToken,
     refreshToken
   };
+};
+
+export const verifyTwilo = async () => {
+  await client.messages
+    .create({
+      body: `Your verification code is ${1234}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: 18482783246
+    })
+    .catch((e) => {
+      throw new BadRequest(e.message);
+    });
 };

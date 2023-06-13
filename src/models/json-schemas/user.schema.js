@@ -28,6 +28,7 @@ export default {
       enum: ['ACTIVATED', 'DISABLED', 'ARCHIVED', 'VERIFY_PHONE', 'VERIFY_EMAIL']
     },
     roleId: { type: 'integer' },
-    coupon: { type: 'integer' }
+    coupon: { type: 'integer' },
+    checkinCount: { type: 'integer' }
   }
 };
