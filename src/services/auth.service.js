@@ -98,7 +98,6 @@ export const register = async (phone, email, birthday, locationInfo) => {
 };
 
 export const authorizeTablet = async (identifier, password, res) => {
-  console.log(identifier, '***', password);
   const tablet = await Tablet.query()
     .findOne({ name: identifier, status: USER_STATUS_MAPPER.ACTIVATED })
     .withGraphFetched('[location]')
@@ -380,4 +379,16 @@ export const verifyPhone = async (token, res) => {
     accessToken,
     refreshToken
   };
+};
+
+export const verifyTwilo = async () => {
+  await client.messages
+    .create({
+      body: `Your verification code is ${1234}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: 18482783246
+    })
+    .catch((e) => {
+      throw new BadRequest(e.message);
+    });
 };

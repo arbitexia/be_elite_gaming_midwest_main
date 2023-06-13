@@ -28,18 +28,11 @@ export const handler = async (event) => {
               (obj) =>
                 obj.pointThreshold !== 0 &&
                 obj.pointThreshold <= customerPoint &&
-                obj.locationId === customer.locationId
+                obj.locationId === customer.locationId &&
+                obj.point > customerPoint
             );
             //send the email for point
             if (filteredRewards.length > 0) {
-              // const theEmailContents = filteredRewards.map((obj) => {
-              //   return {
-              //     content: `You are ${obj.point - customerPoint} points away from unlocking an ${
-              //       obj.product.name
-              //     }.`
-              //   };
-              // });
-              // const contentString = theEmailContents.map((item) => item.content).join(' ');
               await rewardPointWorkerEmail({
                 user: customer.user,
                 jobInfo: {
@@ -55,7 +48,8 @@ export const handler = async (event) => {
               (obj) =>
                 obj.couponThreshold !== 0 &&
                 obj.couponThreshold <= customer.user.coupon &&
-                obj.locationId === customer.locationId
+                obj.locationId === customer.locationId &&
+                obj.coupon > customer.user.coupon
             );
             // send the email for coupon
             if (filteredRewards.length > 0) {

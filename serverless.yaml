@@ -67,7 +67,7 @@ functions:
     handler: dist/workers/reward-worker.handler
     timeout: 600
     events:
-      - schedule: rate(10 minutes)
+      - schedule: rate(1 day)
     package:
       include:
         - dist/**
@@ -85,7 +85,7 @@ functions:
     handler: dist/workers/coupon-worker.handler
     timeout: 600
     events:
-      - schedule: rate(10 minutes)
+      - schedule: rate(1 day)
     package:
       include:
         - dist/**
