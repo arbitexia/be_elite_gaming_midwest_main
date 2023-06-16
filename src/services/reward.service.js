@@ -116,9 +116,9 @@ export const getRewards = async (filter) => {
   let qb = Reward.query();
   if (Number(filter.fromPoint) >= 0 && Number(filter.toPoint) > 0) {
     if (Number(filter.toPoint) === 1) {
-      qb.joinRelated('product').where('product.point', '>', filter.fromPoint);
+      qb.where('point', '>', filter.fromPoint);
     } else {
-      qb.joinRelated('product').whereBetween('product.point', [filter.fromPoint, filter.toPoint]);
+      qb.whereBetween('point', [filter.fromPoint, filter.toPoint]);
     }
   }
   if (filter?.locationId && Number(filter.locationId) !== 0) {

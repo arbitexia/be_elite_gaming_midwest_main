@@ -327,6 +327,12 @@ router.post(
 );
 
 router.post(
+  '/send_customer_email',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  emailTemplateController.sendCustomerEmail
+);
+
+router.post(
   '/followup_email',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   emailTemplateController.followUpEmail
