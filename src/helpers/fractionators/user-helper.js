@@ -2,7 +2,7 @@ import { ref, fn } from 'objection';
 import { User } from '@/models';
 import { USER_STATUS_MAPPER, USER_FILTER_TYPE_MAPPER, USER_ROLE_MAPPER } from '@/constants';
 
-export const filter = (params) => {
+export const filter = (params, userId) => {
   let queryBuilder;
   queryBuilder = User.query();
   if (params.status) {
@@ -44,6 +44,6 @@ export const filter = (params) => {
         .orWhere(fn.lower(ref('phone')), 'like', `%${params.search.toLowerCase()}%`);
     });
   }
-
+  queryBuilder.whereNot('users.id', userId);
   return queryBuilder;
 };

@@ -3,7 +3,7 @@ import { userService } from '@/services';
 export const getUsers = async (req, res) => {
   try {
     const { filterBy, cursor } = req.query;
-    const result = await userService.loadUsers(filterBy, cursor);
+    const result = await userService.loadUsers(filterBy, cursor, req.user.id);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);

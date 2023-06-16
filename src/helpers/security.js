@@ -87,13 +87,6 @@ export const destroyTokenCookie = (res) => {
   res.cookie('refreshToken', cookieOptions);
 };
 
-export const genOneTimeToken = (email, roleId) =>
-  new Promise((resolve) => {
-    const token = jwt.sign({ email, roleId }, config.appSecret);
-
-    resolve(token);
-  });
-
 export const hasUserIdOnRequest = async (req) => {
   let authHeader = req.headers.authorization;
   if (!authHeader) {

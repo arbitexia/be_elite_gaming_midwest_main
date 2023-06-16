@@ -4,6 +4,9 @@ import { Location } from '@/models';
 export const filter = (params) => {
   let queryBuilder;
   queryBuilder = Location.query();
+  if (params?.userId) {
+    queryBuilder.joinRelated('userLocation').where('userLocation.userId', params.userId);
+  }
   if (params?.search) {
     queryBuilder
       .where((builder) => {

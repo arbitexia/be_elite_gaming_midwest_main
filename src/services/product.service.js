@@ -1,4 +1,4 @@
-import { Product } from '@/models';
+import { Product, Reward } from '@/models';
 import { fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
@@ -42,7 +42,7 @@ export const getOne = async (id) => {
 
 export const createProduct = async ({ name, locationId, amount, status, short, description }) => {
   const product = await Product.query()
-    .insertAndFetch({ name, locationId, amount, status, short, description })
+    .insertAndFetch({ name, locationId, amount, status: 'AVAILABLE', short, description })
     .withGraphFetched('[gallery(filterByModel).asset]')
     .modifiers({
       filterByModel(builder) {
@@ -86,6 +86,8 @@ export const deleteProduct = async (id) => {
     message: APP_MESSAGE.PRODUCT.NOT_FOUND,
     type: 'NOT_FOUND'
   });
+  //delete reward
+  await Reward.query().delete().where('product_id', '=', product.id);
   await product.$query().delete();
   return {
     message: APP_MESSAGE.PRODUCT.SUCESS_DELETE

@@ -6,12 +6,12 @@ import { emailService } from '.';
 
 const TEST = config.NODE_ENV === 'test';
 
-export const loadUsers = async (filterBy, cursor) => {
+export const loadUsers = async (filterBy, cursor, userId) => {
   let queryBuilder;
   const pageCursor = cursorHelper('user', cursor);
   const { filter } = await fractionateHelper('user');
 
-  queryBuilder = filter(filterBy);
+  queryBuilder = filter(filterBy, userId);
 
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
@@ -53,7 +53,9 @@ export const updateUser = async (id, input) => {
       status,
       roleId,
       assetId: avatar?.id ?? undefined,
-      userName
+      userName,
+      ...(roleId === USER_ROLE_MAPPER.ADMIN &&
+        roleId !== user.roleId && { password: `${userName}${user.phone}` })
     })
     .withGraphFetched('[role, avatar]');
 

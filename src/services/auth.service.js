@@ -59,7 +59,8 @@ export const createNewUser = async (param) => {
       status: USER_STATUS_MAPPER.ACTIVATED,
       roleId,
       assetId: avatar?.id ?? undefined,
-      coupon: DEFAULT_COUPON
+      coupon: DEFAULT_COUPON,
+      ...(roleId === USER_ROLE_MAPPER.ADMIN && { password: `${userName}${phone}` })
     })
     .withGraphFetched('[role, avatar]');
 
