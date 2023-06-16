@@ -1,4 +1,4 @@
-import { User, Verification, Point, Config, Tablet } from '@/models';
+import { User, Verification, Point, Config, Tablet, UserLocation } from '@/models';
 import { securityHelper } from '@/helpers';
 import {
   APP_MESSAGE,
@@ -31,9 +31,22 @@ export const createNewUser = async (param) => {
   const user = await User.query().findOne({ email: param.email });
   if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_EMAIL);
 
-  const { firstName, lastName, userName, email, address, phone, birthday, status, roleId, avatar } =
-    param;
+  const {
+    firstName,
+    lastName,
+    userName,
+    email,
+    address,
+    phone,
+    birthday,
+    roleId,
+    avatar,
+    locationId
+  } = param;
 
+  if (locationId <= 0) {
+    throw new BadRequest('Select a location');
+  }
   const newUser = await User.query()
     .insertAndFetch({
       firstName,
@@ -43,12 +56,18 @@ export const createNewUser = async (param) => {
       location: address,
       phone,
       ...(birthday && { birthday }),
-      status,
+      status: USER_STATUS_MAPPER.ACTIVATED,
       roleId,
       assetId: avatar?.id ?? undefined,
       coupon: DEFAULT_COUPON
     })
     .withGraphFetched('[role, avatar]');
+
+  await UserLocation.query().insert({
+    userId: newUser.id,
+    locationId: locationId
+  });
+
   return newUser;
 };
 
@@ -57,18 +76,25 @@ export const register = async (phone, email, birthday, locationInfo) => {
     phone,
     roleId: USER_ROLE_MAPPER.USER
   });
-  if (user) throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
-  const token = securityHelper.genPhoneVerifyToken().toString();
 
-  // await client.messages
-  //   .create({
-  //     body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-  //     messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-  //     to: phone
-  //   })
-  //   .catch((e) => {
-  //     throw new BadRequest(e.message);
-  //   });
+  if (user) {
+    // const verification = await Verification.query().where({
+    //   victimId: user.id,
+    //   status: VERIFICATION_STATUS_MAPPER.ACTIVATED
+    // });
+    throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
+  }
+
+  const token = securityHelper.genPhoneVerifyToken().toString();
+  await client.messages
+    .create({
+      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: phone
+    })
+    .catch((e) => {
+      throw new BadRequest(e.message);
+    });
 
   const newUser = await User.query()
     .insertAndFetch({
@@ -91,7 +117,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
   return {
-    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY + 'Token: ' + token,
+    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY,
     token,
     userId: updatedUser.id
   };
@@ -168,15 +194,16 @@ export const authorizeCustomer = async (identifier, res) => {
       type: 'NOT_FOUND'
     });
   const token = securityHelper.genPhoneVerifyToken().toString();
-  // await client.messages
-  //   .create({
-  //     body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-  //     messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-  //     to: user.phone
-  //   })
-  //   .catch((e) => {
-  //     throw new BadRequest(e.message);
-  //   });
+
+  await client.messages
+    .create({
+      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+      to: user.phone
+    })
+    .catch((e) => {
+      throw new BadRequest(e.message);
+    });
 
   const updatedUser = await user
     .$query()
@@ -188,7 +215,7 @@ export const authorizeCustomer = async (identifier, res) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
   return {
-    message: token, //APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
+    message: APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
     token,
     userId: user.id
   };
@@ -379,16 +406,4 @@ export const verifyPhone = async (token, res) => {
     accessToken,
     refreshToken
   };
-};
-
-export const verifyTwilo = async () => {
-  await client.messages
-    .create({
-      body: `Your verification code is ${1234}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: 18482783246
-    })
-    .catch((e) => {
-      throw new BadRequest(e.message);
-    });
 };

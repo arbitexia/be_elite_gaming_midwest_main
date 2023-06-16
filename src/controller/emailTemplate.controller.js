@@ -96,3 +96,13 @@ export const followUpEmail = async (req, res) => {
     res.status(500).json(e.message);
   }
 };
+
+export const sendCustomerEmail = async (req, res) => {
+  try {
+    const { templateId, customerId } = req.body; // templateId is one of sendinblue TemplateID.
+    const result = await emailService.sendCustomerEmail({ templateId, customerId });
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};

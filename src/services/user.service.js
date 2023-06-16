@@ -1,4 +1,4 @@
-import { User, Role } from '@/models';
+import { User, Role, Activity, UserLocation, Point, Transaction } from '@/models';
 import { securityHelper, fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE } from '@/constants';
 import config from '@/config';
@@ -65,6 +65,21 @@ export const deleteUser = async (id) => {
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'
   });
+  //delete activity
+  await Activity.query().delete().where('user_id', '=', user.id);
+  //delete transaction
+  await Transaction.query().delete().where('user_id', '=', user.id);
+  //delete user_location
+  const userLocation = await UserLocation.query().where('user_id', '=', user.id);
+  await Point.query()
+    .delete()
+    .whereIn(
+      'userLocationId',
+      userLocation.map((obj) => {
+        return obj.id;
+      })
+    );
+  await UserLocation.query().delete().where('user_id', '=', user.id);
   await user.$query().delete();
   return {
     message: APP_MESSAGE.USER.SUCESS_USER_DELETE

@@ -218,7 +218,7 @@ export const createNewUser = async (req, res) => {
     };
     await activityService.createActivity(activityToSave);
     res.status(200).json(result);
-  } catch (error) {
+  } catch (e) {
     const activityToSave = {
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.CREATE,

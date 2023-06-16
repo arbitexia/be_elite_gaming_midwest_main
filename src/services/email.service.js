@@ -346,6 +346,35 @@ export const sendEmails = async ({ locationId, templateId, customerIds }) => {
   return APP_MESSAGE.EMAIL.SEND_SUCCESS;
 };
 
+export const sendCustomerEmail = async ({ templateId, customerId }) => {
+  const user = await User.query().where('id', customerId);
+  if (templateId) {
+    await SendEmailSendinBlue({
+      email: user.email,
+      name: user.firstName,
+      templateId
+    });
+  } else {
+    const template = await EmailTemplate.query()
+      .findOne({
+        // category: EMAIL_TEMPLATE_CATEGORY.CONFIRM_RESET_PASSWORD,
+        templateId: 11,
+        status: EMAIL_TEMPLATE_STATUS.PUBLISHED
+      })
+      .throwIfNotFound({
+        message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
+      });
+    if (template) {
+      await SendEmailSendinBlue({
+        email: user.email,
+        name: user.firstName,
+        templateId: template.templateId
+      });
+    }
+  }
+  return { message: APP_MESSAGE.EMAIL.SEND_SUCCESS };
+};
+
 export const rewardPointWorkerEmail = async ({ user, templateId, jobInfo }) => {
   if (templateId) {
     await SendEmailSendinBlue({
