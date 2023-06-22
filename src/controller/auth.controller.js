@@ -1,10 +1,4 @@
-import {
-  authService,
-  userLocationService,
-  pointService,
-  locationService,
-  activityService
-} from '@/services';
+import { authService, userLocationService, pointService, activityService } from '@/services';
 import { ipToLocationInfo, convertIpFromV6ToV4 } from '@/helpers';
 import {
   ACTIVITY_MODEL,
@@ -47,10 +41,10 @@ export const authorize = async (req, res) => {
 export const refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    const { accessToken, userId } = await authService.refreshToken(refreshToken, res);
+    const { accessToken, userId, isTablet } = await authService.refreshToken(refreshToken, res);
     //TODO add auth Activity
     const activityToSave = {
-      userId,
+      ...(!isTablet && { userId }),
       victimId: userId,
       model: ACTIVITY_MODEL.USER,
       type: ACTIVITY_TYPE.GET,
@@ -80,7 +74,6 @@ export const authorizeTablet = async (req, res) => {
     const result = await authService.authorizeTablet(identifier, password, res);
     //TODO add auth Activity
     const activityToSave = {
-      userId: result.id,
       victimId: result.id,
       model: ACTIVITY_MODEL.TABLET,
       type: ACTIVITY_TYPE.LOGIN,

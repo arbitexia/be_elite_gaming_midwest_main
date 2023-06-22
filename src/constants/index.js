@@ -7,7 +7,8 @@ export {
   USER_STATUS_MAPPER,
   USER_ROLE_MAPPER,
   ROLE_SHORT_CODES,
-  DEFAULT_COUPON
+  DEFAULT_COUPON,
+  TEST_PHONE_NUMBER
 } from './user';
 
 export {

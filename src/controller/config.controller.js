@@ -12,7 +12,7 @@ export const getConfig = async (req, res) => {
 export const createConfig = async (req, res) => {
   try {
     const {
-      input: { id, daily, weekly, monthly, checkinThreshold, coupon }
+      input: { id, daily, weekly, monthly, checkinThreshold, coupon, initialCoupon }
     } = req.body;
     const result = await configService.save({
       id,
@@ -20,7 +20,8 @@ export const createConfig = async (req, res) => {
       weekly,
       monthly,
       checkinThreshold,
-      coupon
+      coupon,
+      initialCoupon
     });
     res.status(200).json(result);
   } catch (e) {

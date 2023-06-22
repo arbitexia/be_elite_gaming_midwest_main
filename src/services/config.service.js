@@ -9,7 +9,15 @@ export const findOne = async () => {
   return config;
 };
 
-export const save = async ({ id, daily, weekly, monthly, checkinThreshold, coupon }) => {
+export const save = async ({
+  id,
+  daily,
+  weekly,
+  monthly,
+  checkinThreshold,
+  coupon,
+  initialCoupon
+}) => {
   let result;
   if (id > 0) {
     const config = await Config.query().findOne({ id }).throwIfNotFound({
@@ -21,7 +29,8 @@ export const save = async ({ id, daily, weekly, monthly, checkinThreshold, coupo
       weekly,
       monthly,
       checkinThreshold,
-      coupon
+      coupon,
+      initialCoupon
     });
   } else {
     result = await Config.query().insertAndFetch({
@@ -29,7 +38,8 @@ export const save = async ({ id, daily, weekly, monthly, checkinThreshold, coupo
       weekly,
       monthly,
       checkinThreshold,
-      coupon
+      coupon,
+      initialCoupon
     });
   }
   return result;

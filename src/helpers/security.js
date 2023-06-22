@@ -6,6 +6,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { userService } from '@/services';
 import { AuthenticationError } from '@/provider/error';
 import config from '@/config';
+import { Tablet } from '@/models';
 
 const DEBUG = config.NODE_ENV === 'development';
 const saltRounds = 10;
@@ -18,7 +19,12 @@ const opts = {
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
     try {
-      const user = await userService.getOne(payload.userId);
+      let user;
+      if (payload.isTablet) {
+        user = await Tablet.query().findOne({ id: payload.userId });
+      } else {
+        user = await userService.getOne(payload.userId);
+      }
       return done(null, user);
     } catch (e) {
       return done(e, false);
@@ -48,15 +54,15 @@ export const validatePassword = (password, hashedPassword) =>
     });
   });
 
-export const genJwtToken = (userId, expiresIn) =>
+export const genJwtToken = (userId, expiresIn, isTablet = false) =>
   new Promise((resolve) => {
-    const token = jwt.sign({ userId }, config.APP_SECRET, { expiresIn });
+    const token = jwt.sign({ userId, isTablet }, config.APP_SECRET, { expiresIn });
     resolve(token);
   });
 
-export const genRefreshToken = (userId, expiresIn) =>
+export const genRefreshToken = (userId, expiresIn, isTablet = false) =>
   new Promise((resolve) => {
-    const token = jwt.sign({ userId }, config.APP_REFRESH_SECRET, { expiresIn });
+    const token = jwt.sign({ userId, isTablet }, config.APP_REFRESH_SECRET, { expiresIn });
     resolve(token);
   });
 

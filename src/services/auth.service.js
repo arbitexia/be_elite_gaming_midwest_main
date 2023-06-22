@@ -10,7 +10,8 @@ import {
   ACTIVITY_MODEL,
   ACTIVITY_TYPE,
   STATUS_MSG,
-  DEFAULT_INC_POINT
+  DEFAULT_INC_POINT,
+  TEST_PHONE_NUMBER
 } from '@/constants';
 import { BadRequest } from '@/provider/error';
 import config from '@/config';
@@ -23,8 +24,9 @@ const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN)
 export const refreshToken = async (refreshToken, res) => {
   const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
   const userId = refreshDecoded.userId;
+  const isTablet = refreshDecoded?.isTablet;
   const newToken = await securityHelper.genJwtToken(userId, '8h');
-  return { accessToken: newToken, userId };
+  return { accessToken: newToken, userId, isTablet };
 };
 
 export const createNewUser = async (param) => {
@@ -47,6 +49,11 @@ export const createNewUser = async (param) => {
   if (locationId <= 0) {
     throw new BadRequest('Select a location');
   }
+  let hashedPassword;
+  if (roleId === USER_ROLE_MAPPER.ADMIN) {
+    hashedPassword = await securityHelper.hashPassword(`${userName}${phone}`);
+  }
+  const configItem = await Config.query().first();
   const newUser = await User.query()
     .insertAndFetch({
       firstName,
@@ -59,8 +66,8 @@ export const createNewUser = async (param) => {
       status: USER_STATUS_MAPPER.ACTIVATED,
       roleId,
       assetId: avatar?.id ?? undefined,
-      coupon: DEFAULT_COUPON,
-      ...(roleId === USER_ROLE_MAPPER.ADMIN && { password: `${userName}${phone}` })
+      coupon: configItem ? configItem.initialItem : DEFAULT_COUPON,
+      ...(hashedPassword && { password: hashedPassword })
     })
     .withGraphFetched('[role, avatar]');
 
@@ -87,16 +94,19 @@ export const register = async (phone, email, birthday, locationInfo) => {
   }
 
   const token = securityHelper.genPhoneVerifyToken().toString();
-  await client.messages
-    .create({
-      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: phone
-    })
-    .catch((e) => {
-      throw new BadRequest(e.message);
-    });
-
+  const isTester = TEST_PHONE_NUMBER.some((number) => phone.includes(number));
+  if (!isTester) {
+    await client.messages
+      .create({
+        body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+        messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+        to: phone
+      })
+      .catch((e) => {
+        throw new BadRequest(e.message);
+      });
+  }
+  const configItem = await Config.query().first();
   const newUser = await User.query()
     .insertAndFetch({
       phone,
@@ -104,7 +114,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
       birthday,
       roleId: USER_ROLE_MAPPER.USER,
       firstLogin: locationInfo,
-      coupon: DEFAULT_COUPON,
+      coupon: configItem ? configItem.initialItem : DEFAULT_COUPON,
       status: USER_STATUS_MAPPER.VERIFY_PHONE
     })
     .withGraphFetched('[role, avatar]');
@@ -117,8 +127,9 @@ export const register = async (phone, email, birthday, locationInfo) => {
     token,
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
+
   return {
-    message: APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY,
+    message: `${APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY} ${isTester ? `Token: ${token}` : ''}`,
     token,
     userId: updatedUser.id
   };
@@ -137,11 +148,10 @@ export const authorizeTablet = async (identifier, password, res) => {
     throw new BadRequest(APP_MESSAGE.AUTH.INVALID_CREDENTIAL);
   }
 
-  const accessToken = await securityHelper.genJwtToken(tablet.id, '24h');
-  const refreshToken = await securityHelper.genRefreshToken(tablet.id, '24h');
+  const accessToken = await securityHelper.genJwtToken(tablet.id, '24h', true);
+  const refreshToken = await securityHelper.genRefreshToken(tablet.id, '24h', true);
 
   if (!config.DEBUG) securityHelper.setTokenToCookie(res, refreshToken);
-
   return {
     ...tablet,
     accessToken,
@@ -158,7 +168,7 @@ export const authorize = async (identifier, password, res) => {
     .where((builder) => {
       builder.where('roleId', USER_ROLE_MAPPER.ADMIN).orWhere('roleId', USER_ROLE_MAPPER.SUPER);
     })
-    .withGraphFetched('[role, avatar]')
+    .withGraphFetched('[role, avatar, userLocations]')
     .throwIfNotFound({
       message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
       type: 'NOT_FOUND'
@@ -195,17 +205,18 @@ export const authorizeCustomer = async (identifier, res) => {
       type: 'NOT_FOUND'
     });
   const token = securityHelper.genPhoneVerifyToken().toString();
-
-  await client.messages
-    .create({
-      body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-      messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-      to: user.phone
-    })
-    .catch((e) => {
-      throw new BadRequest(e.message);
-    });
-
+  const isTester = TEST_PHONE_NUMBER.some((number) => identifier.includes(number));
+  if (!isTester) {
+    await client.messages
+      .create({
+        body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
+        messagingServiceSid: config.TWILLIO.MESSAGE_SID,
+        to: user.phone
+      })
+      .catch((e) => {
+        throw new BadRequest(e.message);
+      });
+  }
   const updatedUser = await user
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
@@ -216,7 +227,7 @@ export const authorizeCustomer = async (identifier, res) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
   return {
-    message: APP_MESSAGE.AUTH.SEND_AUTH_VERIFY,
+    message: `${APP_MESSAGE.AUTH.SEND_AUTH_VERIFY} ${isTester ? `Token: ${token}` : ''}`,
     token,
     userId: user.id
   };

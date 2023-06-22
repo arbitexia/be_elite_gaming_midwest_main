@@ -7,6 +7,7 @@ export default {
     weekly: { type: 'integer' },
     monthly: { type: 'integer' },
     checkinThreshold: { type: 'integer' },
-    coupon: { type: 'integer' }
+    coupon: { type: 'integer' },
+    initialCoupon: { type: 'integer' }
   }
 };

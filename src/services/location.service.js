@@ -7,11 +7,11 @@ export const filter = async (filterBy) => {
   const { filter } = await fractionateHelper('location');
   queryBuilder = filter(filterBy);
   const locations = await queryBuilder
-    .select('*')
+    .select('locations.*')
     .withGraphFetched('[gallery(filterByModel).asset]')
     .modifiers({
       filterByModel(builder) {
-        builder.where('model', 'LOCATION');
+        builder.where('model', '=', 'LOCATION');
       }
     });
   return locations;

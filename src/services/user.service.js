@@ -1,6 +1,6 @@
 import { User, Role, Activity, UserLocation, Point, Transaction } from '@/models';
 import { securityHelper, fractionateHelper, cursorHelper } from '@/helpers';
-import { APP_MESSAGE } from '@/constants';
+import { APP_MESSAGE, USER_ROLE_MAPPER } from '@/constants';
 import config from '@/config';
 import { emailService } from '.';
 
@@ -36,12 +36,28 @@ export const loadRoles = async () => {
 };
 
 export const updateUser = async (id, input) => {
-  const { firstName, lastName, birthday, email, firstLogin, status, userName, roleId, avatar } =
-    input;
+  const {
+    firstName,
+    lastName,
+    birthday,
+    email,
+    firstLogin,
+    status,
+    userName,
+    roleId,
+    avatar,
+    phone
+  } = input;
   const user = await User.query().findOne({ id }).throwIfNotFound({
     message: APP_MESSAGE.USER.NOT_FOUND,
     type: 'NOT_FOUND'
   });
+
+  let hashedPassword;
+  if (roleId === USER_ROLE_MAPPER.ADMIN && roleId !== user.roleId) {
+    hashedPassword = await securityHelper.hashPassword(`${userName}${phone}`);
+  }
+
   const updatedUser = await user
     .$query()
     .updateAndFetch({
@@ -54,8 +70,7 @@ export const updateUser = async (id, input) => {
       roleId,
       assetId: avatar?.id ?? undefined,
       userName,
-      ...(roleId === USER_ROLE_MAPPER.ADMIN &&
-        roleId !== user.roleId && { password: `${userName}${user.phone}` })
+      ...(hashedPassword && { password: hashedPassword })
     })
     .withGraphFetched('[role, avatar]');
 

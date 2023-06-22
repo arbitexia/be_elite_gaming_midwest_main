@@ -14,31 +14,39 @@ export const handler = async (event) => {
     let executedSchedule = [];
 
     if (customers.length > 0) {
-      executedSchedule = await Promise.all(
-        customers.map(async (customer) => {
-          if (
-            customer.checkinCount &&
-            configs.checkinThreshold &&
-            customer.checkinCount >= (configs?.checkinThreshold ?? 0)
-          ) {
-            //send email
-            await couponWorkerEmail({
-              user: customer,
-              jobInfo: {
-                amount: configs.coupon
-              }
-            });
+      const pageSize = 10;
+      const totalPages = Math.ceil(customers.length / pageSize);
+      for (let page = 0; page < totalPages; page++) {
+        const start = page * pageSize;
+        const end = start + pageSize;
+        const batchCustomers = customers.slice(start, end);
+        const batchResults = await Promise.all(
+          batchCustomers.map(async (customer) => {
+            if (
+              customer.checkinCount &&
+              configs.checkinThreshold &&
+              customer.checkinCount >= (configs?.checkinThreshold ?? 0)
+            ) {
+              //send email
+              await couponWorkerEmail({
+                user: customer,
+                jobInfo: {
+                  amount: configs.coupon
+                }
+              });
 
-            await User.query()
-              .findById(customer.id)
-              .patch({ checkinCount: 0, coupon: (customer?.coupon ?? 0) + configs.coupon });
-          }
-          return {
-            ...customer,
-            ...configs
-          };
-        })
-      );
+              await User.query()
+                .findById(customer.id)
+                .patch({ checkinCount: 0, coupon: (customer?.coupon ?? 0) + configs.coupon });
+            }
+            return {
+              ...customer,
+              ...configs
+            };
+          })
+        );
+        executedSchedule = executedSchedule.concat(batchResults);
+      }
     }
 
     const insertData = {
