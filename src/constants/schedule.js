@@ -7,7 +7,8 @@ export const JOB_STATUS = {
 
 export const JOB_NAMES = {
   RUN_REWARD_WORKER: 'elitegame-dev-reward-worker',
-  RUN_COUPON_WORKER: 'elitegame-dev-coupon-worker'
+  RUN_COUPON_WORKER: 'elitegame-dev-coupon-worker',
+  RUN_CAMPAIGN_WORKER: 'elitegame-dev-campaign-worker'
 };
 
 export const LOG_TYPES = {

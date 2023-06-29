@@ -76,6 +76,11 @@ const APP_MESSAGE = {
   EMAIL: {
     SEND_SUCCESS: 'Sent the email successfully.',
     SEND_FAILED: 'Failed to send the email.'
+  },
+  CAMPAIGN: {
+    SUCCESS_DELETE: 'Campaign has been deleted',
+    NOT_FOUND: 'Campaign does not exist',
+    SUCCESS_UPDATE: 'Campaign has been updated'
   }
 };
 

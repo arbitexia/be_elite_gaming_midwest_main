@@ -8,3 +8,4 @@ export { default as emailDelivery } from './nodemailer';
 export * as sendInBlue from './sendInBlue';
 export * as workerHelper from './workerHelper';
 export * as dateHelper from './dateHelper';
+export * as twilioHelper from './twilioHelper';

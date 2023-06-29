@@ -108,7 +108,7 @@ export const deleteTransaction = async (req, res) => {
     const result = await transactionService.deleteTransaction(id);
     const activityToSave = {
       userId: req.user.id,
-      victimId: id,
+      victimId: Number(id),
       model: ACTIVITY_MODEL.TRANSACTION,
       type: ACTIVITY_TYPE.DELETE,
       metadata: { body: req.params, status: STATUS_MSG.SUCCEED }

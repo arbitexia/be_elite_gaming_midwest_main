@@ -3,8 +3,10 @@ export default {
   required: [],
   properties: {
     id: { type: 'integer' },
-    userId: { type: 'integer' },
-    logModel: {
+    campaignId: { type: 'integer' },
+    messageId: { type: 'string' },
+    victimId: { type: 'integer' },
+    model: {
       type: 'string',
       enum: [
         'ASSET',
@@ -19,13 +21,8 @@ export default {
         'EMAIL_TEMPLATE',
         'REWARD',
         'TRANSACTION',
-        'TABLET',
-        'CAMPAIGN'
+        'TABLET'
       ]
-    },
-    logType: {
-      type: 'string'
-    },
-    metadata: { type: 'object' }
+    }
   }
 };

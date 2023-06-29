@@ -14,3 +14,5 @@ export { default as Config } from './config';
 export { default as Tablet } from './tablet';
 export { default as Transaction } from './transaction';
 export { default as Log } from './log';
+export { default as Campaign } from './campaign';
+export { default as CampaignHistory } from './campaign-history';

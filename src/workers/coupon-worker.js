@@ -52,17 +52,14 @@ export const handler = async (event) => {
     const insertData = {
       logType: LOG_TYPES.BACKGROUND_JOB,
       logModel: ACTIVITY_MODEL.USER,
-      victimId: 1,
       metadata: {
-        eventId: 2,
+        eventId: event.id,
         jobName: JOB_NAMES.RUN_COUPON_WORKER,
-        data: {}
+        data: executedSchedule
       }
     };
     await Log.query().insert(insertData);
-    await workerHelper.dispatchJob(event.id, JOB_NAMES.RUN_REWARD_WORKER);
-
-    return executedSchedule;
+    await workerHelper.dispatchJob(event.id, JOB_NAMES.RUN_COUPON_WORKER);
   } catch (error) {
     console.log({
       msg: `Caught exception while processing Schedule worker: ${error.message}`

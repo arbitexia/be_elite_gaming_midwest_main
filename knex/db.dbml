@@ -20,12 +20,14 @@ Table users [note: 'user table'] {
   user_name varchar [unique, note: 'userid']
   email varchar
   phone varchar
-  password varchar
-  location "jsonb" [note: 'country, city, state, zipcode, address1, address2']
+  password varchar  
   birthday date
+  coupon int
   asset_id int
   status user_status
   role_id int [not null, note: 'role id']
+  checkin_count int
+  first_login "jsonb" [note: 'user locations by ip address']
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }
@@ -94,10 +96,9 @@ Table verifications [note: 'User verification'] {
 
 Table email_templates [note: 'email tempalte list'] {
   id int [pk, increment]
-  name varchar
-  subject varchar
-  body varchar
-  use_for varchar
+  name varchar  
+  categroy varchar
+  template_id int
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }
@@ -168,8 +169,7 @@ Enum product_status {
 
 Table products [note: 'products table'] {
   id int [pk, increment]
-  name varchar
-  location_id int
+  name varchar  
   amount int
   point int
   status product_status
@@ -179,7 +179,6 @@ Table products [note: 'products table'] {
   updated_at timestamp
 }
 
-Ref: locations.id < products.location_id
 
 Enum activity_type {  
   CHECKIN
@@ -224,6 +223,9 @@ Table configs [note: "config table"] {
   daily int 
   weekly int 
   monthly int 
+  checkin_threshold int
+  coupon int [note: "coupon for checkin"]
+  initial_coupon int
   created_at timestamp [default: `now()`]
   updated_at timestamp 
 }
@@ -277,9 +279,49 @@ Table rewards [note: "rewards table"] {
   product_id int
   point int
   coupon int
+  point_threshold int
+  coupon_threshold int
   created_at timestamp [default: `now()`]
   updated_at timestamp
 }
 
 Ref: locations.id < rewards.location_id
 Ref: products.id < rewards.product_id
+
+Enum campaign_type {
+  BIRTHDAY
+  APPRECIATION
+  REFERRAL
+  REWARDS
+  WELCOME 
+  NEWSLETTER
+}
+
+Enum offer_type{
+  COUPON
+  POINT
+}
+
+Enum campaign_model{
+  AUTO_PILOT
+  ON_DEMAND
+  INFORMATIONAL
+}
+
+Table campaigns [note: "campaigns table"] {
+  id int [pk, increment]    
+  name varchar
+  type campaign_type
+  model campaign_model
+  offer int
+  offer_type offer_type
+  total int
+  redeemed int
+  start_date timestamp
+  end_date timestamp
+  next_delivery timestamp
+  status int [note: "0: disabled, 1: enabled"]
+  channels int [note:"1: email, 2: phone, 3: email and phone"]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}

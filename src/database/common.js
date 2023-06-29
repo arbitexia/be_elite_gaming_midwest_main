@@ -38,7 +38,9 @@ export const Table = {
   CONFIG: camelCaseString('configs'),
   TABLET: camelCaseString('tablets'),
   TRANSACTION: camelCaseString('transactions'),
-  LOG: camelCaseString('logs')
+  LOG: camelCaseString('logs'),
+  CAMPAIGN: camelCaseString('campaigns'),
+  CAMPAIGN_HISTORY: camelCaseString('campaign_histories')
 };
 
 export const knex = _knex;

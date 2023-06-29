@@ -68,11 +68,13 @@ export const SendEmailSendinBlue = async ({
       params = {
         ...params,
         POINT_COUNT: jobInfo.amount,
+        COUPON: jobInfo.amount,
         ...(jobInfo?.productName && { PRODUCT_NAME: jobInfo.productName })
       };
     }
     sendSmtpEmail.params = params;
-    await transactionApiInstance.sendTransacEmail(sendSmtpEmail);
+    const result = await transactionApiInstance.sendTransacEmail(sendSmtpEmail);
+    return result;
   } catch (error) {
     throw new Error('failed');
   }

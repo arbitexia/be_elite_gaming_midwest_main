@@ -11,3 +11,6 @@ export * as configService from './config.service';
 export * as tabletService from './tablet.service';
 export * as transactionService from './transaction.service';
 export * as emailService from './email.service';
+export * as campaignService from './campaign.service';
+export * as schedulerService from './scheduler.service';
+export * as webhookService from './webhook.service';

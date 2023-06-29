@@ -99,6 +99,24 @@ functions:
         - db/**
         - public/**
 
+  campaign-worker:
+    handler: dist/workers/campaign-worker.handler
+    timeout: 600
+    events:
+      - schedule: rate(60 minutes)
+    package:
+      include:
+        - dist/**
+        - package.json
+      exclude:
+        - '*'
+        - node_modules/**
+        - .github/**
+        - __test__/**
+        - docs/**
+        - db/**
+        - public/**
+
   # TODO
   # 1. confirm all app's cases
   # 2. split the main parts for gathering the status of aspects

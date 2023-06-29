@@ -13,18 +13,7 @@ class Log extends BaseModel {
     return jsonSchema;
   }
 
-  static get relationMappings() {
-    return {
-      user: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: path.join(__dirname, 'user'),
-        join: {
-          from: `${Table.LOG}.userId`,
-          to: `${Table.USER}.id`
-        }
-      }
-    };
-  }
+  static get relationMappings() {}
 }
 
 export default Log;

@@ -12,7 +12,10 @@ import {
   tabletController,
   transactionController,
   emailTemplateController,
-  userLocationController
+  userLocationController,
+  campaignController,
+  schedulerController,
+  webhookController
 } from '@/controller';
 import { securityHelper, ipMiddleware } from '@/helpers';
 
@@ -343,5 +346,26 @@ router.get(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   userLocationController.filter
 );
+
+router.get(
+  '/campaigns',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  campaignController.getCampaigns
+);
+
+router.post(
+  '/campaign',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  campaignController.saveCampaign
+);
+
+router.delete(
+  '/campaign/:id',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  campaignController.deleteCampaign
+);
+router.post('/webhook/open', webhookController.CheckFirstOpeningEmail);
+
+router.get('/schedule', schedulerController.testSchedule);
 
 export default router;

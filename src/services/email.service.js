@@ -1,5 +1,6 @@
 import {
   APP_MESSAGE,
+  CAMPAIGN_TYPE,
   DEFAULT_INC_POINT,
   EMAIL_TEMPLATE_CATEGORY,
   EMAIL_TEMPLATE_STATUS
@@ -331,7 +332,6 @@ export const sendEmails = async ({ locationId, templateId, customerIds }) => {
     if (userLocation.length > 0) {
       await Promise.all(
         userLocation.map(async ({ user }) => {
-          console.log(user.email);
           await SendEmailSendinBlue({
             email: user.email,
             name: user.firstName,
@@ -458,6 +458,49 @@ export const couponWorkerEmail = async ({ user, templateId, jobInfo }) => {
         templateId: template.templateId,
         jobInfo
       });
+    }
+  }
+};
+
+export const campaignWorkerEmail = async ({ user, templateId, jobInfo }) => {
+  if (templateId) {
+    await SendEmailSendinBlue({
+      email: user.email,
+      name: user.firstName,
+      templateId,
+      jobInfo
+    });
+  } else {
+    let tempId = 0;
+    switch (jobInfo.campaignType) {
+      case CAMPAIGN_TYPE.WELCOME:
+        tempId = 2;
+        break;
+      case CAMPAIGN_TYPE.BIRTHDAY:
+        tempId = 10;
+        break;
+      default:
+        tempId = 2;
+        break;
+    }
+
+    const template = await EmailTemplate.query()
+      .findOne({
+        // category: EMAIL_TEMPLATE_CATEGORY.FORCE_RESET_PASSWORD,
+        templateId: tempId,
+        status: EMAIL_TEMPLATE_STATUS.PUBLISHED
+      })
+      .throwIfNotFound({
+        message: APP_MESSAGE.EMAIL_TEMPLATE.NOT_FOUND
+      });
+    if (template) {
+      const result = await SendEmailSendinBlue({
+        email: user.email,
+        name: user.firstName,
+        templateId: template.templateId,
+        jobInfo
+      });
+      return result;
     }
   }
 };
