@@ -1,5 +1,5 @@
 import { User, Verification, Point, Config, Tablet, UserLocation } from '@/models';
-import { securityHelper } from '@/helpers';
+import { securityHelper, twilioHelper } from '@/helpers';
 import {
   APP_MESSAGE,
   USER_STATUS_MAPPER,
@@ -15,11 +15,8 @@ import {
 } from '@/constants';
 import { BadRequest } from '@/provider/error';
 import config from '@/config';
-import twilio from 'twilio';
 import { formatDistanceStrict } from 'date-fns';
 import { activityService, emailService, pointService, userLocationService } from '@/services';
-
-const client = new twilio(config.TWILLIO.ACCOUNT_SID, config.TWILLIO.AUTH_TOKEN);
 
 export const refreshToken = async (refreshToken, res) => {
   const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
@@ -96,15 +93,10 @@ export const register = async (phone, email, birthday, locationInfo) => {
   const token = securityHelper.genPhoneVerifyToken().toString();
   const isTester = TEST_PHONE_NUMBER.some((number) => phone.includes(number));
   if (!isTester) {
-    await client.messages
-      .create({
-        body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-        messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-        to: phone
-      })
-      .catch((e) => {
-        throw new BadRequest(e.message);
-      });
+    await twilioHelper.SendTextSms({
+      body: `${token}`,
+      to: phone
+    });
   }
   const configItem = await Config.query().first();
   const newUser = await User.query()
@@ -207,15 +199,10 @@ export const authorizeCustomer = async (identifier, res) => {
   const token = securityHelper.genPhoneVerifyToken().toString();
   const isTester = TEST_PHONE_NUMBER.some((number) => identifier.includes(number));
   if (!isTester) {
-    await client.messages
-      .create({
-        body: `Your verification code is ${token}. It is valid for 5 minutes. Do not provide this verification code to anyone.`,
-        messagingServiceSid: config.TWILLIO.MESSAGE_SID,
-        to: user.phone
-      })
-      .catch((e) => {
-        throw new BadRequest(e.message);
-      });
+    await twilioHelper.SendTextSms({
+      body: `${token}`,
+      to: user.phone
+    });
   }
   const updatedUser = await user
     .$query()
