@@ -63,7 +63,7 @@ export const createNewUser = async (param) => {
       status: USER_STATUS_MAPPER.ACTIVATED,
       roleId,
       assetId: avatar?.id ?? undefined,
-      coupon: configItem ? configItem.initialItem : DEFAULT_COUPON,
+      coupon: configItem ? configItem.initialCoupon : DEFAULT_COUPON,
       ...(hashedPassword && { password: hashedPassword })
     })
     .withGraphFetched('[role, avatar]');
@@ -92,6 +92,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
 
   const token = securityHelper.genPhoneVerifyToken().toString();
   const isTester = TEST_PHONE_NUMBER.some((number) => phone.includes(number));
+  console.log(isTester, '*****');
   if (!isTester) {
     await twilioHelper.SendTextSms({
       body: `${token}`,
@@ -99,6 +100,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
     });
   }
   const configItem = await Config.query().first();
+  console.log(configItem, '***');
   const newUser = await User.query()
     .insertAndFetch({
       phone,
@@ -106,7 +108,7 @@ export const register = async (phone, email, birthday, locationInfo) => {
       birthday,
       roleId: USER_ROLE_MAPPER.USER,
       firstLogin: locationInfo,
-      coupon: configItem ? configItem.initialItem : DEFAULT_COUPON,
+      coupon: configItem ? configItem.initialCoupon : DEFAULT_COUPON,
       status: USER_STATUS_MAPPER.VERIFY_PHONE
     })
     .withGraphFetched('[role, avatar]');

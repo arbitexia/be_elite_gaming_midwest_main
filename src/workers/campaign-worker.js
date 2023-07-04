@@ -33,8 +33,10 @@ export const handler = async (event) => {
           const currentDate = new Date();
           const currentMonth = getMonth(currentDate) + 1;
           const currentDay = getDate(currentDate);
-
-          if (currentDate >= campaign.startDate && currentDate <= campaign.endDate) {
+          if (
+            currentDate >= new Date(campaign.startDate) &&
+            currentDate <= new Date(campaign.endDate)
+          ) {
             if (campaign.type === CAMPAIGN_TYPE.BIRTHDAY) {
               users = await User.query()
                 .where('roleId', USER_ROLE_MAPPER.USER)
@@ -45,7 +47,7 @@ export const handler = async (event) => {
               users = await User.query()
                 .where('roleId', USER_ROLE_MAPPER.USER)
                 .andWhere('status', USER_STATUS_MAPPER.ACTIVATED)
-                .andWhere('createdAt', format(currentDate, 'yyyy-MM-dd'));
+                .whereRaw('DATE(created_at) = ?', [format(currentDate, 'yyyy-MM-dd')]);
             }
           }
           const updateUsers = users.map(async (u, index) => {
@@ -55,10 +57,7 @@ export const handler = async (event) => {
               campaign
             });
             if (!isAppliedCampaign) {
-              await User.query()
-                .update({ coupon: u.coupon + campaign.offer })
-                .where('id', u.id);
-
+              await User.query().where('id', u.id).increment('coupon', campaign.offer);
               if (
                 campaign.channels === CAMPAIGN_CHANNELS.EMAIL ||
                 campaign.channels === CAMPAIGN_CHANNELS.BOTH
