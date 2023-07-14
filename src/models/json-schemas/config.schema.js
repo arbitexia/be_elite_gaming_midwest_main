@@ -8,6 +8,7 @@ export default {
     monthly: { type: 'integer' },
     checkinThreshold: { type: 'integer' },
     coupon: { type: 'integer' },
-    initialCoupon: { type: 'integer' }
+    initialCoupon: { type: 'integer' },
+    requestCoupon: { type: 'integer' }
   }
 };

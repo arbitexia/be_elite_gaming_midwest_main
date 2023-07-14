@@ -287,6 +287,12 @@ router.delete(
   transactionController.deleteTransaction
 );
 
+router.post(
+  '/request_coupon',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  transactionController.requestCouponTransaction
+);
+
 router.get(
   '/email_templates',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),

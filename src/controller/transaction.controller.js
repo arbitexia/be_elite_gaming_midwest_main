@@ -131,3 +131,39 @@ export const deleteTransaction = async (req, res) => {
     res.status(500).json(e.message);
   }
 };
+
+export const requestCouponTransaction = async (req, res) => {
+  const { input } = req.body;
+  try {
+    const result = await transactionService.requestCoupon(input);
+    //TODO Send Email to customer
+    await emailService.requestTransactionEmail({
+      user: result.user,
+      transaction: result
+    });
+    //TODO Activity
+    const activityToSave = {
+      userId: req.user.id,
+      victimId: result.id,
+      model: ACTIVITY_MODEL.TRANSACTION,
+      type: ACTIVITY_TYPE.REQUEST,
+      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(200).json(result);
+  } catch (e) {
+    const activityToSave = {
+      userId: input.userId,
+      model: ACTIVITY_MODEL.TRANSACTION,
+      type: ACTIVITY_TYPE.REQUEST,
+      metadata: {
+        body: req.body,
+        status: STATUS_MSG.FAILED,
+        error: e.message,
+        function: 'requestCouponTransaction'
+      }
+    };
+    await activityService.createActivity(activityToSave);
+    res.status(500).json(e.message);
+  }
+};

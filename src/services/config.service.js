@@ -16,7 +16,8 @@ export const save = async ({
   monthly,
   checkinThreshold,
   coupon,
-  initialCoupon
+  initialCoupon,
+  requestCoupon
 }) => {
   let result;
   if (id > 0) {
@@ -30,7 +31,8 @@ export const save = async ({
       monthly,
       checkinThreshold,
       coupon,
-      initialCoupon
+      initialCoupon,
+      requestCoupon
     });
   } else {
     result = await Config.query().insertAndFetch({
@@ -39,7 +41,8 @@ export const save = async ({
       monthly,
       checkinThreshold,
       coupon,
-      initialCoupon
+      initialCoupon,
+      requestCoupon
     });
   }
   return result;

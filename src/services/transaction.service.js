@@ -70,12 +70,17 @@ export const updateTransaction = async (id, assigneeId, status) => {
     .$query()
     .updateAndFetch({
       assigneeId,
-      status: status,
+      status,
       acceptedAt: new Date().toISOString()
     })
     .withGraphFetched('[user, reward.[product], location, assignee, point ]');
-
-  if (status === 'DECLINED') {
+  if (status === 'ACCEPTED' && !transaction.locationId && !transaction.rewardId) {
+    const user = await User.query().findOne({ id: transaction.userId }).throwIfNotFound({
+      message: APP_MESSAGE.USER.NOT_FOUND
+    });
+    await user.$query().updateAndFetch({ coupon: user.coupon + transaction.amount });
+  }
+  if (status === 'DECLINED' && transaction.locationId && transaction.rewardId) {
     if (transaction.type === TRANSACTION_TYPE.POINT) {
       await Point.query()
         .patch({ point: raw(`point + ${Number(transaction.amount)}`) })
@@ -97,4 +102,12 @@ export const deleteTransaction = async (id) => {
   });
 
   return transaction;
+};
+
+export const requestCoupon = async ({ userId, status, type, amount }) => {
+  await Transaction.query().insertAndFetch({ userId, status, type, amount }).throwIfNotFound({
+    message: APP_MESSAGE.TRANSACTION.FAILED,
+    type: 'NOT_FOUND'
+  });
+  return { message: APP_MESSAGE.TRANSACTION.COUPON_REQUEST };
 };

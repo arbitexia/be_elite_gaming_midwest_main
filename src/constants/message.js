@@ -71,7 +71,9 @@ const APP_MESSAGE = {
     SUCCESS_DELETE: 'Activity has been deleted'
   },
   TRANSACTION: {
-    NOT_FOUND: 'Transaction does not exist'
+    NOT_FOUND: 'Transaction does not exist',
+    FAILED: 'Something is wrong',
+    COUPON_REQUEST: 'Requested the coupon to administrator'
   },
   EMAIL: {
     SEND_SUCCESS: 'Sent the email successfully.',

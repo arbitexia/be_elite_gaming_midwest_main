@@ -127,11 +127,13 @@ export const declineTransactionEmail = async ({ user, templateId, transaction })
       category: EMAIL_TEMPLATE_CATEGORY.DECLINE_TRANSACTION,
       status: EMAIL_TEMPLATE_STATUS.PUBLISHED
     });
-    await SendEmailSendinBlue({
-      email: user.email,
-      name: user.firstName,
-      templateId: template.templateId
-    });
+    if (template) {
+      await SendEmailSendinBlue({
+        email: user.email,
+        name: user.firstName,
+        templateId: template.templateId
+      });
+    }
   }
 };
 

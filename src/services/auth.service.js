@@ -17,6 +17,7 @@ import { BadRequest } from '@/provider/error';
 import config from '@/config';
 import { formatDistanceStrict } from 'date-fns';
 import { activityService, emailService, pointService, userLocationService } from '@/services';
+import { campaignWorkerEmail } from './email.service';
 
 export const refreshToken = async (refreshToken, res) => {
   const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);
@@ -90,17 +91,20 @@ export const register = async (phone, email, birthday, locationInfo) => {
     throw new BadRequest(APP_MESSAGE.AUTH.DUPLICATED_PHONE);
   }
 
+  const configItem = await Config.query().first();
   const token = securityHelper.genPhoneVerifyToken().toString();
   const isTester = TEST_PHONE_NUMBER.some((number) => phone.includes(number));
-  console.log(isTester, '*****');
   if (!isTester) {
     await twilioHelper.SendTextSms({
       body: `${token}`,
       to: phone
     });
+    await twilioHelper.SendTextSms({
+      body: `You got coupons $${configItem ? configItem.initialCoupon : DEFAULT_COUPON} today.`,
+      to: phone
+    });
   }
-  const configItem = await Config.query().first();
-  console.log(configItem, '***');
+
   const newUser = await User.query()
     .insertAndFetch({
       phone,
@@ -122,6 +126,13 @@ export const register = async (phone, email, birthday, locationInfo) => {
     status: VERIFICATION_STATUS_MAPPER.ACTIVATED
   });
 
+  await campaignWorkerEmail({
+    user: newUser,
+    jobInfo: {
+      amount: newUser.coupon,
+      campaignType: 'WELCOME'
+    }
+  });
   return {
     message: `${APP_MESSAGE.AUTH.SEND_REGISTER_VERIFY} ${isTester ? `Token: ${token}` : ''}`,
     token,
