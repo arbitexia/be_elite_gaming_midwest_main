@@ -105,9 +105,11 @@ export const deleteTransaction = async (id) => {
 };
 
 export const requestCoupon = async ({ userId, status, type, amount }) => {
-  await Transaction.query().insertAndFetch({ userId, status, type, amount }).throwIfNotFound({
-    message: APP_MESSAGE.TRANSACTION.FAILED,
-    type: 'NOT_FOUND'
-  });
-  return { message: APP_MESSAGE.TRANSACTION.COUPON_REQUEST };
+  const result = await Transaction.query()
+    .insertAndFetch({ userId, status, type, amount })
+    .throwIfNotFound({
+      message: APP_MESSAGE.TRANSACTION.FAILED,
+      type: 'NOT_FOUND'
+    });
+  return { result, message: APP_MESSAGE.TRANSACTION.COUPON_REQUEST };
 };

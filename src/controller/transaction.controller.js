@@ -135,7 +135,7 @@ export const deleteTransaction = async (req, res) => {
 export const requestCouponTransaction = async (req, res) => {
   const { input } = req.body;
   try {
-    const result = await transactionService.requestCoupon(input);
+    const { result, message } = await transactionService.requestCoupon(input);
     //TODO Send Email to customer
     await emailService.requestTransactionEmail({
       user: result.user,
@@ -143,21 +143,21 @@ export const requestCouponTransaction = async (req, res) => {
     });
     //TODO Activity
     const activityToSave = {
-      userId: req.user.id,
+      userId: result.userId,
       victimId: result.id,
       model: ACTIVITY_MODEL.TRANSACTION,
       type: ACTIVITY_TYPE.REQUEST,
-      metadata: { body: req.body, status: STATUS_MSG.SUCCEED }
+      metadata: { body: input, status: STATUS_MSG.SUCCEED }
     };
     await activityService.createActivity(activityToSave);
-    res.status(200).json(result);
+    res.status(200).json({ message });
   } catch (e) {
     const activityToSave = {
       userId: input.userId,
       model: ACTIVITY_MODEL.TRANSACTION,
       type: ACTIVITY_TYPE.REQUEST,
       metadata: {
-        body: req.body,
+        body: input,
         status: STATUS_MSG.FAILED,
         error: e.message,
         function: 'requestCouponTransaction'
