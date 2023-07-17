@@ -107,9 +107,6 @@ export const deleteTransaction = async (id) => {
 export const requestCoupon = async ({ userId, status, type, amount }) => {
   const result = await Transaction.query()
     .insertAndFetch({ userId, status, type, amount })
-    .throwIfNotFound({
-      message: APP_MESSAGE.TRANSACTION.FAILED,
-      type: 'NOT_FOUND'
-    });
+    .withGraphFetched('[user, assignee , point]');
   return { result, message: APP_MESSAGE.TRANSACTION.COUPON_REQUEST };
 };
