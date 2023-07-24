@@ -287,12 +287,6 @@ router.delete(
   transactionController.deleteTransaction
 );
 
-router.post(
-  '/request_coupon',
-  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
-  transactionController.requestCouponTransaction
-);
-
 router.get(
   '/email_templates',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
@@ -372,6 +366,17 @@ router.delete(
 );
 router.post('/webhook/open', webhookController.CheckFirstOpeningEmail);
 
+router.get(
+  '/backOffice',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  configController.getBackOffice
+);
+router.post(
+  '/backOffice',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  configController.saveBackOffice
+);
+//this is test router. wil be removed later
 router.get('/schedule', schedulerController.testSchedule);
 
 export default router;

@@ -54,6 +54,14 @@ class Transaction extends BaseModel {
           from: `${Table.TRANSACTION}.pointId`,
           to: `${Table.POINT}.id`
         }
+      },
+      backOffice: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: path.join(__dirname, 'back-office'),
+        join: {
+          from: `${Table.TRANSACTION}.backOfficeId`,
+          to: `${Table.BACK_OFFICE}.id`
+        }
       }
     };
   }

@@ -40,7 +40,9 @@ export const Table = {
   TRANSACTION: camelCaseString('transactions'),
   LOG: camelCaseString('logs'),
   CAMPAIGN: camelCaseString('campaigns'),
-  CAMPAIGN_HISTORY: camelCaseString('campaign_histories')
+  CAMPAIGN_HISTORY: camelCaseString('campaign_histories'),
+  BACK_OFFICE: camelCaseString('back_offices'),
+  USER_COUPON: camelCaseString('user_coupons')
 };
 
 export const knex = _knex;

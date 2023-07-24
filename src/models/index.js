@@ -16,3 +16,5 @@ export { default as Transaction } from './transaction';
 export { default as Log } from './log';
 export { default as Campaign } from './campaign';
 export { default as CampaignHistory } from './campaign-history';
+export { default as BackOffice } from './back-office';
+export { default as UserCoupon } from './user-coupon';

@@ -1,5 +1,5 @@
 import { dateHelper, twilioHelper, workerHelper } from '@/helpers';
-import { Log, User, Campaign } from '@/models';
+import { Log, User, Campaign, UserCoupon } from '@/models';
 import {
   JOB_NAMES,
   USER_ROLE_MAPPER,
@@ -14,6 +14,7 @@ import {
 import { campaignWorkerEmail } from '@/services/email.service';
 import { checkCampaignHistory, insertMessageId } from '@/services/campaign.service';
 import { format, getMonth, getDate } from 'date-fns';
+import uniqid from 'uniqid';
 
 export const handler = async (event) => {
   try {
@@ -57,7 +58,15 @@ export const handler = async (event) => {
               campaign
             });
             if (!isAppliedCampaign) {
-              await User.query().where('id', u.id).increment('coupon', campaign.offer);
+              await UserCoupon.query().insert({
+                userId: u.id,
+                amount: campaign.offer,
+                code: uniqid('eg-'),
+                type: 'FREE',
+                expirationDate: dateHelper.addDateTime({ days: 10 }).toISOString(),
+                status: 1
+              });
+              //send the email
               if (
                 campaign.channels === CAMPAIGN_CHANNELS.EMAIL ||
                 campaign.channels === CAMPAIGN_CHANNELS.BOTH

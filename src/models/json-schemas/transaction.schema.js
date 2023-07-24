@@ -8,6 +8,7 @@ export default {
     locationId: { type: 'integer' },
     assigneeId: { type: 'integer' },
     pointId: { type: 'integer' },
+    backOfficeId: { type: 'integer' },
     status: {
       type: 'string',
       enum: ['ACCEPTED', 'DECLINED', 'WAITING']

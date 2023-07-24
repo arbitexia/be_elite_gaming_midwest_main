@@ -1,4 +1,14 @@
-import { User, Verification, Point, Config, Tablet, UserLocation } from '@/models';
+import {
+  User,
+  Verification,
+  Point,
+  Config,
+  Tablet,
+  UserLocation,
+  BackOffice,
+  Transaction,
+  UserCoupon
+} from '@/models';
 import { securityHelper, twilioHelper } from '@/helpers';
 import {
   APP_MESSAGE,
@@ -11,7 +21,9 @@ import {
   ACTIVITY_TYPE,
   STATUS_MSG,
   DEFAULT_INC_POINT,
-  TEST_PHONE_NUMBER
+  TEST_PHONE_NUMBER,
+  TRANSACTION_STATUS,
+  TRANSACTION_TYPE
 } from '@/constants';
 import { BadRequest } from '@/provider/error';
 import config from '@/config';
@@ -67,7 +79,7 @@ export const createNewUser = async (param) => {
       coupon: configItem ? configItem.initialCoupon : DEFAULT_COUPON,
       ...(hashedPassword && { password: hashedPassword })
     })
-    .withGraphFetched('[role, avatar]');
+    .withGraphFetched('[role, avatar, userCoupons]');
 
   await UserLocation.query().insert({
     userId: newUser.id,
@@ -112,10 +124,19 @@ export const register = async (phone, email, birthday, locationInfo) => {
       birthday,
       roleId: USER_ROLE_MAPPER.USER,
       firstLogin: locationInfo,
-      coupon: configItem ? configItem.initialCoupon : DEFAULT_COUPON,
       status: USER_STATUS_MAPPER.VERIFY_PHONE
     })
-    .withGraphFetched('[role, avatar]');
+    .withGraphFetched('[role, avatar,userCoupons]');
+
+  await UserCoupon.query().insert({
+    userId: newUser.id,
+    amount: configItem ? configItem.initialCoupon : DEFAULT_COUPON,
+    code: uniqid('eg-'),
+    type: 'FREE',
+    expirationDate: dateHelper.addDateTime({ days: 10 }).toISOString(),
+    status: 1
+  });
+
   const updatedUser = await newUser
     .$query()
     .updateAndFetch({ status: USER_STATUS_MAPPER.VERIFY_PHONE });
@@ -204,7 +225,7 @@ export const authorizeCustomer = async (identifier, res) => {
       phone: identifier,
       roleId: USER_ROLE_MAPPER.USER
     })
-    .withGraphFetched('[role, avatar]')
+    .withGraphFetched('[role, avatar, userCoupons]')
     .throwIfNotFound({
       message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
       type: 'NOT_FOUND'
@@ -240,7 +261,7 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
       roleId: USER_ROLE_MAPPER.USER
       // status: USER_STATUS_MAPPER.ACTIVATED
     })
-    .withGraphFetched('[role, avatar]')
+    .withGraphFetched('[role, avatar, userCoupons]')
     .throwIfNotFound({
       message: APP_MESSAGE.AUTH.NOT_FOUND_USER,
       type: 'NOT_FOUND'
@@ -257,6 +278,7 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
   if (userLocation) {
     const point = await Point.query().findOne({ userLocationId: userLocation.id });
     if (point?.updatedAt) {
+      //increase point once a day when use checkin
       const distance = formatDistanceStrict(new Date(), point.updatedAt, { unit: 'day' }).split(
         ' '
       )[0];
@@ -287,6 +309,22 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
         metadata: { body: { ...userLocation, dailyConfig }, status: STATUS_MSG.SUCCEED }
       };
       await activityService.createActivity(activityToSave);
+    }
+
+    //request coupon when checkin
+    const currentCheckinCount = (user?.checkinCount ?? 0) + 1;
+    const backOffice = await BackOffice.query().findOne({
+      checkinThreshold: currentCheckinCount,
+      status: 1
+    });
+    if (backOffice) {
+      await Transaction.query().insertAndFetch({
+        userId: user.id,
+        status: TRANSACTION_STATUS.WAITING,
+        type: TRANSACTION_TYPE.COUPON,
+        amount: backOffice.coupon,
+        backOfficeId: backOffice.id
+      });
     }
   }
   // increase the count whenever a customer checkin
@@ -397,7 +435,7 @@ export const verifyPhone = async (token, res) => {
     .updateAndFetchById(verification.victimId, {
       status: USER_STATUS_MAPPER.ACTIVATED
     })
-    .withGraphFetched('[role, avatar]');
+    .withGraphFetched('[role, avatar, userCoupons]');
 
   await Verification.query()
     .update({

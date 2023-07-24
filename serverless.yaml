@@ -81,24 +81,6 @@ functions:
         - db/**
         - public/**
 
-  coupon-worker:
-    handler: dist/workers/coupon-worker.handler
-    timeout: 600
-    events:
-      - schedule: rate(1 day)
-    package:
-      include:
-        - dist/**
-        - package.json
-      exclude:
-        - '*'
-        - node_modules/**
-        - .github/**
-        - __test__/**
-        - docs/**
-        - db/**
-        - public/**
-
   campaign-worker:
     handler: dist/workers/campaign-worker.handler
     timeout: 600

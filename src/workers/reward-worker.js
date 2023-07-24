@@ -48,25 +48,25 @@ export const handler = async (event) => {
               }
             }
 
-            if (filteredRewards.length <= 0 && customer.user.coupon) {
-              filteredRewards = rewards.filter(
-                (obj) =>
-                  obj.couponThreshold !== 0 &&
-                  obj.couponThreshold <= customer.user.coupon &&
-                  obj.locationId === customer.locationId &&
-                  obj.coupon > customer.user.coupon
-              );
-              // send the email for coupon
-              if (filteredRewards.length > 0) {
-                await rewardCouponWorkerEmail({
-                  user: customer.user,
-                  jobInfo: {
-                    amount: filteredRewards[0].coupon - customer.user.coupon,
-                    productName: filteredRewards[0].product.name
-                  }
-                });
-              }
-            }
+            // if (filteredRewards.length <= 0 && customer.user.coupon) {
+            //   filteredRewards = rewards.filter(
+            //     (obj) =>
+            //       obj.couponThreshold !== 0 &&
+            //       obj.couponThreshold <= customer.user.coupon &&
+            //       obj.locationId === customer.locationId &&
+            //       obj.coupon > customer.user.coupon
+            //   );
+            //   // send the email for coupon
+            //   if (filteredRewards.length > 0) {
+            //     await rewardCouponWorkerEmail({
+            //       user: customer.user,
+            //       jobInfo: {
+            //         amount: filteredRewards[0].coupon - customer.user.coupon,
+            //         productName: filteredRewards[0].product.name
+            //       }
+            //     });
+            //   }
+            // }
 
             return {
               ...customer.user,

@@ -132,6 +132,7 @@ export const deleteTransaction = async (req, res) => {
   }
 };
 
+//maybe removed
 export const requestCouponTransaction = async (req, res) => {
   const { input } = req.body;
   try {

@@ -1,4 +1,4 @@
-import { Config } from '@/models';
+import { BackOffice, Config } from '@/models';
 import { APP_MESSAGE } from '@/constants';
 
 export const findOne = async () => {
@@ -16,8 +16,7 @@ export const save = async ({
   monthly,
   checkinThreshold,
   coupon,
-  initialCoupon,
-  requestCoupon
+  initialCoupon
 }) => {
   let result;
   if (id > 0) {
@@ -31,8 +30,7 @@ export const save = async ({
       monthly,
       checkinThreshold,
       coupon,
-      initialCoupon,
-      requestCoupon
+      initialCoupon
     });
   } else {
     result = await Config.query().insertAndFetch({
@@ -41,9 +39,53 @@ export const save = async ({
       monthly,
       checkinThreshold,
       coupon,
-      initialCoupon,
-      requestCoupon
+      initialCoupon
     });
   }
   return result;
+};
+
+export const findBackOffice = async () => {
+  const backOffices = await BackOffice.query().orderBy('id', 'ASC');
+  return backOffices;
+};
+
+export const saveBackOffice = async (body) => {
+  let result;
+  const backOffices = await BackOffice.query();
+  if (backOffices.length > 0) {
+    //update
+    result = await Promise.all(
+      body.map(async (obj) => {
+        await BackOffice.query()
+          .findById(obj.id)
+          .patch({
+            coupon: obj.coupon,
+            checkinThreshold: obj.checkinThreshold,
+            days: obj.days,
+            code: obj.code,
+            expirationDate: new Date(obj.expirationDate).toISOString(),
+            type: obj.type,
+            status: obj.status
+          });
+      })
+    );
+  } else {
+    //create
+    result = await Promise.all(
+      body.map(async (obj) => {
+        await BackOffice.query().insert({
+          coupon: obj.coupon,
+          checkinThreshold: obj.checkinThreshold,
+          days: obj.days,
+          code: obj.code,
+          expirationDate: new Date(obj.expirationDate).toISOString(),
+          type: obj.type,
+          status: obj.status
+        });
+      })
+    );
+  }
+
+  return { message: APP_MESSAGE.BACK_OFFICE.SUCCESS_SAVE };
 };

@@ -222,9 +222,7 @@ Table configs [note: "config table"] {
   id int [pk, increment]
   daily int 
   weekly int 
-  monthly int 
-  checkin_threshold int
-  coupon int [note: "coupon for checkin"]
+  monthly int   
   initial_coupon int
   created_at timestamp [default: `now()`]
   updated_at timestamp 
@@ -322,6 +320,24 @@ Table campaigns [note: "campaigns table"] {
   next_delivery timestamp
   status int [note: "0: disabled, 1: enabled"]
   channels int [note:"1: email, 2: phone, 3: email and phone"]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Enum back_offices_type{
+  FREE
+  MATCH  
+}
+
+Table back_offices [note: "backOffices table"] {
+  id int [pk, increment]    
+  coupon int [note: "coupon for checkin. freePlay or MatchPlay"]  
+  checkin_threshold int
+  days int
+  type back_offices_type [note: "FREE or MATCH"]
+  expiration_date timestamp
+  code varchar
+  status int [note: "0: inactive, 1: active"]
   created_at timestamp [default: `now()`]
   updated_at timestamp
 }

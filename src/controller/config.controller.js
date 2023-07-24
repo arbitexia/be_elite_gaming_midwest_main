@@ -12,7 +12,7 @@ export const getConfig = async (req, res) => {
 export const createConfig = async (req, res) => {
   try {
     const {
-      input: { id, daily, weekly, monthly, checkinThreshold, coupon, initialCoupon, requestCoupon }
+      input: { id, daily, weekly, monthly, checkinThreshold, coupon, initialCoupon }
     } = req.body;
     const result = await configService.save({
       id,
@@ -21,9 +21,26 @@ export const createConfig = async (req, res) => {
       monthly,
       checkinThreshold,
       coupon,
-      initialCoupon,
-      requestCoupon
+      initialCoupon
     });
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const getBackOffice = async (req, res) => {
+  try {
+    const result = await configService.findBackOffice();
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};
+
+export const saveBackOffice = async (req, res) => {
+  try {
+    const result = await configService.saveBackOffice(req.body);
     res.status(200).json(result);
   } catch (e) {
     res.status(500).json(e.message);

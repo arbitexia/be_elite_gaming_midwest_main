@@ -1,10 +1,10 @@
 import { Table } from '@/database/common';
 import BaseModel from './__base';
-import jsonSchema from './json-schemas/config.schema';
+import jsonSchema from './json-schemas/back-office.schema';
 
-class Config extends BaseModel {
+class BackOffice extends BaseModel {
   static get tableName() {
-    return Table.CONFIG;
+    return Table.BACK_OFFICE;
   }
 
   static get jsonSchema() {
@@ -16,4 +16,4 @@ class Config extends BaseModel {
   }
 }
 
-export default Config;
+export default BackOffice;

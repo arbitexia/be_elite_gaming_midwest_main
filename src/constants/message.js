@@ -83,6 +83,9 @@ const APP_MESSAGE = {
     SUCCESS_DELETE: 'Campaign has been deleted',
     NOT_FOUND: 'Campaign does not exist',
     SUCCESS_UPDATE: 'Campaign has been updated'
+  },
+  BACK_OFFICE: {
+    SUCCESS_SAVE: 'Saved successfully'
   }
 };
 

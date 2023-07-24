@@ -46,6 +46,14 @@ class User extends BaseModel {
           from: `${Table.USER}.id`,
           to: `${Table.USER_LOCATION}.userId`
         }
+      },
+      userCoupons: {
+        relation: Model.HasManyRelation,
+        modelClass: path.join(__dirname, 'user-coupon'),
+        join: {
+          from: `${Table.USER}.id`,
+          to: `${Table.USER_COUPON}.userId`
+        }
       }
     };
   }

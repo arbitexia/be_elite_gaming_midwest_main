@@ -15,7 +15,7 @@ export const loadUsers = async (filterBy, cursor, userId) => {
 
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
-    .withGraphFetched('[role, avatar, userLocations]');
+    .withGraphFetched('[role, avatar, userLocations, userCoupons]');
   return {
     data: results,
     pageInfo: {
@@ -26,7 +26,9 @@ export const loadUsers = async (filterBy, cursor, userId) => {
 };
 
 export const getOne = async (id) => {
-  const user = await User.query().findOne({ id }).withGraphFetched('[role, avatar, userLocations]');
+  const user = await User.query()
+    .findOne({ id })
+    .withGraphFetched('[role, avatar, userLocations, userCoupons]');
   return user;
 };
 
@@ -72,7 +74,7 @@ export const updateUser = async (id, input) => {
       userName,
       ...(hashedPassword && { password: hashedPassword })
     })
-    .withGraphFetched('[role, avatar]');
+    .withGraphFetched('[role, avatar, userCoupons]');
 
   return updatedUser;
 };
