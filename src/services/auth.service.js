@@ -9,7 +9,7 @@ import {
   Transaction,
   UserCoupon
 } from '@/models';
-import { securityHelper, twilioHelper } from '@/helpers';
+import { dateHelper, securityHelper, twilioHelper } from '@/helpers';
 import {
   APP_MESSAGE,
   USER_STATUS_MAPPER,
@@ -30,6 +30,7 @@ import config from '@/config';
 import { formatDistanceStrict } from 'date-fns';
 import { activityService, emailService, pointService, userLocationService } from '@/services';
 import { campaignWorkerEmail } from './email.service';
+import uniqid from 'uniqid';
 
 export const refreshToken = async (refreshToken, res) => {
   const refreshDecoded = await securityHelper.decodeJwtToken(refreshToken);

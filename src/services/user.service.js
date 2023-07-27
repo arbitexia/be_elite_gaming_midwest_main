@@ -1,4 +1,4 @@
-import { User, Role, Activity, UserLocation, Point, Transaction } from '@/models';
+import { User, Role, Activity, UserLocation, Point, Transaction, UserCoupon } from '@/models';
 import { securityHelper, fractionateHelper, cursorHelper } from '@/helpers';
 import { APP_MESSAGE, USER_ROLE_MAPPER } from '@/constants';
 import config from '@/config';
@@ -90,6 +90,8 @@ export const deleteUser = async (id) => {
   await Transaction.query().delete().where('user_id', '=', user.id);
   //delete user_location
   const userLocation = await UserLocation.query().where('user_id', '=', user.id);
+  //delete user_coupon
+  await UserCoupon.query().delete().where('user_id', '=', user.id);
   await Point.query()
     .delete()
     .whereIn(
