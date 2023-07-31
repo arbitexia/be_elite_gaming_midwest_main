@@ -20,6 +20,7 @@ export default {
     },
     transactionId: {
       type: 'integer'
-    }
+    },
+    metadata: { type: 'object' }
   }
 };

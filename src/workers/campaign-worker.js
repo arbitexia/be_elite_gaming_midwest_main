@@ -9,7 +9,8 @@ import {
   CAMPAIGN_TYPE,
   USER_STATUS_MAPPER,
   CAMPAIGN_CHANNELS,
-  TEST_PHONE_NUMBER
+  TEST_PHONE_NUMBER,
+  USER_COUPON_STATUS
 } from '@/constants';
 import { campaignWorkerEmail } from '@/services/email.service';
 import { checkCampaignHistory, insertMessageId } from '@/services/campaign.service';
@@ -64,7 +65,7 @@ export const handler = async (event) => {
                 code: uniqid('eg-'),
                 type: 'FREE',
                 expirationDate: dateHelper.addDateTime({ days: 10 }).toISOString(),
-                status: 1
+                status: USER_COUPON_STATUS.request
               });
               //send the email
               if (

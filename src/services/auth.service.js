@@ -6,7 +6,6 @@ import {
   Tablet,
   UserLocation,
   BackOffice,
-  Transaction,
   UserCoupon
 } from '@/models';
 import { dateHelper, securityHelper, twilioHelper } from '@/helpers';
@@ -22,8 +21,8 @@ import {
   STATUS_MSG,
   DEFAULT_INC_POINT,
   TEST_PHONE_NUMBER,
-  TRANSACTION_STATUS,
-  TRANSACTION_TYPE
+  USER_COUPON_STATUS,
+  BACK_OFFICE_STATUS
 } from '@/constants';
 import { BadRequest } from '@/provider/error';
 import config from '@/config';
@@ -135,7 +134,13 @@ export const register = async (phone, email, birthday, locationInfo) => {
     code: uniqid('eg-'),
     type: 'FREE',
     expirationDate: dateHelper.addDateTime({ days: 10 }).toISOString(),
-    status: 1
+    status: USER_COUPON_STATUS.request,
+    metadata: {
+      desc: 'Signup',
+      type: 'FREE',
+      coupon: configItem ? configItem.initialCoupon : DEFAULT_COUPON,
+      date: new Date().toISOString()
+    }
   });
 
   const updatedUser = await newUser
@@ -316,21 +321,33 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
     const currentCheckinCount = (user?.checkinCount ?? 0) + 1;
     const backOffice = await BackOffice.query().findOne({
       checkinThreshold: currentCheckinCount,
-      status: 1
+      status: BACK_OFFICE_STATUS.active
     });
     if (backOffice) {
-      await Transaction.query().insertAndFetch({
+      await UserCoupon.query().insert({
         userId: user.id,
-        status: TRANSACTION_STATUS.WAITING,
-        type: TRANSACTION_TYPE.COUPON,
         amount: backOffice.coupon,
-        backOfficeId: backOffice.id
+        code: uniqid('eg-'),
+        type: backOffice.type,
+        expirationDate: dateHelper.addDateTime({ days: backOffice.days }).toISOString(),
+        status: USER_COUPON_STATUS.request,
+        metadata: { desc: 'Checkin', date: new Date().toISOString(), ...backOffice }
       });
+      // update the status expired coupons
+      await UserCoupon.query()
+        .patch({ status: USER_COUPON_STATUS.init })
+        .where('userId', user.id)
+        .where('status', USER_COUPON_STATUS.request)
+        .where('expirationDate', '<', new Date());
     }
   }
   // increase the count whenever a customer checkin
-  await user.$query().updateAndFetch({ checkinCount: (user?.checkinCount ?? 0) + 1 });
-  const { role, ...rest } = user;
+  const updatedUser = await user
+    .$query()
+    .updateAndFetch({ checkinCount: (user?.checkinCount ?? 0) + 1 })
+    .withGraphFetched('[role, avatar, userCoupons]');
+
+  const { role, ...rest } = updatedUser;
   return {
     user: rest,
     role,

@@ -57,17 +57,13 @@ export const saveBackOffice = async (body) => {
     //update
     result = await Promise.all(
       body.map(async (obj) => {
-        await BackOffice.query()
-          .findById(obj.id)
-          .patch({
-            coupon: obj.coupon,
-            checkinThreshold: obj.checkinThreshold,
-            days: obj.days,
-            code: obj.code,
-            expirationDate: new Date(obj.expirationDate).toISOString(),
-            type: obj.type,
-            status: obj.status
-          });
+        await BackOffice.query().findById(obj.id).patch({
+          coupon: obj.coupon,
+          checkinThreshold: obj.checkinThreshold,
+          days: obj.days,
+          type: obj.type,
+          status: obj.status
+        });
       })
     );
   } else {
@@ -78,8 +74,6 @@ export const saveBackOffice = async (body) => {
           coupon: obj.coupon,
           checkinThreshold: obj.checkinThreshold,
           days: obj.days,
-          code: obj.code,
-          expirationDate: new Date(obj.expirationDate).toISOString(),
           type: obj.type,
           status: obj.status
         });

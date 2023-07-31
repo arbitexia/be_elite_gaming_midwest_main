@@ -376,6 +376,11 @@ router.post(
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
   configController.saveBackOffice
 );
+router.post(
+  '/request_coupon',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  transactionController.requestCouponTransaction
+);
 //this is test router. wil be removed later
 router.get('/schedule', schedulerController.testSchedule);
 

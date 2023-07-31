@@ -1,6 +1,6 @@
 import { Point, Transaction, UserCoupon } from '@/models';
 import { fractionateHelper, cursorHelper, dateHelper } from '@/helpers';
-import { APP_MESSAGE, TRANSACTION_TYPE } from '@/constants';
+import { APP_MESSAGE, TRANSACTION_TYPE, USER_COUPON_STATUS } from '@/constants';
 import config from '@/config';
 import { raw } from 'objection';
 import uniqid from 'uniqid';
@@ -15,7 +15,7 @@ export const loadTransactions = async (filterBy, cursor) => {
   queryBuilder = filter(filterBy);
   const { results, total } = await queryBuilder
     .page(pageCursor.page, pageCursor.size)
-    .withGraphFetched('[user, reward.[product], location, assignee, point, backOffice]');
+    .withGraphFetched('[user, reward.[product], location, assignee, point]');
   return {
     data: results,
     pageInfo: {
@@ -28,7 +28,7 @@ export const loadTransactions = async (filterBy, cursor) => {
 export const getOne = async (id) => {
   const transaction = await Transaction.query()
     .findOne({ id })
-    .withGraphFetched('[user, reward.[product], location, assignee, point, backOffice]');
+    .withGraphFetched('[user, reward.[product], location, assignee, point]');
   return transaction;
 };
 
@@ -56,13 +56,13 @@ export const createTransaction = async ({
       amount,
       pointId: pointId > 0 ? pointId : undefined
     })
-    .withGraphFetched('[user, reward.[product], location, assignee , point, backOffice]');
+    .withGraphFetched('[user, reward.[product], location, assignee , point]');
 
   if (type === TRANSACTION_TYPE.COUPON && userCouponCodes && userCouponCodes.length > 0) {
     await Promise.all(
       userCouponCodes.map(async (code) => {
         await UserCoupon.query().findOne({ code }).patch({
-          status: 0,
+          status: USER_COUPON_STATUS.requested,
           transactionId: transaction.id
         });
       })
@@ -84,33 +84,40 @@ export const updateTransaction = async (id, assigneeId, status) => {
       status,
       acceptedAt: new Date().toISOString()
     })
-    .withGraphFetched('[user, reward.[product], location, assignee, point, backOffice]');
+    .withGraphFetched('[user, reward.[product], location, assignee, point]');
 
-  if (status === 'ACCEPTED' && updatedTransaction.backOfficeId) {
-    await UserCoupon.query().insert({
-      userId: updatedTransaction.userId,
-      amount: updatedTransaction.amount,
-      code: uniqid('eg-'),
-      type: updatedTransaction.backOffice.type,
-      expirationDate: dateHelper
-        .addDateTime({ days: updatedTransaction.backOffice.days })
-        .toISOString(),
-      status: 1
-    });
-    //send the email
-    await emailService.requestTransactionEmail({
-      user: updatedTransaction.user,
-      transaction: updatedTransaction
-    });
-  }
-  if (status === 'DECLINED' && transaction.locationId && transaction.rewardId) {
-    if (transaction.type === TRANSACTION_TYPE.POINT) {
-      await Point.query()
-        .patch({ point: raw(`point + ${Number(transaction.amount)}`) })
-        .where('id', transaction.pointId);
+  if (status === 'ACCEPTED') {
+    if (updatedTransaction.rewardId) {
+      await UserCoupon.query()
+        .patch({ status: USER_COUPON_STATUS.accepted })
+        .where('transactionId', transaction.id);
+    } else {
+      await UserCoupon.query()
+        .patch({ status: USER_COUPON_STATUS.accepted })
+        .where('id', transaction.metadata.userCouponId);
     }
-    if (transaction.type === TRANSACTION_TYPE.COUPON) {
-      await UserCoupon.query().patch({ status: 1 }).where('transactionId', transaction.id);
+    //send the email
+    // await emailService.requestTransactionEmail({
+    //   user: updatedTransaction.user,
+    //   transaction: updatedTransaction
+    // });
+  }
+  if (status === 'DECLINED') {
+    if (transaction.locationId && transaction.rewardId) {
+      if (transaction.type === TRANSACTION_TYPE.POINT) {
+        await Point.query()
+          .patch({ point: raw(`point + ${Number(transaction.amount)}`) })
+          .where('id', transaction.pointId);
+      }
+      if (transaction.type === TRANSACTION_TYPE.COUPON) {
+        await UserCoupon.query()
+          .patch({ status: USER_COUPON_STATUS.request })
+          .where('transactionId', transaction.id);
+      }
+    } else {
+      await UserCoupon.query()
+        .patch({ status: USER_COUPON_STATUS.init })
+        .where('id', transaction.metadata.userCouponId);
     }
   }
   return updatedTransaction;
@@ -125,10 +132,12 @@ export const deleteTransaction = async (id) => {
   return transaction;
 };
 
-//maybe removed
-export const requestCoupon = async ({ userId, status, type, amount }) => {
+export const requestCoupon = async ({ userId, status, type, amount, metadata, userCouponId }) => {
   const result = await Transaction.query()
-    .insertAndFetch({ userId, status, type, amount })
+    .insertAndFetch({ userId, status, type, amount, metadata })
     .withGraphFetched('[user, assignee , point]');
+  await UserCoupon.query()
+    .patch({ status: USER_COUPON_STATUS.requested })
+    .where('id', userCouponId);
   return { result, message: APP_MESSAGE.TRANSACTION.COUPON_REQUEST };
 };

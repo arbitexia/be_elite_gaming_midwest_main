@@ -45,3 +45,6 @@ export const DEFAULT_COUPON = 10;
 export const TEST_PHONE_NUMBER = [
   1234567890, 1112223333, 2223334444, 3334445555, 4445556666, 5556667777, 6667778888, 7778889999
 ];
+
+export const USER_COUPON_STATUS = { init: 0, request: 1, requested: 2, accepted: 3 };
+export const BACK_OFFICE_STATUS = { inactive: 0, active: 1 };

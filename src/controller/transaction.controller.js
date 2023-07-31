@@ -132,16 +132,15 @@ export const deleteTransaction = async (req, res) => {
   }
 };
 
-//maybe removed
 export const requestCouponTransaction = async (req, res) => {
   const { input } = req.body;
   try {
     const { result, message } = await transactionService.requestCoupon(input);
     //TODO Send Email to customer
-    await emailService.requestTransactionEmail({
-      user: result.user,
-      transaction: result
-    });
+    // await emailService.requestTransactionEmail({
+    //   user: result.user,
+    //   transaction: result
+    // });
     //TODO Activity
     const activityToSave = {
       userId: result.userId,

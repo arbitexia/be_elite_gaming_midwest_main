@@ -199,9 +199,9 @@ const generateAttributes = ({ metadata, victim, model, type }) => {
       if (status === STATUS_MSG.SUCCEED) {
         if (model === ACTIVITY_MODEL.TRANSACTION) {
           attributeObj = {
-            description: `${'The transaction'} has been accepted by ${victim.assignee.firstName} ${
-              victim.assignee.lastName
-            }!`
+            description: `${'The transaction'} has been accepted by ${
+              victim?.assignee?.firstName
+            } ${victim?.assignee?.lastName}!`
           };
         }
       }
