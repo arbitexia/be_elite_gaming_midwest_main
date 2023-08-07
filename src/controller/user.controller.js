@@ -58,3 +58,13 @@ export const updatePassword = async (req, res) => {
     res.status(500).json(e.message);
   }
 };
+
+export const sendSMSToUser = async (req, res) => {
+  try {
+    const { userId, text } = req.body;
+    const result = await userService.sendSMS({ userId, text });
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+};

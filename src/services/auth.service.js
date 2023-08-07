@@ -285,7 +285,7 @@ export const authorizeCustomerFromTablet = async (identifier, locationId, res) =
     const point = await Point.query().findOne({ userLocationId: userLocation.id });
     if (point?.updatedAt) {
       //increase point once a day when use checkin
-      const distance = formatDistanceStrict(new Date(), point.updatedAt, { unit: 'day' }).split(
+      const distance = formatDistanceStrict(new Date(), point.updatedAt, { unit: 'hour' }).split(
         ' '
       )[0];
       if (Number(distance) > 0) {

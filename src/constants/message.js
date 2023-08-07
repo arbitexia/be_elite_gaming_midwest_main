@@ -26,7 +26,8 @@ const APP_MESSAGE = {
     INVALID_PASSWORD: 'Unable to process the update password',
     SUCESS_PASSWORD_CHANGE: 'Successfully, Your password has been updated!',
     SUCESS_USER_DELETE: 'User has been deleted',
-    SUCCESS: 'Success!'
+    SUCCESS: 'Success!',
+    SMS_MSG: 'Sent SMS successfully'
   },
   EMAIL_TEMPLATE: {
     NOT_FOUND: 'Email Template Not Found',

@@ -1,5 +1,5 @@
 import { User, Role, Activity, UserLocation, Point, Transaction, UserCoupon } from '@/models';
-import { securityHelper, fractionateHelper, cursorHelper } from '@/helpers';
+import { securityHelper, fractionateHelper, cursorHelper, twilioHelper } from '@/helpers';
 import { APP_MESSAGE, USER_ROLE_MAPPER } from '@/constants';
 import config from '@/config';
 import { emailService } from '.';
@@ -141,4 +141,14 @@ export const forceResetPassword = async (id) => {
     .withGraphFetched('[role, avatar]');
   await emailService.forceResetPasswordEmail({ user: updatedUser, randomPassword });
   return updatedUser;
+};
+
+export const sendSMS = async ({ userId, text }) => {
+  const user = await User.query().findOne({ id: userId }).throwIfNotFound({
+    message: APP_MESSAGE.USER.NOT_FOUND
+  });
+  await twilioHelper.SendTextSms({ body: text, to: user.phone.toString() });
+  return {
+    message: APP_MESSAGE.USER.SMS_MSG
+  };
 };

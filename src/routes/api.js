@@ -78,6 +78,12 @@ router.delete(
   userController.deleteUser
 );
 
+router.post(
+  '/sms/user',
+  securityHelper.JwtAuth.authenticate('jwt', { session: false }),
+  userController.sendSMSToUser
+);
+
 router.get(
   '/locations',
   securityHelper.JwtAuth.authenticate('jwt', { session: false }),
